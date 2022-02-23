@@ -42,7 +42,6 @@ export default class Pagination {
             time: 180_000
         });
         collector.on("collect", async int => {
-            await int.deferUpdate();
             if (int.user.id !== this.ctx.author.id) {
                 return int.reply({
                     embeds: [
@@ -53,9 +52,9 @@ export default class Pagination {
             }
             if (int.customId === this.ctx.client.utils.encodeDecodeBase64String(`${this.ctx.author.id}_deleteButton`)) {
                 collector.stop();
-                send.delete().catch(() => null);
                 return undefined;
             }
+            await int.deferUpdate();
             if (int.customId === "previousPage") {
                 index--;
             } else if (int.customId === "nextPage") {
@@ -109,7 +108,6 @@ export default class Pagination {
             time: 180_000
         });
         collector.on("collect", async int => {
-            await int.deferUpdate();
             if (int.user.id !== this.ctx.author.id) {
                 return int.reply({
                     embeds: [
@@ -120,9 +118,9 @@ export default class Pagination {
             }
             if (int.customId === this.ctx.client.utils.encodeDecodeBase64String(`${this.ctx.author.id}_deleteButton`)) {
                 collector.stop();
-                send.delete().catch(() => null);
                 return undefined;
             }
+            await int.deferUpdate();
             if (int.customId === "previousPage") {
                 index--;
             } else {
@@ -167,7 +165,6 @@ export default class Pagination {
             time: 180_000
         });
         collector.on("collect", async int => {
-            await int.deferUpdate();
             if (int.user.id !== this.ctx.author.id) {
                 return int.reply({
                     embeds: [
@@ -180,6 +177,7 @@ export default class Pagination {
                 collector.stop();
                 return undefined;
             }
+            await int.deferUpdate();
             if (int.isSelectMenu()) {
                 index = int.values[0] as unknown as number;
                 const messageRow = send.components;
