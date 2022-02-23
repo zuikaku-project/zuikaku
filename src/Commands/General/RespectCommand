@@ -1,0 +1,82 @@
+import { ZuikakuCommand<ICommandComponent> } from "@zuikaku/Decorators/ZuikakuCommand<ICommandComponent>";
+import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
+import { CommandContext } from "@zuikaku/Structures/CommandContext";
+import { createEmbed } from "@zuikaku/Utils";
+import { User } from "discord.js";
+
+@ZuikakuDecorator<ICommandComponent>({
+    name: "respect",
+    description: "Pay respect for something",
+    usage: "respect [thing]",
+    clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"]
+})
+export default class RespectCommand extends ZuikakuCommand {
+    public async execute(ctx: CommandContext): Promise<any> {
+        const thing = ctx.args.join(" ");
+        let data;
+        if (thing) {
+            data = `**Press 🇫 to pay your respect for: **\n**${thing}**`;
+        } else {
+            data = `**Press 🇫 to pay your respect**`;
+        }
+
+        const respect = await ctx.send({ embeds: [createEmbed("info").setDescription(data)] });
+        await respect.react("🇫");
+
+        try {
+            const collector = respect.createReactionCollector({
+                filter: (reaction: any, user: User) => reaction.emoji.name === "🇫" && user.id !== (this.client.user as User).id,
+                time: 60000
+            });
+            const array: Array<any> = [];
+            collector.on("collect", async (reaction: any, user: User): Promise<void> => {
+                switch (reaction.emoji.name) {
+                    case "🇫":
+                        if (array.includes(user.id)) return;
+                        array.push(user.id);
+                        await ctx.send(`**\`${user.tag}\` just paid their respect**`);
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+            collector.on("end", async () => {
+                const data = array.length;
+                let desc;
+                if (thing) {
+                    desc =
+                        Boolean(data)
+                            ? data > 0
+                                ? `**Total \`${data}\` User has paid their respect for: **\n` +
+                                `**${thing}**`
+                                : `**Nobody paid their respect for: **\n**${thing}**`
+                            : `**Nobody paid their respect for: **\n**${thing}**`;
+                } else {
+                    desc =
+                        Boolean(data)
+                            ? data > 0
+                                ? `**Total \`${data}\` User has paid their respect**`
+                                : `**Nobody paid their respect**`
+                            : `**Nobody paid their respect**`;
+                }
+
+                await ctx.send({ embeds: [createEmbed("info").setDescription(desc)] });
+                return array.splice(0, array.length);
+            });
+        } catch {
+            ctx.send({
+                embeds: [
+                    createEmbed(
+                        "error",
+                        "**<a:no:872344998660689932> | Operation Canceled. I got some error**"
+                    )
+                ]
+            }).then(x => {
+                if (x.deletable) {
+                    void setTimeout(() => x.delete().catch(() => null), 10000);
+                }
+            }).catch(() => null);
+        }
+    }
+}

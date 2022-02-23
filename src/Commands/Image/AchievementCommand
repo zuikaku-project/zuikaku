@@ -1,0 +1,42 @@
+import { ZuikakuCommand<ICommandComponent> } from "@zuikaku/Decorators/ZuikakuCommand<ICommandComponent>";
+import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
+import { CommandContext } from "@zuikaku/Structures/CommandContext";
+import { createEmbed } from "@zuikaku/Utils";
+import alex from "alexflipnote.js";
+import { MessageAttachment } from "discord.js";
+
+@ZuikakuDecorator<ICommandComponent>({
+    name: "achievement",
+    category: "Image",
+    description: "Generate minecraft achievement",
+    usage: "achievement <text>",
+    clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
+    slash: {
+        options: [
+            {
+                name: "query",
+                type: "STRING",
+                description: "Achievement",
+                required: true
+            }
+        ]
+    }
+})
+export default class AchievementCommand extends ZuikakuCommand {
+    public async execute(ctx: CommandContext): Promise<any> {
+        if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
+
+        const { image } = new alex(this.client.config.alexapi);
+        if ((ctx.options?.getString("query") as string).length > 20) {
+            return ctx.send({
+                embeds: [
+                    createEmbed("error", "maximum length of text is 20")
+                ]
+            }).then(x => setTimeout(() => x.delete().catch(() => null), 10000)).catch(() => null);
+        }
+
+        const img = await image.achievement({ text: `${ctx.options?.getString("query")}` });
+        const ath = new MessageAttachment(img, "achievement.png");
+        await ctx.send({ files: [ath] });
+    }
+}

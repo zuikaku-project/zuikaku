@@ -1,0 +1,13 @@
+import { DefineListener } from "@zuikaku/Decorators/DefineListener";
+import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
+
+@ZuikakuDecorator<IListenerComponent>({
+    name: "Debugging",
+    event: "debug",
+    emitter: "client"
+})
+export class debug extends ZuikakuListener {
+    public async execute(info: string): Promise<void> {
+        console.log(info);
+    }
+}

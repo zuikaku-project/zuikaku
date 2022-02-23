@@ -2,5 +2,8 @@
     "extends": "@hazmi35/eslint-config/typescript",
     "parserOptions": {
         "project": "./tsconfig.json"
+    },
+    "rules": {
+        "class-methods-use-this": 0
     }
 }

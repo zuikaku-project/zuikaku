@@ -2,15 +2,25 @@
     "extends": "@hazmi35/eslint-config",
     "compilerOptions": {
         "alwaysStrict": true,
+        "skipLibCheck": true,
         "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "rootDir": "./src",
         "outDir": "./dist",
+        "baseUrl": "./src",
         "typeRoots": [
             "node_modules/@types",
-        ]
+            "src/types/index.d.ts"
+        ],
+        "paths": {
+            "@zuikaku/*": [
+                "*"
+            ]
+        }
     },
     "include": [
-        "src/**/*.ts",
+        "src/**/*.ts"
     ],
     "exclude": [
         "node_modules/**"
