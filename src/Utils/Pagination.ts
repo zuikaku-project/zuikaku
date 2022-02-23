@@ -46,7 +46,6 @@ export default class Pagination {
                 if (int.user.id === this.ctx.author.id) collector.stop();
                 return undefined;
             }
-            await int.deferUpdate();
             if (int.user.id !== this.ctx.author.id) {
                 return int.reply({
                     embeds: [
@@ -55,6 +54,7 @@ export default class Pagination {
                     ephemeral: true
                 });
             }
+            await int.deferUpdate();
             if (int.customId === "previousPage") {
                 index--;
             } else if (int.customId === "nextPage") {
@@ -112,7 +112,6 @@ export default class Pagination {
                 if (int.user.id === this.ctx.author.id) collector.stop();
                 return undefined;
             }
-            await int.deferUpdate();
             if (int.user.id !== this.ctx.author.id) {
                 return int.reply({
                     embeds: [
@@ -121,6 +120,7 @@ export default class Pagination {
                     ephemeral: true
                 });
             }
+            await int.deferUpdate();
             if (int.customId === "previousPage") {
                 index--;
             } else {
@@ -169,7 +169,6 @@ export default class Pagination {
                 if (int.user.id === this.ctx.author.id) collector.stop();
                 return undefined;
             }
-            await int.deferUpdate();
             if (int.user.id !== this.ctx.author.id) {
                 return int.reply({
                     embeds: [
@@ -178,6 +177,7 @@ export default class Pagination {
                     ephemeral: true
                 });
             }
+            await int.deferUpdate();
             if (int.isSelectMenu()) {
                 index = int.values[0] as unknown as number;
                 const messageRow = send.components;
