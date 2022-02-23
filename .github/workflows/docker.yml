@@ -50,7 +50,7 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ steps.flavor.outputs.name }}
-          images: ghcr.io/noxzym/zuikaku
+          images: ghcr.io/zuikaku-org/zuikaku
           tags: |
             ${{ steps.tags.outputs.name }}
             latest
