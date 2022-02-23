@@ -151,8 +151,8 @@ export default class NPMCommand extends ZuikakuCommand {
             time: 30_000
         });
         collector.on("collect", async int => {
+            await int.deferUpdate();
             if (int.user.id === ctx.author.id) {
-                await int.deferUpdate();
                 collector.stop("Finished");
                 await this.getNodePackageModule(data.objects[Number(int.values[0])].package.name!, ctx);
             } else {
