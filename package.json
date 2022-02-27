@@ -45,7 +45,7 @@
     "discord.js": "13.6.0",
     "js-yaml": "4.1.0",
     "module-alias": "2.2.2",
-    "mongodb": "3.7.3",
+    "mongodb": "4.4.0",
     "petitio": "1.4.0",
     "shoukaku": "2.1.4",
     "tslib": "2.3.1",
