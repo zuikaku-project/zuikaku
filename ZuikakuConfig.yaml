@@ -9,7 +9,7 @@ nodes:
   - auth: youshallnotpass
     url: node-au.rb.tiramitzu.me:2000
     name: rahagia
-  - auth: youshallnotpass
+  - auth: LoliBandarHunter
     url: node-au.fab1o.xyz:2333
     name: fabio
 devMode: false
