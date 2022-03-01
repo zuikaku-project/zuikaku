@@ -3,24 +3,24 @@ import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import petitio from "petitio";
 
 export class CanvasHandler {
-    public readonly baseURL = "https://imageapi.orchitiadi.repl.co/";
+    public readonly baseURL = "https://api.maakoo.my.id/api/";
     public readonly endpoint = {
-        brightness: "api/image/brightness",
-        chip: "api/image/chip",
-        circle: "api/image/circle",
-        communist: "api/image/communist",
-        contrast: "api/image/contrast",
-        darkness: "api/image/darkness",
-        gay: "api/image/gay",
-        greyscale: "api/image/greyscale",
-        instagram: "api/image/instagram",
-        invert: "api/image/invert",
-        sepia: "api/image/sepia",
-        spotify: "api/image/spotify",
-        supreme: "api/image/supreme",
-        threshold: "api/image/threshold",
-        what: "api/image/what",
-        kleesay: "api/image/kleesay"
+        brightness: "image/brightness",
+        chip: "image/chip",
+        circle: "image/circle",
+        communist: "image/communist",
+        contrast: "image/contrast",
+        darkness: "image/darkness",
+        gay: "image/gay",
+        greyscale: "image/greyscale",
+        instagram: "image/instagram",
+        invert: "image/invert",
+        sepia: "image/sepia",
+        spotify: "image/spotify",
+        supreme: "image/supreme",
+        threshold: "image/threshold",
+        what: "image/what",
+        kleesay: "image/kleesay"
     };
 
     public constructor(public client: ZuikakuClient) { }
@@ -29,7 +29,7 @@ export class CanvasHandler {
         try {
             const getAPIData = await petitio(this.baseURL)
                 .path(this.endpoint[getEndpoint])
-                .query("base64", this.client.utils.encodeDecodeBase64String(JSON.stringify(data)))
+                .query("base64", this.client.utils.encodeDecodeBase64String(encodeURIComponent(JSON.stringify(data))))
                 .header("Authorization", this.client.utils.encodeDecodeBase64String("243728573624614912.791271223077109820"))
                 .send();
             if (getAPIData.statusCode !== 200) {
@@ -43,20 +43,20 @@ export class CanvasHandler {
 }
 
 interface APIEndpoint {
-    brightness: "api/image/brightness";
-    chip: "api/image/chip";
-    circle: "api/image/circle";
-    communist: "api/image/communist";
-    contrast: "api/image/contrast";
-    darkness: "api/image/darkness";
-    gay: "api/image/gay";
-    greyscale: "api/image/greyscale";
-    instagram: "api/image/instagram";
-    invert: "api/image/invert";
-    sepia: "api/image/sepia";
-    spotify: "api/image/spotify";
-    supreme: "api/image/supreme";
-    threshold: "api/image/threshold";
-    what: "api/image/what";
-    kleesay: "api/image/kleesay";
+    brightness: "image/brightness";
+    chip: "image/chip";
+    circle: "image/circle";
+    communist: "image/communist";
+    contrast: "image/contrast";
+    darkness: "image/darkness";
+    gay: "image/gay";
+    greyscale: "image/greyscale";
+    instagram: "image/instagram";
+    invert: "image/invert";
+    sepia: "image/sepia";
+    spotify: "image/spotify";
+    supreme: "image/supreme";
+    threshold: "image/threshold";
+    what: "image/what";
+    kleesay: "image/kleesay";
 }
