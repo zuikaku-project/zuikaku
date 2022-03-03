@@ -23,8 +23,10 @@ export default class ZuikakuMessageCreate extends ZuikakuListener {
             if (
                 message.deletable &&
                 message.author.id !== this.client.user?.id
-            ) await message.delete().catch(() => null);
-            const command = this.client.commands.get("play")!;
+            ) {
+                await message.delete().catch(() => null);
+            }
+            const command = this.client.commands.find(x => x.meta.name === "play")!;
             if (!this.client.commands.cooldowns.has(command.meta.name)) {
                 this.client.commands.cooldowns.set(command.meta.name, new Collection());
             }
@@ -48,12 +50,13 @@ export default class ZuikakuMessageCreate extends ZuikakuListener {
                     setTimeout(() => timeoutmsg.delete().catch(() => null), 3000);
                     return undefined;
                 }
-
                 timestamps.set(message.author.id, now);
                 setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
             } else {
                 timestamps?.set(message.author.id, now);
-                if (this.client.options.ownerId.includes(message.author.id)) timestamps?.delete(message.author.id);
+                if (this.client.options.ownerId.includes(message.author.id)) {
+                    timestamps?.delete(message.author.id);
+                }
             }
             return command.execute(new CommandContext(this.client, message, message.content.split(/ +/g)));
         }
@@ -76,8 +79,7 @@ export default class ZuikakuMessageCreate extends ZuikakuListener {
                         .setAuthor({ name: "Zuikaku - Quick Help!", iconURL: this.client.user?.displayAvatarURL({ format: "png" }) })
                         .setDescription(
                             "The best Discord Bot that can serve you everytime\n" +
-                            "Fast, Secure, Always on, Best Audio, No Configuration\n" +
-                            "**Click buttons bellow for more information**"
+                            "Fast, Secure, Always on, Best Audio, and No Configuration\n"
                         )
                 ],
                 components: [
