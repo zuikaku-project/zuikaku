@@ -1,0 +1,173 @@
+[
+    {
+        "date": "01 January 2021",
+        "title": "Release Zuikaku@1.0.0",
+        "content": [
+            "Happy new year! 🎆"
+        ]
+    },
+    {
+        "date": "11 January 2021",
+        "title": "Release Zuikaku@1.0.6",
+        "content": [
+            "Inline reply support",
+            "Using default fonts for instagram and spotify",
+            "Update pagination style",
+            "Fix error in command emoji & command shuffle",
+            "Optimizing command listenmoe",
+            "Canvas style for command instagram",
+            "Fix unsupported fonts"
+        ]
+    },
+    {
+        "date": "22 January 2021",
+        "title": "Release Zuikaku@1.1.3",
+        "content": [
+            "Filter video data",
+            "Fix bug in command help & shoob timer",
+            "Optimizing Music Service",
+            "Support play track from spotify"
+        ]
+    },
+    {
+        "date": "07 February 2021",
+        "title": "Release Zuikaku@1.2.5",
+        "content": [
+            "Refactor music service",
+            "Fix bug in music player",
+            "Using instagram private API",
+            "New: command respect & canvas style for command spotify",
+            "Update action command & moderation"
+        ]
+    },
+    {
+        "date": "27 February 2021",
+        "title": "Release Zuikaku@2.0.0",
+        "content": [
+            "Fix command kick, ban, unban, queue, and play & fix custom prefix",
+            "New: customable prefix",
+            "Use akairo framework & Shoukaku for music service"
+        ]
+    },
+    {
+        "date": "28 March 2021",
+        "title": "Release Zuikaku@2.2.0",
+        "content": [
+            "Using Argument Prompt for a few Commands",
+            "Optimizing gacha node for lavalink :D",
+            "Optimizing the bot system to fix a few problems",
+            "Fix bug Play Command cannot play from playlist & moderation command",
+            "Using local system for spotify",
+            "Optimizing song selection"
+        ]
+    },
+    {
+        "date": "22 April 2021",
+        "title": "Release Zuikaku@2.3.6",
+        "content": [
+            "Fix embed error",
+            "Using discord.js master",
+            "New: ot can Join stage channel",
+            "fix error when trying play track from spotify",
+            "fix songs title is not same from spotify",
+            "fix command songview",
+            "Fix split String in command lyrics",
+            "Fix timestamps in command spotify",
+            "New: command lyrics"
+        ]
+    },
+    {
+        "date": "01 June 2021",
+        "title": "Release Zuikaku@2.4.8",
+        "content": [
+            "Using custom key-mongo",
+            "Remove sharding because high ping issue",
+            "Optimizing Command",
+            "Using shoukaku custom branch",
+            "Fix bug equalizer & missing pemission",
+            "New: 5 track filters",
+            "Using mongodb instead of mongoose",
+            "Fix command kick & ban"
+        ]
+    },
+    {
+        "date": "27 June 2021",
+        "title": "Release Zuikaku@2.6.7",
+        "content": [
+            "Fix crash when run argument prompt",
+            "Optimizing Music Command",
+            "New: filter Daycore",
+            "Optimizing play handler",
+            "Using button in pagination",
+            "Fix invalid command type",
+            "Fix cannot play track from spotify playlisy or album"
+        ]
+    },
+    {
+        "date": "11 July 2021",
+        "title": "Release Zuikaku@3.0.0",
+        "content": [
+            "Using prototype for extend function and not using collection for queue",
+            "Refactor handler Shoukaku for better code efficiency",
+            "Update discord.js@dev to latest commit",
+            "Not extend data and rollback queue to collection"
+        ]
+    },
+    {
+        "date": "02 August 2021",
+        "title": "Release Zuikaku@3.1.4",
+        "content": [
+            "Counted 3 days from July 29,2021, all of these BOT services are turned off due to problems in obtaining data. All service can be used now",
+            "Using clientOptions.makeCache for change deprecated options",
+            "Clean Code",
+            "Snipe support thread channel",
+            "Fix command nuke only for textChannel",
+            "Using dayjs instead of moment & petitio for all http request",
+            "Change api for Action Command"
+        ]
+    },
+    {
+        "date": "11 September 2021",
+        "title": "Release Zuikaku@3.2.7",
+        "content": [
+            "Refactor queue, make it clear",
+            "Support play track from apple music & spotify episode and show",
+            "Fix unresolve emoji & double message",
+            "Using select menu for flags search",
+            "Using NodeJS v16",
+            "Optimizing slash Command"
+        ]
+    },
+    {
+        "date": "18 November 2021",
+        "title": "Release Zuikaku@3.3.5",
+        "content": [
+            "Bye legacy Command. Full Slash! 👋",
+            "Using skia-canvas instead of node-canvas",
+            "Convert Command to slash Command. [7/7] Category has been converted",
+            "Increase search limit option"
+        ]
+    },
+    {
+        "date": "03 January 2022",
+        "title": "Release Zuikaku@3.5.0",
+        "content": [
+            "Happy new year 🎇",
+            "Update APIEndpoint",
+            "Update snipe message attachment",
+            "Migrate image generation API to private API",
+            "Increase queue list to 10 list",
+            "Using colorette insteadof chalk",
+            "Using typeorm for mongodb client"
+        ]
+    },
+    {
+        "date": "08 February 2022",
+        "title": "Release Zuikaku@3.8.2",
+        "content": [
+            "Refactor Shoukaku Extension",
+            "Fix some little shit, wrong check, and more",
+            "Move database directory"
+        ]
+    }
+]
