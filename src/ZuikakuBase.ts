@@ -45,7 +45,7 @@ app.get("/changelog", (_, res) => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     res
         .status(200)
-        .send((JSON.parse(readFileSync("./changelog.json", "utf8")) as IChangelog[]).reverse().map(x => ({
+        .send((JSON.parse(readFileSync("./Changelog.json", "utf8")) as IChangelog[]).reverse().map(x => ({
             date: {
                 day: new Date(x.date).getDate(),
                 month: months[new Date(x.date).getMonth()],
