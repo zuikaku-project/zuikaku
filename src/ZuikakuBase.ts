@@ -3,6 +3,7 @@ import express from "express";
 import process from "node:process";
 import { ZuikakuClient } from "./Structures/ZuikakuClient";
 import { readFileSync } from "node:fs";
+import cors from "cors";
 
 process.on("unhandledRejection", e => {
     console.log("Error handler caught an error:", e);
@@ -20,6 +21,7 @@ client.start();
 const app = express();
 app.set("trust proxy", 1);
 app.set("json spaces", 2);
+app.use(cors({ origin: "*" }));
 app.get("/", (_, res) => res.status(200).send({ status: "ok" }));
 app.get("/commands", (_, res) => res
     .status(200)
@@ -55,8 +57,8 @@ app.get("/changelog", (_, res) => {
             content: x.content.map((z, i) => `${i + 1}. ${z}`)
         })));
 });
-app.listen(process.env.SERVER_PORT ?? 3000, () => {
-    console.log(`Server is running on port ${process.env.SERVER_PORT ?? 3000}`);
+app.listen(process.env.SERVER_PORT ?? 3002, () => {
+    console.log(`Server is running on port ${process.env.SERVER_PORT ?? 3002}`);
 });
 
 interface IChangelog {
