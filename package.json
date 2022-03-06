@@ -53,7 +53,7 @@
     "petitio": "1.4.0",
     "shoukaku": "2.1.5",
     "tslib": "2.3.1",
-    "typeorm": "0.2.44"
+    "typeorm": "0.2.45"
   },
   "optionalDependencies": {
     "bufferutil": "4.0.6",
