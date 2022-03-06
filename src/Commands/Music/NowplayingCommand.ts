@@ -7,7 +7,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "nowplaying",
     description: "Display the current playing",
-    usage: "nowplaying",
+    usage: "{CATEGORY} nowplaying",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

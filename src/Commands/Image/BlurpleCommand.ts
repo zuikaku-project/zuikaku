@@ -8,8 +8,8 @@ import petitio from "petitio";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "blurple",
-    description: "Add blue purple filter to image",
-    usage: "blurple [user|image|^]",
+    description: "Apply the blurple filter to image",
+    usage: "{CATEGORY} blurple [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

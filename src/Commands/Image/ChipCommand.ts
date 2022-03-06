@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "chip",
-    description: "Convert image to chip",
-    usage: "chip [user|image]",
+    description: "Generate chip image",
+    usage: "{CATEGORY} chip [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

@@ -7,7 +7,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "mock",
     description: "Mocking case word or sentences",
-    usage: "mock <thing>",
+    usage: "mock {ABRACKETSL}query{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

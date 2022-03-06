@@ -9,8 +9,8 @@ import os from "os";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "stats",
-    description: "Display bot statistics",
-    usage: "stats [flags]",
+    description: "Display node/bot statistics",
+    usage: "stats lavalink|zuikaku",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

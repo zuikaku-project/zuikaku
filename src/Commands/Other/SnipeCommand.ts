@@ -8,7 +8,7 @@ import { MessageEmbed, TextChannel, ThreadChannel, User } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "snipe",
     description: "Get last message deleted",
-    usage: "snipe [channel] [flags]",
+    usage: "snipe [channel]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

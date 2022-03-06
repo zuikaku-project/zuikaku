@@ -8,8 +8,8 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "skip",
-    description: "Skip the current player",
-    usage: "skip [track number]",
+    description: "Skip the track",
+    usage: "{CATEGORY} skip [range]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

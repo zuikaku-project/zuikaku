@@ -9,7 +9,7 @@ import { MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "manga",
     description: "fetching manga information from Anilist",
-    usage: "manga <title>",
+    usage: "{CATEGORY} anilist manga {ABRACKETSL}title{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

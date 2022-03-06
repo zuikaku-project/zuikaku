@@ -9,7 +9,7 @@ import petitio from "petitio";
 @ZuikakuDecorator<ICommandComponent>({
     name: "punch",
     description: "Punch someone",
-    usage: "punch <user>",
+    usage: "{CATEGORY} punch {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

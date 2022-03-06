@@ -9,7 +9,8 @@ import { ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "add",
-    description: "Add track(s) to playlist",
+    description: "Add track(s) into some playlist",
+    usage: "{CATEGORY} add {ABRACKETSL}id{ABRACKETSR} {ABRACKETSL}track{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

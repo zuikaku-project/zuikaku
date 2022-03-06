@@ -7,7 +7,7 @@ import { MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "kleesay",
     description: "Klee will say what you want",
-    usage: "kleesay <text>",
+    usage: "{CATEGORY} kleesay {ABRACKETSL}query{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

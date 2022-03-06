@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "8d",
     description: "Apply the 8d filter to player",
-    usage: "8d",
+    usage: "{CATEGORY} 8d",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

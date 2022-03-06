@@ -8,7 +8,7 @@ import { MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "supreme",
     description: "Generate supreme image",
-    usage: "supreme <text>",
+    usage: "{CATEGORY} supreme {ABRACKETSL}query{ABRACKETSR} [type]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

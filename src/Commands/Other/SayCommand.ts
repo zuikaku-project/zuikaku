@@ -6,7 +6,7 @@ import { ICommandComponent } from "@zuikaku/types";
 @ZuikakuDecorator<ICommandComponent>({
     name: "say",
     description: "Make me say anything",
-    usage: "say <message>",
+    usage: "say {ABRACKETSL}query{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

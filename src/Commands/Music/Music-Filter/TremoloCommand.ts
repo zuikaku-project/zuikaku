@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "tremolo",
     description: "Apply the tremolo filter to player",
-    usage: "tremolo",
+    usage: "{CATEGORY} tremolo",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

@@ -8,8 +8,8 @@ import { createEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "unban",
-    description: "Unbanned user from the guild",
-    usage: "unban <id>",
+    description: "Unban user from the guild",
+    usage: "{CATEGORY} unban {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS", "BAN_MEMBERS"],
     userPermissions: ["BAN_MEMBERS"],
     slash: {

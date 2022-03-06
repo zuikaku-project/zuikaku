@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "contrast",
-    description: "Add contrast filter to image",
-    usage: "contrast [user|image|^]",
+    description: "Apply the contrast filter to image",
+    usage: "{CATEGORY} contrast [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

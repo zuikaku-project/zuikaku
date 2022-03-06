@@ -11,7 +11,7 @@ import petitio from "petitio";
 @ZuikakuDecorator<ICommandComponent>({
     name: "bully",
     description: "Bully someone",
-    usage: "bully <user>",
+    usage: "{CATEGORY} bully {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

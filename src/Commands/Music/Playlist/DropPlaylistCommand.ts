@@ -7,7 +7,8 @@ import { MessageActionRow, MessageButton } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "drop",
-    description: "Drop (delete) playlist or track",
+    description: "Drop (delete) the playlist or track from user database",
+    usage: "{CATEGORY} drop playlist|track {ABRACKETSL}id{ABRACKETSR} ?{ABRACKETSL}trackid{ABRACKETSR}",
     slash: {
         type: "SUB_COMMAND_GROUP",
         options: [

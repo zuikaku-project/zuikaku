@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "vibrato",
     description: "Apply the vibrato filter to player",
-    usage: "vibrato",
+    usage: "{CATEGORY} vibrato",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

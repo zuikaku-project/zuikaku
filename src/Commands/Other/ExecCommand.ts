@@ -6,8 +6,8 @@ import { exec } from "node:child_process";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "execute",
-    description: "Execute program",
-    usage: "execute <code>",
+    description: "Run bash code",
+    usage: "execute {ABRACKETSL}bash{ABRACKETSR}",
     clientPermissions: "SEND_MESSAGES",
     slash: {
         options: [

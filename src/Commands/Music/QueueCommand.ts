@@ -9,7 +9,7 @@ import { MessageEmbed } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "queue",
     description: "Display all track from player",
-    usage: "queue",
+    usage: "{CATEGORY} queue",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

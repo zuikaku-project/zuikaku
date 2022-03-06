@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "vaporwave",
     description: "Apply the vaporwave filter to player",
-    usage: "vaporwave",
+    usage: "{CATEGORY} vaporwave",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

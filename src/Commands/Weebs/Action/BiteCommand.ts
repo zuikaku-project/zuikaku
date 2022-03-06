@@ -10,7 +10,7 @@ import { GuildMember, MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "bite",
     description: "Bite Someone",
-    usage: "bite <user>",
+    usage: "{CATEGORY} bite {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

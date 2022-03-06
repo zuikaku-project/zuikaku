@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "daycore",
     description: "Apply the daycore filter to player",
-    usage: "daycore",
+    usage: "{CATEGORY} daycore",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

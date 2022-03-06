@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "sepia",
-    description: "Add sepia filter to image",
-    usage: "sepia [user|image|^]",
+    description: "Apply the sepia filter to image",
+    usage: "{CATEGORY} sepia [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

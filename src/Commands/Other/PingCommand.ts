@@ -6,7 +6,7 @@ import { createEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "ping",
-    description: "Display bot ping",
+    description: "Get the bot's ping",
     usage: "ping",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {}

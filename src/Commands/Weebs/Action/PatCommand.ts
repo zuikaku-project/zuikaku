@@ -10,7 +10,7 @@ import { GuildMember, MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "pat",
     description: "Pat someone",
-    usage: "pat <user>",
+    usage: "{CATEGORY} pat {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

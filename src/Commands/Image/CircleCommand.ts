@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "circle",
-    description: "Change image to circle",
-    usage: "circle [user|image|^]",
+    description: "Generate circle image",
+    usage: "{CATEGORY} circle [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

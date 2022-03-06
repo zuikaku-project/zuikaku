@@ -11,7 +11,7 @@ import util from "util";
 @ZuikakuDecorator<ICommandComponent>({
     name: "eval",
     description: "Run code snippets",
-    usage: "eval <code>",
+    usage: "eval {ABRACKETSL}code{ABRACKETSR} [async|silent]",
     clientPermissions: ["SEND_MESSAGES"],
     slash: {
         options: [

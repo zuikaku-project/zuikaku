@@ -7,8 +7,8 @@ import { User } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "avatar",
-    description: "Display avatar user or guild",
-    usage: "avatar [user|flags]",
+    description: "Display avatar/guild icon",
+    usage: "avatar user|server ?[user]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

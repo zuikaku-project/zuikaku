@@ -8,8 +8,8 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "back",
-    description: "back the last playing player",
-    usage: "back",
+    description: "Play previous playing",
+    usage: "{CATEGORY} back",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

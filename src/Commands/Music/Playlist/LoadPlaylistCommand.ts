@@ -7,7 +7,8 @@ import { Util } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "load",
-    description: "Load the playlist",
+    description: "Load the playlist and play-it",
+    usage: "{CATEGORY} load {ABRACKETSL}id{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

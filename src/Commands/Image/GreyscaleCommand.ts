@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "greyscale",
-    description: "Add grey filter to image",
-    usage: "grey [user|image|^]",
+    description: "Apply the greyscale filter to image",
+    usage: "{CATEGORY} grey [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

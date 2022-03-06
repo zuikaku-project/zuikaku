@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "invert",
-    description: "Add invert filter to image",
-    usage: "invert [user|image|^]",
+    description: "Apply the invert filter to image",
+    usage: "{CATEGORY} invert [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

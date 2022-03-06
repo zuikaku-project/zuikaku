@@ -8,7 +8,7 @@ import { MessageEmbed } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "lyrics",
-    description: "Fetch song lyrics from musixmatch, also support spotify presnece",
+    description: "Get lyrics from musixmatch. Support spotify presence",
     usage: "lyrics [title]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {

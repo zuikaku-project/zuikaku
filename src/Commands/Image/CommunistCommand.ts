@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "communist",
-    description: "Add communist filter to image",
-    usage: "communist [user|image|^]",
+    description: "Apply the communist filter to image",
+    usage: "{CATEGORY} communist [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

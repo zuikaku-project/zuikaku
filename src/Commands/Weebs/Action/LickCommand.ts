@@ -10,7 +10,7 @@ import { GuildMember, MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "lick",
     description: "Lick someone",
-    usage: "lick <user>",
+    usage: "{CATEGORY} lick {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

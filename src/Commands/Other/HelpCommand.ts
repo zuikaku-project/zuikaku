@@ -36,19 +36,13 @@ export default class HelpCommand extends ZuikakuCommand {
                 .addFields([
                     {
                         name: "Command Name",
-                        value: ["music", "music-filter", "action", "image", "animal", "admin", "anilist", "myanimelist", "playlist"]
-                            .includes(findCommand.meta.category!)
-                            ? `/${findCommand.meta.category!} ${findCommand.meta.name}`
-                            : `/${findCommand.meta.name}`
+                        value: findCommand.meta.name
                     }, {
                         name: "Description",
                         value: findCommand.meta.description!
                     }, {
                         name: "Usage",
-                        value: ["music", "music-filter", "action", "image", "animal", "admin", "anilist", "myanimelist", "playlist"]
-                            .includes(findCommand.meta.category!)
-                            ? `/${findCommand.meta.category ?? ""} ${findCommand.meta.usage ?? ""}`
-                            : `${findCommand.meta.usage ?? ""}`
+                        value: findCommand.meta.category === "other" ? `/${findCommand.meta.usage ?? ""}` : `/${findCommand.meta.usage?.replace("{CATEGORY}", findCommand.meta.category!).replace(/{ABRACKETSL}/g, "<").replace(/{ABRACKETSR}/g, ">") ?? ""}`
                     }
                 ]);
             await ctx.send({

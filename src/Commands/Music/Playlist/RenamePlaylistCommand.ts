@@ -7,7 +7,8 @@ import { MessageActionRow, MessageButton } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "rename",
-    description: "Renamed playlist name",
+    description: "Renamed playlist",
+    usage: "{CATEGORY} rename {ABRACKETSL}id{ABRACKETSR} {ABRACKETSL}name{ABRACKETSR}",
     slash: {
         type: "SUB_COMMAND",
         options: [

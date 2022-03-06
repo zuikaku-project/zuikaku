@@ -9,7 +9,7 @@ locale();
 @ZuikakuDecorator<ICommandComponent>({
     name: "serverinfo",
     category: "general",
-    description: "Display server informations",
+    description: "Get server information",
     usage: "serverinfo",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {}

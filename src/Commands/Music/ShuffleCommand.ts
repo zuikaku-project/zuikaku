@@ -8,8 +8,8 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "shuffle",
-    description: "Shuffle queue",
-    usage: "shuffle",
+    description: "Shuffle the track",
+    usage: "{CATEGORY} shuffle",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

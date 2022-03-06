@@ -7,8 +7,8 @@ import { GuildMember, MessageActionRow, MessageAttachment, MessageButton } from 
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "spotify",
-    description: "Display spotify information currently playing",
-    usage: "spotify [user]",
+    description: "Display user spotify presence",
+    usage: "spotify [user] [canvas|notime]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES"],
     slash: {
         options: [

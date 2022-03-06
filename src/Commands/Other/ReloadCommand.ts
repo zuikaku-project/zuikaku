@@ -8,8 +8,8 @@ import { createEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "reload",
-    description: "Update all command",
-    usage: "reload",
+    description: "Reload slash/file command",
+    usage: "reload slash|command ?{ABRACKETSL}slash{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     devOnly: true,
     slash: {

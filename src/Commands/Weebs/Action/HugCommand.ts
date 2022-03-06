@@ -10,7 +10,7 @@ import { GuildMember, MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "hug",
     description: "Hug someone",
-    usage: "hug <user>",
+    usage: "{CATEGORY} hug {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

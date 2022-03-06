@@ -12,7 +12,7 @@ import { ShoukakuTrackList } from "shoukaku";
 @ZuikakuDecorator<ICommandComponent>({
     name: "play",
     description: "Play track from any source",
-    usage: "play <sources>",
+    usage: "{CATEGORY} play {ABRACKETSL}query{ABRACKETSR} [search]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

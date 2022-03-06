@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "treblebass",
     description: "Apply the treblebass filter to player",
-    usage: "treblebass",
+    usage: "{CATEGORY} treblebass",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 
 export class CommandHandler extends Collection<string, ICommandComponent> {
     public isReady = false;
-    public categories!: Record<"action" | "admin" | "anilist" | "animal" | "image" | "music-filter" | "music" | "myanimelist" | "playlist", ICommandComponent[] | undefined>;
+    public categories!: Record<"action" | "admin" | "anilist" | "animal" | "image" | "music-filter" | "music" | "myanimelist" | "other" | "playlist", ICommandComponent[] | undefined>;
     public readonly aliases: Collection<string, string> = new Collection();
     public readonly cooldowns: Collection<string, Collection<Snowflake, number>> = new Collection();
     public subCommandsAction = { name: "action", description: "Action Command(s)", options: [] as any[] };

@@ -9,7 +9,7 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "volume",
     description: "Change volume player",
-    usage: "volume <number>",
+    usage: "{CATEGORY} volume {ABRACKETSL}number{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

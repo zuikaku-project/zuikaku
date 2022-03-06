@@ -135,7 +135,7 @@ export class ShoukakuHandler extends Shoukaku {
                 const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase.guildPlayer.channelId);
                 if (channelGuildPlayer?.isText()) {
                     const messageGuildPlayer = await channelGuildPlayer.messages.fetch(getGuildDatabase.guildPlayer.messageId).catch(() => undefined);
-                    if (messageGuildPlayer) {
+                    if (messageGuildPlayer && messageGuildPlayer.author.id === this.client.user?.id) {
                         const components = new MessageActionRow().addComponents(messageGuildPlayer.components[0].components.map(x => x.setDisabled(false)));
                         await messageGuildPlayer.edit({ embeds: [embed], content: `**__Queue list:__**${list.length > 1 ? `\n\n**And ${queue.getTrackSize - 1 - list[0].length} more...**` : ""}\n${list.length ? list[0].reverse().join("\n") : "Join a voice channel and request some song in here"}`, components: [components] }).catch(() => null);
                     }
@@ -148,7 +148,7 @@ export class ShoukakuHandler extends Shoukaku {
                 const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase.guildPlayer.channelId);
                 if (channelGuildPlayer?.isText()) {
                     const messageGuildPlayer = await channelGuildPlayer.messages.fetch(getGuildDatabase.guildPlayer.messageId).catch(() => undefined);
-                    if (messageGuildPlayer) {
+                    if (messageGuildPlayer && messageGuildPlayer.author.id === this.client.user?.id) {
                         const component = messageGuildPlayer.components[0].components.slice(1).map(x => x.setDisabled());
                         component.unshift(messageGuildPlayer.components[0].components[0]);
                         const components = new MessageActionRow().addComponents(
@@ -167,7 +167,7 @@ export class ShoukakuHandler extends Shoukaku {
             const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase?.guildPlayer?.channelId ?? "");
             if (channelGuildPlayer) {
                 const messageGuildPlayer = await (channelGuildPlayer as TextBasedChannel).messages.fetch(getGuildDatabase!.guildPlayer!.messageId).catch(() => undefined);
-                if (messageGuildPlayer) {
+                if (messageGuildPlayer && messageGuildPlayer.author.id === this.client.user?.id) {
                     await this.updateGuildPlayerEmbed(guild);
                     this.client.logger.info({ module: "guildPlayer", message: "guildPlayerEmbed has been updated" });
                 }

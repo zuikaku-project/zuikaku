@@ -8,8 +8,8 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "resume",
-    description: "Resume the current player",
-    usage: "resume",
+    description: "Resume the player",
+    usage: "{CATEGORY} resume",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

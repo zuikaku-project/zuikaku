@@ -9,7 +9,7 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "remove",
     description: "Remove song from player",
-    usage: "remove <songnumber> [songposition]",
+    usage: "{CATEGORY} remove {ABRACKETSL}number{ABRACKETSR} [range]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

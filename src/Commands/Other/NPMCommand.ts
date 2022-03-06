@@ -11,8 +11,8 @@ locale();
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "npm",
-    description: "Give information about node module module",
-    usage: "npm <module>",
+    description: "Get information about a package",
+    usage: "npm {ABRACKETSL}query{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

@@ -8,7 +8,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "nightcore",
     description: "Apply the nightcore filter to player",
-    usage: "nightcore",
+    usage: "{CATEGORY} nightcore",
     clientPermissions: ["SEND_MESSAGES", "ADD_REACTIONS"],
     slash: {
         type: "SUB_COMMAND"

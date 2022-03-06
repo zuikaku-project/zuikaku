@@ -8,8 +8,8 @@ import { Message, MessageActionRow, MessageButton, TextChannel } from "discord.j
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "setup",
-    description: "Guild Player Settings",
-    usage: "setup [channel] [flags]",
+    description: "Create or Delete guild player",
+    usage: "{CATEGORY} setup create|delete {ABRACKETSL}channel{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     userPermissions: ["MANAGE_GUILD"],
     slash: {

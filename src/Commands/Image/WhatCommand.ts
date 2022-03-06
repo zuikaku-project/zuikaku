@@ -8,7 +8,7 @@ import { MessageAttachment } from "discord.js";
 @ZuikakuDecorator<ICommandComponent>({
     name: "what",
     description: "Generate 'what' image",
-    usage: "what [user|image|^]",
+    usage: "{CATEGORY} what [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

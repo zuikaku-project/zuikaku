@@ -7,8 +7,8 @@ import { MessageActionRow, MessageButton, TextChannel } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "nuke",
-    description: "Clear all ecosystem of the channel",
-    usage: "nuke <channel[mention|id]>",
+    description: "Nuke all ecosystem of the channel",
+    usage: "{CATEGORY} nuke {ABRACKETSL}channel{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS", "MANAGE_CHANNELS"],
     userPermissions: ["MANAGE_CHANNELS"],
     slash: {

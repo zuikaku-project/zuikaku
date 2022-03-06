@@ -9,7 +9,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "ban",
     description: "Ban user from the guild",
-    usage: "ban <user[mention|id]>",
+    usage: "{CATEGORY} ban {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS", "BAN_MEMBERS"],
     userPermissions: ["BAN_MEMBERS"],
     slash: {

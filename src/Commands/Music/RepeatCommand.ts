@@ -6,8 +6,8 @@ import { createEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "repeat",
-    description: "Repeating the player",
-    usage: "repeat [track|queue|off]",
+    description: "Repeated track",
+    usage: "{CATEGORY} repeat all|queue|disable",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND_GROUP",

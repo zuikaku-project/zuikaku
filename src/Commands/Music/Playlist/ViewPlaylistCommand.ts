@@ -6,7 +6,8 @@ import { chunk, createMusicEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "view",
-    description: "View playlist tracks",
+    description: "View playlist track(s)",
+    usage: "{CATEGORY} view {ABRACKETSL}id{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

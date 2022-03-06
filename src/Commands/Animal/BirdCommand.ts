@@ -8,8 +8,8 @@ import petitio from "petitio";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "bird",
-    description: "Giving the random pic of bird",
-    usage: "bird",
+    description: "Random bird picture",
+    usage: "{CATEGORY} bird",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

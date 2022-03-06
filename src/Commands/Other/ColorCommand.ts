@@ -10,8 +10,8 @@ import petitio from "petitio";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "color",
-    description: "Get sample color of hexcolor",
-    usage: "color <hex>",
+    description: "Get color information",
+    usage: "color {ABRACKETSL}color{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [

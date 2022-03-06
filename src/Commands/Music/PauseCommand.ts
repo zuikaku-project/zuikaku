@@ -9,7 +9,7 @@ import { createMusicEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "pause",
     description: "Pause the player",
-    usage: "pause",
+    usage: "{CATEGORY} pause",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND"

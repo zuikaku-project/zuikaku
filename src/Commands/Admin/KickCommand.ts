@@ -9,7 +9,7 @@ import { createEmbed } from "@zuikaku/Utils";
 @ZuikakuDecorator<ICommandComponent>({
     name: "kick",
     description: "Kick user from the guild",
-    usage: "kick <user[mention|id]>",
+    usage: "{CATEGORY} kick {ABRACKETSL}user{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS", "KICK_MEMBERS"],
     userPermissions: ["KICK_MEMBERS"],
     slash: {

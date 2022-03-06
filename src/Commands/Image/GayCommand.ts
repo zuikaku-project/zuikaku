@@ -7,8 +7,8 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "gay",
-    description: "Add gay filter to image",
-    usage: "gay [user|image|^]",
+    description: "Apply the gay filter to image",
+    usage: "{CATEGORY} gay [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         type: "SUB_COMMAND",

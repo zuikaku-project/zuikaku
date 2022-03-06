@@ -8,8 +8,8 @@ import petitio from "petitio";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "instagram",
-    description: "Get information instagram user",
-    usage: "instagram <user>",
+    description: "Get instagram user",
+    usage: "instagram {ABRACKETSL}user{ABRACKETSR} [nocanvas|dark]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES"],
     slash: {
         options: [

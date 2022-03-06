@@ -8,8 +8,8 @@ locale();
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "userinfo",
-    description: "Display user informations",
-    usage: "userinfo [user|id]",
+    description: "Get user informations",
+    usage: "userinfo [query]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
         options: [
