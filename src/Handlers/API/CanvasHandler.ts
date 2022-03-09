@@ -3,7 +3,7 @@ import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import petitio from "petitio";
 
 export class CanvasHandler {
-    public readonly baseURL = "https://api.maakoo.my.id/api/";
+    public readonly baseURL = "https://zuikaku-canvas-api.maakoo.my.id/";
     public readonly endpoint = {
         brightness: "image/brightness",
         chip: "image/chip",
