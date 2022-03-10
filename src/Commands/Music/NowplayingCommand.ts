@@ -27,13 +27,22 @@ export default class NowplayingCommand extends ZuikakuCommand {
             ? "◉ LIVE"
             : `${this.client.utils.parseMs(progress, { colonNotation: true }).colonNotation}/${queue.current!.durationFormated!}`;
         const duration = createEmbed("info")
-            .setAuthor({ name: queue.current!.info.title!, iconURL: this.client.user!.displayAvatarURL({ format: "png" }), url: queue.current?.info.uri })
+            .setAuthor({
+                name: queue.current!.info.title!,
+                iconURL: this.client.user!.displayAvatarURL({ format: "png" }),
+                url: queue.current?.info.uri
+            })
             .setDescription(
                 `${queue.player.paused ? "⏸️" : "▶️"} **${final} \`[${time}]\`\n` +
                 `Requested by \`【${queue.current!.requester!.username}】\`**`
             )
             .setImage(queue.current!.thumbnail!);
-        const generateLastNowplayingMessage = await ctx.send({ embeds: [duration], deleteButton: { reference: ctx.author.id } }).catch(() => null);
-        queue._lastNowplayingMessageId = generateLastNowplayingMessage?.id ?? null;
+        const generateLastNowplayingMessage = await ctx.send({
+            embeds: [duration],
+            deleteButton: {
+                reference: ctx.author.id
+            }
+        }).catch(() => null);
+        queue.playerMessage.lastNowplayingMessage = generateLastNowplayingMessage ?? null;
     }
 }

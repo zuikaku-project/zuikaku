@@ -38,11 +38,9 @@ export default class QueueCommand extends ZuikakuCommand {
         }
         for (const info of infoArray.values()) {
             const embed = createEmbed("info").setThumbnail(guildQueue._timeout ? this.client.user!.displayAvatarURL({ format: "png", size: 4096 }) : guildQueue.current!.thumbnail!);
-
             if (queue.length !== 0) {
                 embed.setFooter({ text: `Total ${queue.length} Tracks ${queue.map(track => track.info.isStream).includes(true) ? "" : `in  ${estimate}`}` });
             }
-
             if (queue.length === 0 && guildQueue._timeout) {
                 embed.setDescription("**404: Not Found**");
             } else if (queue.length === 0) {

@@ -9,7 +9,7 @@ import { Message, MessageActionRow, MessageButton, TextChannel } from "discord.j
 @ZuikakuDecorator<ICommandComponent>({
     name: "setup",
     description: "Create or Delete guild player",
-    usage: "{CATEGORY} setup create|delete {ABRACKETSL}channel{ABRACKETSR}",
+    usage: "{CATEGORY} setup create|delete ?{ABRACKETSL}channel{ABRACKETSR}",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     userPermissions: ["MANAGE_GUILD"],
     slash: {

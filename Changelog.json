@@ -169,5 +169,13 @@
             "Fix some little shit, wrong check, and more",
             "Move database directory"
         ]
+    },
+    {
+        "date": "10 Maret 2022",
+        "title": "Release Zuikaku@3.8.5",
+        "content": [
+            "Fix play previous logic, guild player, and api error",
+            "Use error event for error handling"
+        ]
     }
 ]

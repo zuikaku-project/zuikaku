@@ -16,10 +16,8 @@ export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
         const queue = this.client.shoukaku.queue.get(player.connection.guildId);
         if (queue) {
             const getGuildDatabase = await queue.getGuildDatabase;
-            if (queue._lastNowplayingMessageId) {
-                const getLastNowplayingMessage =
-                    await queue.getText?.messages.fetch(queue._lastNowplayingMessageId).catch(() => null);
-                getLastNowplayingMessage?.delete().catch(() => null);
+            if (queue.playerMessage.lastPlayerMessage) {
+                queue.playerMessage.lastPlayerMessage.delete().catch(() => null);
             }
             if (getGuildDatabase?.guildPlayer?.channelId) {
                 await queue.shoukaku.updateGuildPlayerEmbed(queue.getGuild);
@@ -65,7 +63,7 @@ export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
                             .setThumbnail(queue.current?.thumbnail ?? "")
                     ]
                 }).catch(() => null);
-                queue._lastMusicMessageId = lastMusicMessageId?.id ?? null;
+                queue.playerMessage.lastPlayerMessage = lastMusicMessageId ?? null;
             }
         }
     }

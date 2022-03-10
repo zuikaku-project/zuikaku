@@ -12,14 +12,16 @@ export default class ShoukakuPlayerTrackEnd extends ZuikakuListener {
     public async execute(player: ShoukakuPlayer): Promise<void> {
         const queue = this.client.shoukaku.queue.get(player.connection.guildId);
         if (queue) {
-            if (queue._lastMusicMessageId) {
-                queue.getText?.messages.fetch(queue._lastMusicMessageId, { cache: false, force: true })!.then(x => x.delete().catch(() => null))
-                    .catch(() => null);
-                queue._lastMusicMessageId = null;
+            if (queue.playerMessage.lastPlayerMessage) {
+                queue.playerMessage.lastPlayerMessage.delete().catch(() => null);
+                queue.playerMessage.lastPlayerMessage = null;
             }
             if (queue.trackRepeat) queue.tracks.unshift(queue.current!);
             if (queue.queueRepeat) await queue.addTrack(queue.current!);
-            queue.previous = queue.current!;
+            if (!queue._isFromPrev) {
+                queue.previous = queue.current!;
+            }
+            console.log(queue.previous);
             queue.current = null;
             if (queue.tracks.length === 0) {
                 const getGuildDatabase = await queue.getGuildDatabase;

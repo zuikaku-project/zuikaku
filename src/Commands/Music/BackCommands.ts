@@ -25,13 +25,21 @@ export default class BackCommand extends ZuikakuCommand {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
         if (!queue.previous) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "This player doesn't have last playing track(s)")] }).then(x => {
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(ctx, "info", "This player doesn't have last playing track(s)")
+                ]
+            }).then(x => {
                 if (fromGuildPlayer) setTimeout(() => x.delete().catch(() => null), 5000);
             }).catch(() => null);
             return undefined;
         }
         await queue.playPrevious();
-        await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "This player playing the last track played")] }).then(x => {
+        await ctx.send({
+            embeds: [
+                createMusicEmbed(ctx, "info", "This player playing the last track played")
+            ]
+        }).then(x => {
             if (fromGuildPlayer) setTimeout(() => x.delete().catch(() => null), 5000);
         }).catch(() => null);
     }

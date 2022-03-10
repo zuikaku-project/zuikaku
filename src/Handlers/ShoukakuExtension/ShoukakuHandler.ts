@@ -58,7 +58,13 @@ export class ShoukakuHandler extends Shoukaku {
     public async getTracks(query: string, option?: LavalinkSource): Promise<ShoukakuTrackList> {
         query = decodeURIComponent(query);
         const node = this.nodes.get(this.getRandomNode());
-        if (this.youtubeRegex.test(query) || this.soundcloudRegex.test(query) || query.slice(query.search("http") >= 0 ? query.search("http") : 0).split(" ")[0].includes("http")) return node!.rest.resolve(query.slice(query.search("http") >= 0 ? query.search("http") : 0).split(" ")[0]);
+        if (
+            this.youtubeRegex.test(query) ||
+            this.soundcloudRegex.test(query) ||
+            query.slice(query.search("http") >= 0 ? query.search("http") : 0).split(" ")[0].includes("http")
+        ) {
+            return node!.rest.resolve(query.slice(query.search("http") >= 0 ? query.search("http") : 0).split(" ")[0]);
+        }
         return node!.rest.resolve(query, option ?? "youtube");
     }
 
@@ -119,7 +125,11 @@ export class ShoukakuHandler extends Shoukaku {
         const queue = this.queue.get(guild.id);
         if (getGuildDatabase?.guildPlayer?.channelId) {
             if (queue?.getTrackSize && queue.current) {
-                const list = chunk(queue.tracks.map((x, i) => `**${++i}.** ${x.info.title!} [${x.info.isStream ? "◉ LIVE" : x.durationFormated!}]`), 10);
+                const list = chunk(
+                    queue.tracks
+                        .map((x, i) => `**${++i}.** ${x.info.title!} [${x.info.isStream ? "◉ LIVE" : x.durationFormated!}]`),
+                    10
+                );
                 const display = await this.getThumbnail(queue.current.info.uri!) ?? defaultImage;
                 const embed = createEmbed("info")
                     .setAuthor({
@@ -134,20 +144,39 @@ export class ShoukakuHandler extends Shoukaku {
                     });
                 const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase.guildPlayer.channelId);
                 if (channelGuildPlayer?.isText()) {
-                    const messageGuildPlayer = await channelGuildPlayer.messages.fetch(getGuildDatabase.guildPlayer.messageId).catch(() => undefined);
+                    const messageGuildPlayer = await channelGuildPlayer.messages
+                        .fetch(getGuildDatabase.guildPlayer.messageId)
+                        .catch(() => undefined);
                     if (messageGuildPlayer && messageGuildPlayer.author.id === this.client.user?.id) {
-                        const components = new MessageActionRow().addComponents(messageGuildPlayer.components[0].components.map(x => x.setDisabled(false)));
-                        await messageGuildPlayer.edit({ embeds: [embed], content: `**__Queue list:__**${list.length > 1 ? `\n\n**And ${queue.getTrackSize - 1 - list[0].length} more...**` : ""}\n${list.length ? list[0].reverse().join("\n") : "Join a voice channel and request some song in here"}`, components: [components] }).catch(() => null);
+                        const components = new MessageActionRow()
+                            .addComponents(
+                                messageGuildPlayer
+                                    .components[0]
+                                    .components
+                                    .map(x => x.setDisabled(false))
+                            );
+                        await messageGuildPlayer.edit({
+                            embeds: [embed],
+                            content: `**__Queue list:__**${list.length > 1 ? `\n\n**And ${queue.getTrackSize - 1 - list[0].length} more...**` : ""}\n${list.length ? list[0].reverse().join("\n") : "Join a voice channel and request some song in here"}`,
+                            components: [components]
+                        }).catch(() => null);
                     }
                 }
             } else {
                 const embed = createEmbed("info")
-                    .setAuthor({ name: "Nothing are playing rightnow", iconURL: this.client.user?.displayAvatarURL({ format: "png", size: 4096 }) })
+                    .setAuthor({
+                        name: "Nothing are playing rightnow",
+                        iconURL: this.client.user?.displayAvatarURL({ format: "png", size: 4096 })
+                    })
                     .setImage("https://cdn.discordapp.com/attachments/795512730940735508/857506653028614174/thumb-1920-744946.png")
-                    .setFooter({ text: "Zuikaku-ship" });
+                    .setFooter({
+                        text: "Zuikaku-ship"
+                    });
                 const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase.guildPlayer.channelId);
                 if (channelGuildPlayer?.isText()) {
-                    const messageGuildPlayer = await channelGuildPlayer.messages.fetch(getGuildDatabase.guildPlayer.messageId).catch(() => undefined);
+                    const messageGuildPlayer = await channelGuildPlayer.messages
+                        .fetch(getGuildDatabase.guildPlayer.messageId)
+                        .catch(() => undefined);
                     if (messageGuildPlayer && messageGuildPlayer.author.id === this.client.user?.id) {
                         const component = messageGuildPlayer.components[0].components.slice(1).map(x => x.setDisabled());
                         component.unshift(messageGuildPlayer.components[0].components[0]);
@@ -166,10 +195,15 @@ export class ShoukakuHandler extends Shoukaku {
             const getGuildDatabase = await this.getGuildDatabase(guild.id);
             const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase?.guildPlayer?.channelId ?? "");
             if (channelGuildPlayer) {
-                const messageGuildPlayer = await (channelGuildPlayer as TextBasedChannel).messages.fetch(getGuildDatabase!.guildPlayer!.messageId).catch(() => undefined);
+                const messageGuildPlayer = await (channelGuildPlayer as TextBasedChannel).messages
+                    .fetch(getGuildDatabase!.guildPlayer!.messageId)
+                    .catch(() => undefined);
                 if (messageGuildPlayer && messageGuildPlayer.author.id === this.client.user?.id) {
                     await this.updateGuildPlayerEmbed(guild);
-                    this.client.logger.info({ module: "guildPlayer", message: "guildPlayerEmbed has been updated" });
+                    this.client.logger.info({
+                        module: "guildPlayer",
+                        message: "guildPlayerEmbed has been updated"
+                    });
                 }
             }
             if (getGuildDatabase?.persistenceQueue?.textId) {
@@ -203,9 +237,15 @@ export class ShoukakuHandler extends Shoukaku {
                     await guildQueue.addTrack(getGuildDatabase.persistenceQueue.tracks);
                 }
                 await guildQueue.playTrack(getGuildDatabase.persistenceQueue.position);
-                this.client.logger.info({ module: "persistenceQueue", message: "persistenceQueue has been assigned" });
+                this.client.logger.info({
+                    module: "persistenceQueue",
+                    message: "persistenceQueue has been assigned"
+                });
             }
         });
-        this.client.logger.info({ module: "DATABASE", message: "database has been assigned" });
+        this.client.logger.info({
+            module: "DATABASE",
+            message: "database has been assigned"
+        });
     }
 }

@@ -9,8 +9,8 @@ nodes:
   - auth: youshallnotpass
     url: node-au.rahagia.tech:3002
     name: rahagia
-  - auth: LoliBandarHunter
-    url: node-au.fab1o.xyz:2333
+  - auth: ShipGirlWangy
+    url: node-au.panel.fab1o.xyz:2333
     name: fabio
 devMode: false
 devGuild:

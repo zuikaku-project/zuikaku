@@ -6,11 +6,9 @@ import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
 import { createEmbed } from "@zuikaku/Utils";
 import { APIMessage } from "discord-api-types";
 import {
-    ButtonInteraction,
-    GuildChannel, GuildMember, Interaction, Message, MessageActionRow,
-    MessageButton, NewsChannel, TextChannel, ThreadChannel, WebhookClient
+    ButtonInteraction, GuildChannel, GuildMember,
+    Interaction, Message, NewsChannel, TextChannel, ThreadChannel
 } from "discord.js";
-import petitio from "petitio";
 
 @ZuikakuDecorator<IListenerComponent>({
     name: "ZuikakuInteractionCreate",
@@ -84,8 +82,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                     }
                 }
             } catch (error: any) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                await this.handleInteractionError(context, error);
+                this.client.emit("zuikakuError", context, error);
             }
         }
 
@@ -121,8 +118,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                     if (await this.runCommandCheck(context, command)) return;
                     await command.execute(context);
                 } catch (error: any) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    await this.handleInteractionError(context, error, command);
+                    this.client.emit("zuikakuError", context, error, command);
                 } finally {
                     if (
                         command.meta.devOnly &&
@@ -165,8 +161,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                     if (await this.runCommandCheck(context, command)) return;
                     await command.execute(context);
                 } catch (error: any) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    await this.handleInteractionError(context, error, command);
+                    this.client.emit("zuikakuError", context, error, command);
                 } finally {
                     if (
                         command.meta.devOnly &&
@@ -197,51 +192,9 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
     }
 
     private isMessage(message: APIMessage | Message): Message {
-        if (message instanceof Message) {
-            return message;
-        }
+        if (message instanceof Message) return message;
         // @ts-expect-error-next-line
         return new Message(this.client, message);
-    }
-
-    private async handleInteractionError(context: CommandContext, error: Error, command?: ICommandComponent): Promise<void> {
-        const embedLog = createEmbed("error")
-            .setTitle(`Oof! An error occurred! ${command ? `| ${command.meta.name} command` : ""} `);
-        if (error.stack!.length > 4050) {
-            const { key } = await petitio("https://hastebin.orchitiadi.repl.co/documents", "POST")
-                .body(error.stack!)
-                .json();
-            embedLog
-                .setDescription(`** StackTrack **\nhttps://hastebin.orchitiadi.repl.co/${key as string}`);
-        } else {
-            embedLog
-                .setDescription(`**StackTrack**\n\`\`\`bash\n${error.stack!}\n\`\`\``);
-        }
-        const webhook = new WebhookClient({
-            url:
-                "https://discord.com/api/webhooks/875557647401762918/2TRNR30WOfcFy7kpeSajcvx_tvhHsGoiTkOFOf-c4B8HqhgyAjGhCzuKs1Oy3OnnGm3z"
-        });
-        await webhook.send({
-            embeds: [embedLog]
-        }).catch(() => null);
-        await context.send({
-            embeds: [
-                createEmbed(
-                    "error",
-                    `\`\`\`bash\n${String(error.message)}\n\`\`\`\n**This Error has been send to developers**`
-                )
-                    .setAuthor({ name: "Oof! An error occurred!" })
-            ],
-            components: [
-                new MessageActionRow()
-                    .addComponents(
-                        new MessageButton()
-                            .setURL("https://discord.gg/U4ynfYRYj9")
-                            .setLabel("Support Server")
-                            .setStyle("LINK")
-                    )
-            ]
-        }).catch(() => null);
     }
 
     private async runCommandCheck(context: CommandContext, command: ICommandComponent): Promise<boolean> {
@@ -254,9 +207,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
             const missing = (context.channel as NewsChannel | TextChannel | ThreadChannel)
                 .permissionsFor(this.client.user!.id)?.missing(command.meta.clientPermissions);
             if (missing!.length) {
-                if (!context.deferred) {
-                    await context.deferReply();
-                }
+                if (!context.deferred) await context.deferReply();
                 await context.send({
                     content:
                         "**<a:decline:879311910045097984> | Access Denied. " +
@@ -269,9 +220,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
             const missing = (context.channel as NewsChannel | TextChannel | ThreadChannel)
                 .permissionsFor(context.author.id)?.missing(command.meta.userPermissions);
             if (missing!.length) {
-                if (!context.deferred) {
-                    await context.deferReply();
-                }
+                if (!context.deferred) await context.deferReply();
                 await context.send({
                     content:
                         "**<a:decline:879311910045097984> | Access Denied. " +
@@ -284,9 +233,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
             getGuildDatabase?.guildPlayer?.channelId === context.channel!.id &&
             !["music", "music-filter", "playlist"].includes(command.meta.category!)
         ) {
-            if (!context.deferred) {
-                await context.deferReply(true);
-            }
+            if (!context.deferred) await context.deferReply(true);
             await context.send({
                 embeds: [
                     createEmbed(
@@ -300,7 +247,12 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         return false;
     }
 
-    private async handleButtonPlayer(interaction: ButtonInteraction, getDecodeCommand: "LAST-TRACK" | "NEXT-TRACK" | "PLAY-PAUSE" | "REPEAT" | "SHUFFLE" | "STOP", getGuildQueue: QueueManager, getGuildDatabase?: GuildSettings): Promise<void> {
+    private async handleButtonPlayer(
+        interaction: ButtonInteraction,
+        getDecodeCommand: "LAST-TRACK" | "NEXT-TRACK" | "PLAY-PAUSE" | "REPEAT" | "SHUFFLE" | "STOP",
+        getGuildQueue: QueueManager,
+        getGuildDatabase?: GuildSettings
+    ): Promise<void> {
         if (getGuildDatabase?.guildPlayer?.channelId === interaction.channelId) {
             if (getDecodeCommand === "STOP") {
                 getGuildQueue.destroyPlayer();
@@ -315,11 +267,11 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                 if (getGuildQueue.trackRepeat) {
                     await getGuildQueue.setQueueRepeat(false);
                     await getGuildQueue.setTrackRepeat(false);
-                }
-                if (getGuildQueue.queueRepeat) {
+                } else if (getGuildQueue.queueRepeat) {
                     await getGuildQueue.setTrackRepeat();
+                } else {
+                    await getGuildQueue.setQueueRepeat();
                 }
-                await getGuildQueue.setQueueRepeat();
             }
             if (getDecodeCommand === "SHUFFLE") {
                 getGuildQueue.shuffleTrack();

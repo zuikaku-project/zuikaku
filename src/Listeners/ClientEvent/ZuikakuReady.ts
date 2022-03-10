@@ -43,7 +43,7 @@ export default class ZuikakuReady extends ZuikakuListener {
                 module: "DATABASE",
                 message: `${Object.values(this.client.database).length} Database has been initiated`
             });
-            this.client.shoukaku.assignPersistenceQueue();
+            if (!this.client.config.devMode) this.client.shoukaku.assignPersistenceQueue();
         });
         await this.client.commands.load();
         this.client.logger.ready({

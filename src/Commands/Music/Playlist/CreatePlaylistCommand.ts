@@ -10,7 +10,7 @@ import { MessageActionRow, MessageButton } from "discord.js";
     name: "create",
     description: "Create Playlist",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
-    usage: "{CATEGORY} creata {ABRACKETSL}name{ABRACKETSR}",
+    usage: "{CATEGORY} create {ABRACKETSL}name{ABRACKETSR}",
     slash: {
         type: "SUB_COMMAND",
         options: [
