@@ -21,7 +21,6 @@ export default class ShoukakuPlayerTrackEnd extends ZuikakuListener {
             if (!queue._isFromPrev) {
                 queue.previous = queue.current!;
             }
-            console.log(queue.previous);
             queue.current = null;
             if (queue.tracks.length === 0) {
                 const getGuildDatabase = await queue.getGuildDatabase;

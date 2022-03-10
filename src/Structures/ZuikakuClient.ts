@@ -8,7 +8,6 @@ import UtilHandler from "@zuikaku/Utils/Utils";
 import { Client, Intents, Options, Sweepers } from "discord.js";
 import { join, resolve } from "node:path";
 import process from "node:process";
-import { start } from "node:repl";
 
 const config = parseYaml(join(__dirname, "../../ZuikakuConfig.yaml"));
 
@@ -95,13 +94,6 @@ export class ZuikakuClient extends Client {
         } else {
             void this.login("NzkxMjcxMjIzMDc3MTA5ODIw.X-MuwA.XTpdWsnWaAt3Qm7qGqkQr7zL3cM");
         }
-        const repl = start({
-            prompt: "zuikaku> "
-        });
-        repl.context.this = this;
-        process.stdin.on("data", _ => {
-            repl.displayPrompt(true);
-        });
         return this;
     }
 
