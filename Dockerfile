@@ -1,4 +1,4 @@
-FROM node:17.6.0-alpine as build-stage
+FROM node:17.7.1-alpine as build-stage
 
 LABEL name "Zuikaku (build-stage)"
 LABEL maintainer "noxzym"
@@ -24,7 +24,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Get ready for production
-FROM node:17.6.0-alpine
+FROM node:17.7.1-alpine
 
 LABEL name "Zuikaku"
 LABEL maintainer "noxzym"
