@@ -16,7 +16,7 @@ export class QueueManager {
     public tracks!: ShoukakuTrack[];
     public previous!: ShoukakuTrack | null;
     public volume!: number;
-    public playerMessage!: Record<"lastNowplayingMessage" | "lastPlayerMessage", Message | null>;
+    public playerMessage!: Record<"lastExceptionMessage" | "lastNowplayingMessage" | "lastPlayerMessage", Message | null>;
     public exceptionCount!: number;
     public _timeout!: NodeJS.Timeout | null;
     public _isStopped!: boolean;
@@ -35,7 +35,8 @@ export class QueueManager {
         Object.defineProperty(this, "playerMessage", {
             value: {
                 lastPlayerMessage: null,
-                lastNowplayingMessage: null
+                lastNowplayingMessage: null,
+                lastExceptionMessage: null
             },
             enumerable: true,
             writable: true
@@ -156,6 +157,7 @@ export class QueueManager {
                 if (this.exceptionCount % 5 === 0) {
                     await new Promise(resolve => setTimeout(resolve, 5000));
                 }
+                if (this.playerMessage.lastExceptionMessage) this.playerMessage.lastExceptionMessage.delete().catch(() => null);
                 this.getText?.send({
                     embeds: [
                         createEmbed("info")
@@ -165,6 +167,7 @@ export class QueueManager {
                             })
                     ]
                 })
+                    .then(x => this.playerMessage.lastExceptionMessage = x)
                     .catch(() => null);
                 this.shoukaku.emit("playerTrackEnd", this.player);
             }
@@ -194,6 +197,7 @@ export class QueueManager {
 
     public destroyPlayer(): this {
         this._isStopped = true;
+        if (this.playerMessage.lastExceptionMessage) this.playerMessage.lastExceptionMessage.delete().catch(() => null);
         if (this.playerMessage.lastPlayerMessage) this.playerMessage.lastPlayerMessage.delete().catch(() => null);
         if (this.playerMessage.lastNowplayingMessage) this.playerMessage.lastNowplayingMessage.delete().catch(() => null);
         if (this._timeout) {

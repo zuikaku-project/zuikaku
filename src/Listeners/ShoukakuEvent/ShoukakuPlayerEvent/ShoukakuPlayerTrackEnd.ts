@@ -18,7 +18,7 @@ export default class ShoukakuPlayerTrackEnd extends ZuikakuListener {
             }
             if (queue.trackRepeat) queue.tracks.unshift(queue.current!);
             if (queue.queueRepeat) await queue.addTrack(queue.current!);
-            if (!queue._isFromPrev) {
+            if (!queue._isFromPrev && !queue.trackRepeat) {
                 queue.previous = queue.current!;
             }
             queue.current = null;

@@ -17,10 +17,9 @@ export default class ZuikakuErrorEvent extends ZuikakuListener {
             embeds: [
                 createEmbed("info", error.message)
                     .setAuthor({
-                        name: "[Zuikaku Support Server]",
+                        name: "OOF! An error has occured! Click her to join support server",
                         url: "https://zuikaku-ship.maakoo.my.id/support"
                     })
-                    .setTitle("OOF! An error has occured!")
             ],
             deleteButton: {
                 reference: ctx.author.id
@@ -33,7 +32,7 @@ export default class ZuikakuErrorEvent extends ZuikakuListener {
                 .body(error.stack!)
                 .json();
             embedLog
-                .setDescription(`** StackTrack **\nhttps://hastebin.orchitiadi.repl.co/${key as string}`);
+                .setDescription(`**StackTrack**\nhttps://hastebin.orchitiadi.repl.co/${key as string}`);
         } else {
             embedLog
                 .setDescription(`**StackTrack**\n\`\`\`bash\n${error.stack!}\n\`\`\``);

@@ -1,4 +1,5 @@
 import { ShoukakuPlayer } from "shoukaku";
+import { ShoukakuHandler } from "./ShoukakuHandler";
 
 export class FilterManager extends Set {
     public player!: ShoukakuPlayer;
@@ -15,7 +16,7 @@ export class FilterManager extends Set {
             if (this.has("nightcore")) this.player.setTimescale({});
             this.updateSet("nightcore");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setDaycore(active = true): ShoukakuPlayer {
@@ -26,7 +27,7 @@ export class FilterManager extends Set {
             if (this.has("daycore")) this.player.setTimescale({});
             this.updateSet("daycore");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setVaporwave(active = true): ShoukakuPlayer {
@@ -37,7 +38,7 @@ export class FilterManager extends Set {
             if (this.has("vaporwave")) this.player.setEqualizer([]).setTimescale({}).setTremolo({});
             this.updateSet("vaporwave");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setPop(active = true): ShoukakuPlayer {
@@ -63,7 +64,7 @@ export class FilterManager extends Set {
             if (this.has("pop")) this.player.setEqualizer([]);
             this.updateSet("pop");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setSoft(active = true): ShoukakuPlayer {
@@ -89,7 +90,7 @@ export class FilterManager extends Set {
             if (this.has("soft")) this.player.setEqualizer([]);
             this.updateSet("soft");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setTreblebass(active = true): ShoukakuPlayer {
@@ -115,7 +116,7 @@ export class FilterManager extends Set {
             if (this.has("treblebass")) this.player.setEqualizer([]);
             this.updateSet("treblebass");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setEightD(active = true): ShoukakuPlayer {
@@ -126,7 +127,7 @@ export class FilterManager extends Set {
             if (this.has("eightd")) this.player.setRotation({});
             this.updateSet("eigthd");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setKaraoke(active = true): ShoukakuPlayer {
@@ -137,7 +138,7 @@ export class FilterManager extends Set {
             if (this.has("karaoke")) this.player.setKaraoke({});
             this.updateSet("karaoke");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setVibrato(active = true): ShoukakuPlayer {
@@ -148,7 +149,7 @@ export class FilterManager extends Set {
             if (this.has("vibrato")) this.player.setVibrato({});
             this.updateSet("vibrato");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setTremolo(active = true): ShoukakuPlayer {
@@ -159,7 +160,7 @@ export class FilterManager extends Set {
             if (this.has("tremolo")) this.player.setTremolo({});
             this.updateSet("tremolo");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setEarrape(active = true): ShoukakuPlayer {
@@ -170,7 +171,7 @@ export class FilterManager extends Set {
             if (this.has("earrape")) this.player.setEqualizer([]);
             this.updateSet("earrape");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public setDistortion(active = true): ShoukakuPlayer {
@@ -181,13 +182,13 @@ export class FilterManager extends Set {
             if (this.has("distortion")) this.player.setDistortion({});
             this.updateSet("distortion");
         }
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public clearFilters(): ShoukakuPlayer {
         this.clear();
         this.player.clearFilters();
-        return this.player.seekTo(this.player.position);
+        return this.updatePlayerFilterWithSeeking();
     }
 
     public updateSet(deletes: string[] | string | undefined, setup?: string[] | string): this {
@@ -206,5 +207,15 @@ export class FilterManager extends Set {
             }
         }
         return this;
+    }
+
+    private updatePlayerFilterWithSeeking(): ShoukakuPlayer {
+        if (
+            !(this.player.connection.node.shoukaku as ShoukakuHandler).queue
+                .get(this.player.connection.guildId)?.current?.info.uri?.startsWith("https://open.spotify.com")
+        ) {
+            return this.player.seekTo(this.player.position);
+        }
+        return this.player;
     }
 }
