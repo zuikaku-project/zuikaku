@@ -26,7 +26,7 @@ export default class ShoukakuPlayerUpdate extends ZuikakuListener {
                         queueRepeat: queue.queueRepeat,
                         trackRepeat: queue.trackRepeat,
                         volume: queue.volume,
-                        position: payload.state.position || 0
+                        position: payload.state.position ?? 0
                     })
                 )
             );

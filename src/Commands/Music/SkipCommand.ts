@@ -42,7 +42,11 @@ export default class SkipCommand extends ZuikakuCommand {
                         )
                     ]
                 })
-                    .then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined)
+                    .then(x => {
+                        if (fromGuildPlayer) {
+                            setTimeout(() => x.delete().catch(() => null), 5000);
+                        }
+                    })
                     .catch(() => null);
                 return undefined;
             }
@@ -53,10 +57,22 @@ export default class SkipCommand extends ZuikakuCommand {
             } else {
                 queue.tracks = queue.tracks.slice(ctx.options!.getNumber("range")! - 1);
             }
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `You has been skipped [${ctx.options!.getNumber("range")! - 1}] track(s)`)] }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `You has been skipped [${ctx.options!.getNumber("range")! - 1}] track(s)`)] })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
             queue.stopTrack();
         } else {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been skipped currently playing")] }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been skipped currently playing")] })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
             queue.stopTrack();
         }
     }

@@ -17,7 +17,7 @@ export default class ZuikakuReady extends ZuikakuListener {
         await createConnection({
             database: "database",
             type: "mongodb",
-            url: "mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/database",
+            url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${this.client.config.devMode ? "development" : "database"}`,
             useUnifiedTopology: true,
             ssl: true,
             sslValidate: true,
@@ -43,7 +43,7 @@ export default class ZuikakuReady extends ZuikakuListener {
                 module: "DATABASE",
                 message: `${Object.values(this.client.database).length} Database has been initiated`
             });
-            if (!this.client.config.devMode) this.client.shoukaku.assignPersistenceQueue();
+            this.client.shoukaku.assignPersistenceQueue();
         });
         await this.client.commands.load();
         this.client.logger.ready({

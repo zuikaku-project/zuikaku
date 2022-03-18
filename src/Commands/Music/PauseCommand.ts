@@ -25,10 +25,30 @@ export default class PauseCommand extends ZuikakuCommand {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
         if (queue.player.paused) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You can't paused player if the player is not playing")] }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(ctx, "info", "You can't paused player if the player is not playing")
+                ]
+            })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         } else {
             await queue.setPaused(true);
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been paused the player")] }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(ctx, "info", "You has been paused the player")
+                ]
+            })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         }
     }
 }

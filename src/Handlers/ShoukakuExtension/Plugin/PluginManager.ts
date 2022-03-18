@@ -82,6 +82,10 @@ export class PluginManager {
     }
 
     public async retrieveTrack(unresolvedTrack: ILavalinkPayloadTrack): Promise<ShoukakuTrack | undefined> {
+        if (this.spotifyRegex.test(unresolvedTrack.info.uri ?? "")) {
+            const response = await this._getTracks(unresolvedTrack.info.uri!);
+            return response.tracks[0];
+        }
         const response = await this.getTracks(`${unresolvedTrack.info.author ?? ""} ${unresolvedTrack.info.title ?? ""}`);
         return response.tracks[0];
     }
@@ -145,7 +149,7 @@ export class PluginManager {
                 )
             ) as AppleMusicMetaTagResponse;
             Object.defineProperty(this, "appleToken", { value: `Bearer ${token.MEDIA_API.token}` });
-        } catch (_e) {
+        } catch {
             /* Do nothing. */
         }
     }

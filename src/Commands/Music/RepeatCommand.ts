@@ -41,14 +41,32 @@ export default class RepeatCommand extends ZuikakuCommand {
         const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
         if (ctx.options?.getSubcommand(false) === "all") {
             await queue.setQueueRepeat();
-            await ctx.send({ embeds: [createEmbed("info", "**🔁| Repeat mode: Queue**")] }).then(message => fromGuildPlayer ? setTimeout(() => message.delete().catch(() => null), 5000) : undefined);
+            await ctx.send({ embeds: [createEmbed("info", "**🔁| Repeat mode: Queue**")] })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         } else if (ctx.options?.getSubcommand(false) === "track") {
             await queue.setTrackRepeat();
-            await ctx.send({ embeds: [createEmbed("info", "**🔂| Repeat mode: Track**")] }).then(message => fromGuildPlayer ? setTimeout(() => message.delete().catch(() => null), 5000) : undefined);
+            await ctx.send({ embeds: [createEmbed("info", "**🔂| Repeat mode: Track**")] })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         } else {
             await queue.setTrackRepeat(false);
             await queue.setQueueRepeat(false);
-            await ctx.send({ embeds: [createEmbed("info", "**▶| Repeat mode: none**")] }).then(message => fromGuildPlayer ? setTimeout(() => message.delete().catch(() => null), 5000) : undefined);
+            await ctx.send({ embeds: [createEmbed("info", "**▶| Repeat mode: none**")] })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         }
     }
 }

@@ -64,6 +64,9 @@ export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
                     ]
                 }).catch(() => null);
                 queue.playerMessage.lastPlayerMessage = lastMusicMessageId ?? null;
+                if (queue._isFromPrev) {
+                    queue._isFromPrev = false;
+                }
             }
         }
     }

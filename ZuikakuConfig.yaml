@@ -7,7 +7,7 @@ spcs: ec94116a9a2c4212936afc33f55b697b
 sessionid: 14643228375%3AwtGbRlhe4qGtU8%3A9
 nodes:
   - auth: youshallnotpass
-    url: node-au.rahagia.tech:3002
+    url: node-au.rahagia.tech:3003
     name: rahagia
   - auth: ShipGirlWangy
     url: node-au.panel.fab1o.xyz:2333

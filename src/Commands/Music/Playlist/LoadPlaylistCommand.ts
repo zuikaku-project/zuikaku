@@ -34,17 +34,32 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
         const getGuildDatabase = await this.client.database.guilds.get(ctx.guild!.id);
         const fromGuildPlayer = getGuildDatabase?.guildPlayer?.channelId === ctx.channel?.id;
         if (getGuildDatabase?.guildPlayer?.channelId && getGuildDatabase.guildPlayer.channelId !== ctx.channel?.id) {
-            await ctx.send({ embeds: [createEmbed("info", `**<a:decline:879311910045097984> | Operation Canceled. This command is restrictred to ${this.client.channels.resolve(getGuildDatabase.guildPlayer.channelId)?.toString() ?? "unknown"} ** `)] });
+            await ctx.send({
+                embeds: [
+                    createEmbed("info", `**<a:decline:879311910045097984> | Operation Canceled. This command is restrictred to ${this.client.channels.resolve(getGuildDatabase.guildPlayer.channelId)?.toString() ?? "unknown"} ** `)
+                ]
+            })
+                .catch(() => null);
             return undefined;
         }
         const getUserDatabase = await this.client.database.users.get(ctx.author.id);
         if (!getUserDatabase) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist database")] }).catch(() => null);
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist database")
+                ]
+            })
+                .catch(() => null);
             return undefined;
         }
         const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("id")!);
         if (!getUserPlaylist) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id")] });
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id")
+                ]
+            })
+                .catch(() => null);
             return undefined;
         }
         if (getUserPlaylist.playlistTracks.length) {
@@ -62,11 +77,26 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 return track;
             }));
             if (fromGuildPlayer) await this.client.shoukaku.updateGuildPlayerEmbed(ctx.guild!);
-            // eslint-disable-next-line no-eval
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I enqueued ${getTracks.length} track(s) from ${Util.escapeMarkdown(getUserPlaylist.playlistName)}(${this.client.utils.parseMs(Number(eval(getTracks.map(({ info }) => info.length).join("+"))), { colonNotation: true }).colonNotation})`)] }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            await ctx.send({
+                embeds: [
+                    // eslint-disable-next-line no-eval
+                    createMusicEmbed(ctx, "info", `I enqueued ${getTracks.length} track(s) from ${Util.escapeMarkdown(getUserPlaylist.playlistName)}(${this.client.utils.parseMs(Number(eval(getTracks.map(({ info }) => info.length).join("+"))), { colonNotation: true }).colonNotation})`)
+                ]
+            })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
             if (guildQueue._timeout || !guildQueue.player.track) await guildQueue.playTrack();
         } else {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I am sorry, but your playlist ${getUserPlaylist.playlistName}(${getUserPlaylist.playlistId}) don't have any tracks`)] });
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(ctx, "info", `I am sorry, but your playlist ${getUserPlaylist.playlistName}(${getUserPlaylist.playlistId}) don't have any tracks`)
+                ]
+            })
+                .catch(() => null);
         }
     }
 }

@@ -88,7 +88,11 @@ export default class PlayCommand extends ZuikakuCommand {
                     createMusicEmbed(ctx, "info", `I can't get any result for ${search.trim()}`)
                 ]
             })
-                .then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined)
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
                 .catch(() => null);
             return undefined;
         }
@@ -129,7 +133,11 @@ export default class PlayCommand extends ZuikakuCommand {
                     )
                 ]
             })
-                .then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined)
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
                 .catch(() => null);
         } else if (ctx.args.includes("--search") || ctx.options?.getBoolean("search")) {
             return this.flags(ctx, getTracks, guildQueue, fromGuildPlayer);
@@ -243,7 +251,11 @@ export default class PlayCommand extends ZuikakuCommand {
                         ],
                         components: []
                     })
-                        .then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined)
+                        .then(x => {
+                            if (fromGuildPlayer) {
+                                setTimeout(() => x.delete().catch(() => null), 5000);
+                            }
+                        })
                         .catch(() => null);
                     setTimeout(() => send.delete().catch(() => null), 5000);
                     collector.stop("Finished");

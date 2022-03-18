@@ -43,7 +43,11 @@ export default class RemoveCommand extends ZuikakuCommand {
         if (data < 1) return;
         if (data > queue.tracks.length) {
             await ctx.send({ embeds: [embed2] })
-                .then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined)
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
                 .catch(() => null);
             return undefined;
         }
@@ -51,7 +55,11 @@ export default class RemoveCommand extends ZuikakuCommand {
             if (data > data2) return;
             if (data2 > queue.tracks.length) {
                 await ctx.send({ embeds: [embed2] })
-                    .then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined)
+                    .then(x => {
+                        if (fromGuildPlayer) {
+                            setTimeout(() => x.delete().catch(() => null), 5000);
+                        }
+                    })
                     .catch(() => null);
                 return undefined;
             }
@@ -61,14 +69,26 @@ export default class RemoveCommand extends ZuikakuCommand {
                 embeds: [
                     createMusicEmbed(ctx, "info", `You has been removed [\`${calculate + 1}\`] track(s) from queue**`)
                 ]
-            }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         } else {
             const get = await queue.removeTrack(data - 1, data2!);
             await ctx.send({
                 embeds: [
                     createMusicEmbed(ctx, "info", `You has been removed [${data}]・${get[0].info.title!} track from queue**`)
                 ]
-            }).then(x => fromGuildPlayer ? setTimeout(() => x.delete().catch(() => null), 5000) : undefined).catch(() => null);
+            })
+                .then(x => {
+                    if (fromGuildPlayer) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
+                .catch(() => null);
         }
     }
 }

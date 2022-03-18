@@ -17,6 +17,7 @@ export class QueueManager {
     public previous!: ShoukakuTrack | null;
     public volume!: number;
     public playerMessage!: Record<"lastNowplayingMessage" | "lastPlayerMessage", Message | null>;
+    public exceptionCount!: number;
     public _timeout!: NodeJS.Timeout | null;
     public _isStopped!: boolean;
     public _isFromPrev!: boolean;
@@ -39,6 +40,7 @@ export class QueueManager {
             enumerable: true,
             writable: true
         });
+        Object.defineProperty(this, "exceptionCount", { value: 0, enumerable: true, writable: true });
         Object.defineProperty(this, "_timeout", { value: null, writable: true });
         Object.defineProperty(this, "_isStopped", { value: false, writable: true });
         Object.defineProperty(this, "_isFromPrev", { value: false, writable: true });
@@ -124,12 +126,48 @@ export class QueueManager {
                 clearTimeout(this._timeout);
                 this._timeout = null;
             }
-            if (this.getVoice?.type === "GUILD_STAGE_VOICE") await this.getGuild?.me?.voice.setSuppressed(false);
-            if (!this.current.track.length) await this.current.resolve!();
-            Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
-            Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
-            Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });
-            this.player.playTrack(this.current, { startTime });
+            if (this.getVoice?.type === "GUILD_STAGE_VOICE") {
+                await this.getGuild?.me?.voice.setSuppressed(false);
+            }
+            try {
+                if (!this.current.track.length) {
+                    await this.current.resolve!();
+                }
+                Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
+                Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
+                Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });
+                this.player.playTrack(this.current, { startTime });
+            } catch {
+                this.exceptionCount++;
+                if (this.exceptionCount === 20) {
+                    this.getText?.send({
+                        embeds: [
+                            createEmbed("info")
+                                .setAuthor({
+                                    name: "This Player has been automatically detroy because hit the limit of 20 exceptions",
+                                    iconURL: this.shoukaku.client.user!.displayAvatarURL()
+                                })
+                        ]
+                    })
+                        .catch(() => null);
+                    this.destroyPlayer();
+                    return;
+                }
+                if (this.exceptionCount % 5 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                }
+                this.getText?.send({
+                    embeds: [
+                        createEmbed("info")
+                            .setAuthor({
+                                name: `Unable to resolve ${this.current.info.uri ?? this.current.info.title ?? "UNKNOWN_TRACK"}. Skipping...`,
+                                iconURL: this.shoukaku.client.user!.displayAvatarURL()
+                            })
+                    ]
+                })
+                    .catch(() => null);
+                this.shoukaku.emit("playerTrackEnd", this.player);
+            }
         }
     }
 
@@ -172,7 +210,11 @@ export class QueueManager {
     public setTimeout(time: number, message: string): NodeJS.Timeout {
         this._timeout = setTimeout(() => {
             this.getText?.send({ embeds: [createEmbed("info", `**${message}**`)] })
-                .then(async msg => (await this.getGuildDatabase)?.guildPlayer?.channelId ? setTimeout(() => msg.delete().catch(() => null), 5000) : undefined)
+                .then(async x => {
+                    if ((await this.getGuildDatabase)?.guildPlayer?.channelId) {
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                    }
+                })
                 .catch(() => null);
             this.destroyPlayer();
         }, time).unref();
