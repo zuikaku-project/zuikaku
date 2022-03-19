@@ -16,7 +16,7 @@ import { createEmbed } from "@zuikaku/Utils";
 export default class NowplayingCommand extends ZuikakuCommand {
     @isMusicPlaying()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
         const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
         const timesCurrentDuration = queue.current!.info.length!;

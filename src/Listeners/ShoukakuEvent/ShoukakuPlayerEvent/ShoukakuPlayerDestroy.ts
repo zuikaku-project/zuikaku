@@ -10,12 +10,12 @@ import { ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuPlayerDestroy extends ZuikakuListener {
     public async execute(_: string, player: ShoukakuPlayer): Promise<void> {
-        const getGuildDatabase = await this.client.database.guilds.get(player.connection.guildId);
+        const getGuildDatabase = await this.client.database.entity.guilds.get(player.connection.guildId);
         if (getGuildDatabase?.guildPlayer) {
-            await this.client.database.guilds.reset(player.connection.guildId, "persistenceQueue")
+            await this.client.database.entity.guilds.reset(player.connection.guildId, "persistenceQueue")
                 .catch(() => null);
         } else {
-            await this.client.database.guilds.drop(player.connection.guildId);
+            await this.client.database.entity.guilds.drop(player.connection.guildId);
         }
         this.client.shoukaku.queue.delete(player.connection.guildId);
     }

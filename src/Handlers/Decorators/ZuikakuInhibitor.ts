@@ -12,7 +12,7 @@ export function ZuikakuInhibitor<T extends (ctx: CommandContext, ...args: any[])
         if (!method) throw new Error("Descriptor value isn't provided");
         descriptor.value = async function (ctx: CommandContext, ...args: any[]): Promise<any> {
             const message = await func(ctx, ...args);
-            const getGuildDatabase = await ctx.client.database.guilds.get(ctx.guild!.id);
+            const getGuildDatabase = await ctx.client.database.entity.guilds.get(ctx.guild!.id);
             if (typeof message === "string") {
                 if (message.length) {
                     if (ctx.isInteraction() && !ctx.deferred) {

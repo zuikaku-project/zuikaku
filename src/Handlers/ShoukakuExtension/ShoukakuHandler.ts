@@ -69,7 +69,7 @@ export class ShoukakuHandler extends Shoukaku {
     }
 
     public getGuildDatabase(guildId: string): Promise<GuildSettings | undefined> {
-        return this.client.database.guilds.get(guildId);
+        return this.client.database.entity.guilds.get(guildId);
     }
 
     public async getThumbnail(data: string): Promise<string | null> {
@@ -121,7 +121,7 @@ export class ShoukakuHandler extends Shoukaku {
     public async updateGuildPlayerEmbed(guild?: Guild): Promise<void> {
         if (!guild) return;
         const defaultImage = "https://cdn.discordapp.com/attachments/795512730940735508/857506653028614174/thumb-1920-744946.png";
-        const getGuildDatabase = await this.client.database.guilds.get(guild.id);
+        const getGuildDatabase = await this.client.database.entity.guilds.get(guild.id);
         const queue = this.queue.get(guild.id);
         if (getGuildDatabase?.guildPlayer?.channelId) {
             if (queue?.getTrackSize && queue.current) {

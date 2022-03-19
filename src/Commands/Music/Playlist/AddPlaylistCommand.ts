@@ -32,9 +32,9 @@ import { ShoukakuTrackList } from "shoukaku";
 })
 export default class AddPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.users.get(ctx.author.id);
+        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id);
         if (!getUserDatabase) {
             await ctx.send({
                 embeds: [
@@ -97,7 +97,7 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
                     getUserPlaylist.playlistTracks.map(({ trackLength }) => trackLength).join("+")
                 ) as unknown as number, { colonNotation: true }
             ).colonNotation;
-        await this.client.database.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
+        await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
         await ctx.send({
             embeds: [
                 createMusicEmbed(

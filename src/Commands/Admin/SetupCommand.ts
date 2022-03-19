@@ -41,16 +41,16 @@ export default class SetupCommand extends ZuikakuCommand {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const queue = this.client.shoukaku.queue.get(ctx.guild!.id);
         if (ctx.options?.getSubcommand(false) === "delete") {
-            const getGuildDatabase = await this.client.database.guilds.get(ctx.guild!.id);
+            const getGuildDatabase = await this.client.database.entity.guilds.get(ctx.guild!.id);
             const alreadySet = this.client.channels.resolve(getGuildDatabase?.guildPlayer?.channelId ?? "");
             if (alreadySet) {
                 (await (alreadySet as TextChannel).messages
                     .fetch(getGuildDatabase?.guildPlayer?.messageId ?? "")
                     .catch(() => null))?.delete().catch(() => null);
                 if (queue) {
-                    await this.client.database.guilds.reset(ctx.guild!.id, "guildPlayer");
+                    await this.client.database.entity.guilds.reset(ctx.guild!.id, "guildPlayer");
                 } else {
-                    await this.client.database.guilds.drop(ctx.guild!.id);
+                    await this.client.database.entity.guilds.drop(ctx.guild!.id);
                 }
                 await ctx.send({
                     embeds: [
@@ -68,7 +68,7 @@ export default class SetupCommand extends ZuikakuCommand {
                 });
             }
         } else {
-            const getGuildDatabase = await this.client.database.guilds.set(
+            const getGuildDatabase = await this.client.database.entity.guilds.set(
                 ctx.guild!.id,
                 "guildPlayer",
                 {
@@ -108,7 +108,7 @@ export default class SetupCommand extends ZuikakuCommand {
                         });
                     } else {
                         const msg = await this.setup(channel);
-                        await this.client.database.guilds.set(
+                        await this.client.database.entity.guilds.set(
                             ctx.guild!.id,
                             "guildPlayer",
                             {
@@ -128,7 +128,7 @@ export default class SetupCommand extends ZuikakuCommand {
                     return;
                 }
                 const msg = await this.setup(channel);
-                await this.client.database.guilds.set(
+                await this.client.database.entity.guilds.set(
                     ctx.guild!.id,
                     "guildPlayer",
                     {

@@ -8,6 +8,7 @@ import UtilHandler from "@zuikaku/Utils/Utils";
 import { Client, Intents, Options, Sweepers } from "discord.js";
 import { join, resolve } from "node:path";
 import process from "node:process";
+import { DataSource } from "typeorm";
 
 const config = parseYaml(join(__dirname, "../../ZuikakuConfig.yaml"));
 
@@ -75,8 +76,22 @@ export class ZuikakuClient extends Client {
         });
         Object.defineProperty(this, "database", {
             value: {
-                guilds: new GuildDatabaseManager(),
-                users: new UserDatabaseManager()
+                dataSource: new DataSource({
+                    database: "database",
+                    type: "mongodb",
+                    url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${this.config.devMode ? "development" : "database"}`,
+                    useUnifiedTopology: true,
+                    ssl: true,
+                    sslValidate: true,
+                    useNewUrlParser: true,
+                    entities: [
+                        `${resolve(__dirname, "../Handlers/Databases/Entities")}/**/*.js`
+                    ]
+                }),
+                entity: {
+                    guilds: new GuildDatabaseManager(),
+                    users: new UserDatabaseManager()
+                }
             }
         });
         Object.defineProperty(this, "listeners", {

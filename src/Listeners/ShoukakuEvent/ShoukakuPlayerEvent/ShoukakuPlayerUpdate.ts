@@ -12,7 +12,7 @@ export default class ShoukakuPlayerUpdate extends ZuikakuListener {
     public async execute(player: ShoukakuPlayer, payload: PlayerUpdate): Promise<void> {
         const queue = this.client.shoukaku.queue.get(player.connection.guildId);
         if (queue) {
-            await this.client.database.guilds.set(
+            await this.client.database.entity.guilds.set(
                 queue.player.connection.guildId,
                 "persistenceQueue",
                 JSON.parse(

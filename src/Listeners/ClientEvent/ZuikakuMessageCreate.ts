@@ -17,7 +17,7 @@ export default class ZuikakuMessageCreate extends ZuikakuListener {
             message.channel.type === "DM" ||
             !this.client.commands.isReady
         ) return;
-        const getGuildDatabase = await this.client.database.guilds.get(message.guildId!);
+        const getGuildDatabase = await this.client.database.entity.guilds.get(message.guildId!);
         const channelGuildPlayer = this.client.channels.resolve(getGuildDatabase?.guildPlayer?.channelId ?? "");
         if (message.channelId === channelGuildPlayer?.id) {
             if (

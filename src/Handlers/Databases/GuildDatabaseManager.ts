@@ -1,13 +1,13 @@
 import { Collection } from "discord.js";
-import { DeleteWriteOpResultObject, getMongoRepository, MongoRepository } from "typeorm";
+import { DataSource, DeleteWriteOpResultObject, MongoRepository } from "typeorm";
 import { GuildSettings } from "./Entities/GuildSettings";
 
 export class GuildDatabaseManager {
     public collection!: MongoRepository<GuildSettings>;
     public cache: Collection<string, GuildSettings> = new Collection();
 
-    public _init(): void {
-        this.collection = getMongoRepository(GuildSettings);
+    public _init(dataSource: DataSource): void {
+        this.collection = dataSource.getMongoRepository(GuildSettings);
         void this.list()
             .then(database => database.map(guildSettings => this.cache.set(guildSettings.guildId, guildSettings)));
     }

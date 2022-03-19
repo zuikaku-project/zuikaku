@@ -53,7 +53,7 @@ export class QueueManager {
     }
 
     public get getGuildDatabase(): Promise<GuildSettings | undefined> {
-        return this.shoukaku.client.database.guilds.get(this.options.guildId);
+        return this.shoukaku.client.database.entity.guilds.get(this.options.guildId);
     }
 
     public get getVoice(): StageChannel | VoiceChannel | undefined {
@@ -137,7 +137,7 @@ export class QueueManager {
                 Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
                 Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
                 Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });
-                this.player.playTrack(this.current, { startTime });
+                this.player.playTrack(this.current, { startTime: this.current.info.uri?.startsWith("https://open.spotify.com") ? undefined : startTime });
             } catch {
                 this.exceptionCount++;
                 if (this.exceptionCount === 20) {

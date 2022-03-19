@@ -41,7 +41,7 @@ export default class PlayCommand extends ZuikakuCommand {
     @isQueueReachLimit()
     @isNoNodesAvailable()
     public async execute(ctx: CommandContext): Promise<void> {
-        const getGuildDatabase = await this.client.database.guilds.get(ctx.guild!.id);
+        const getGuildDatabase = await this.client.database.entity.guilds.get(ctx.guild!.id);
         const fromGuildPlayer = getGuildDatabase?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
         if (

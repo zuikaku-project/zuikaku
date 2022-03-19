@@ -4,11 +4,12 @@ import {
     CanvasHandler, CommandHandler, GuildDatabaseManager, JikanManager, ListenerHandler, ShoukakuHandler,
     TopggHandler, UserDatabaseManager, WeebyManager
 } from "@zuikaku/Handlers";
-import { UnresolvedPluginTrack } from "./plugin";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import { Logger } from "@zuikaku/Utils";
 import UtilHandler from "@zuikaku/Utils/Utils";
 import { ApplicationCommandOptionData, ApplicationCommandOptionType, PermissionResolvable, Snowflake, User } from "discord.js";
+import { DataSource } from "typeorm";
+import { UnresolvedPluginTrack } from "./plugin";
 
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
 
@@ -246,8 +247,11 @@ declare module "discord.js" {
         };
         shoukaku: ShoukakuHandler;
         database: {
-            guilds: GuildDatabaseManager;
-            users: UserDatabaseManager;
+            dataSource: DataSource;
+            entity: {
+                guilds: GuildDatabaseManager;
+                users: UserDatabaseManager;
+            };
         };
         readonly commands: CommandHandler;
         readonly listeners: ListenerHandler;

@@ -26,7 +26,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                 if (decodeBase64Interaction.startsWith("Player")) {
                     const getDecodeCommand = decodeBase64Interaction
                         .split("_")[1] as "LAST-TRACK" | "NEXT-TRACK" | "PLAY-PAUSE" | "REPEAT" | "SHUFFLE" | "STOP";
-                    const getGuildDatabase = await this.client.database.guilds.get(interaction.guild!.id);
+                    const getGuildDatabase = await this.client.database.entity.guilds.get(interaction.guild!.id);
                     const getGuildQueue = this.client.shoukaku.queue.get(interaction.guild!.id);
                     const member = interaction.guild?.members.cache.get(interaction.user.id);
                     const vc = interaction.guild?.channels.cache.get(member?.voice.channelId ?? "") as GuildChannel | undefined;
@@ -198,7 +198,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
     }
 
     private async runCommandCheck(context: CommandContext, command: ICommandComponent): Promise<boolean> {
-        const getGuildDatabase = await this.client.database.guilds.get(context.guild!.id);
+        const getGuildDatabase = await this.client.database.entity.guilds.get(context.guild!.id);
         if (
             command.meta.devOnly &&
             !this.client.options.ownerId.includes(context.author.id)

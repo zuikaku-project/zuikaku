@@ -49,9 +49,9 @@ import { MessageActionRow, MessageButton } from "discord.js";
 })
 export default class DropPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.users.get(ctx.author.id);
+        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id);
         if (!getUserDatabase) {
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist database")] });
             return undefined;
@@ -79,9 +79,9 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                     if (interaction.customId === "accept") {
                         getUserDatabase.playlists = getUserDatabase.playlists.filter(({ playlistId }) => playlistId !== getUserPlaylist.playlistId);
                         if (getUserDatabase.playlists.length) {
-                            await this.client.database.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
+                            await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
                         } else {
-                            await this.client.database.users.drop(ctx.author.id);
+                            await this.client.database.entity.users.drop(ctx.author.id);
                         }
                         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I have dropped your playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`)], components: [] }).catch(() => null);
                     } else {
@@ -115,7 +115,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                         getUserPlaylist.playlistTracks = getUserPlaylist.playlistTracks.filter(({ trackId }) => trackId !== getPlaylistTrack.trackId);
                         // eslint-disable-next-line no-eval
                         getUserPlaylist.playlistDuration = this.client.utils.parseMs(eval(getUserPlaylist.playlistTracks.map(({ trackLength }) => trackLength).join("+")) as unknown as number, { colonNotation: true }).colonNotation;
-                        await this.client.database.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
+                        await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
                         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I have dropped track${getPlaylistTrack.trackTitle} (${getPlaylistTrack.trackId}) from playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`)], components: [] }).catch(() => null);
                     } else {
                         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You have canceled command")], components: [] }).catch(() => null);

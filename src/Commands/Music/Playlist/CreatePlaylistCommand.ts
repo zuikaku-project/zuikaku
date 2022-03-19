@@ -25,9 +25,9 @@ import { MessageActionRow, MessageButton } from "discord.js";
 })
 export default class CreatePlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.users.get(ctx.author.id) ?? await this.client.database.users.set(ctx.author.id, "playlists", []);
+        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id) ?? await this.client.database.entity.users.set(ctx.author.id, "playlists", []);
         const getUserPlaylist = getUserDatabase.playlists.find(({ playlistName }) => playlistName === ctx.options!.getString("name")!);
         const newUserPlaylist = { playlistId: this.getRandomPlaylistId(getUserDatabase), playlistName: ctx.options!.getString("name")!, playlistDuration: "0", playlistTracks: [] };
         if (getUserPlaylist) {
@@ -47,7 +47,7 @@ export default class CreatePlaylistCommand extends ZuikakuCommand {
                 if (interaction.user.id === ctx.author.id) {
                     if (interaction.customId === "accept") {
                         getUserDatabase.playlists.push(newUserPlaylist);
-                        await this.client.database.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
+                        await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
                         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I have created your new playlist ${newUserPlaylist.playlistName} (${newUserPlaylist.playlistId})`)], components: [] });
                     } else {
                         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You have canceled command")], components: [] });
@@ -63,7 +63,7 @@ export default class CreatePlaylistCommand extends ZuikakuCommand {
             });
         } else {
             getUserDatabase.playlists.push(newUserPlaylist);
-            await this.client.database.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
+            await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I have created your new playlist ${newUserPlaylist.playlistName} (${newUserPlaylist.playlistId})`)] });
         }
     }

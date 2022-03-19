@@ -1,13 +1,13 @@
 import { Collection } from "discord.js";
-import { DeleteWriteOpResultObject, getMongoRepository, MongoRepository } from "typeorm";
+import { DataSource, DeleteWriteOpResultObject, MongoRepository } from "typeorm";
 import { UserSettings } from "./Entities/UserSettings";
 
 export class UserDatabaseManager {
     public collection!: MongoRepository<UserSettings>;
     public cache: Collection<string, UserSettings> = new Collection();
 
-    public _init(): void {
-        this.collection = getMongoRepository(UserSettings);
+    public _init(dataSource: DataSource): void {
+        this.collection = dataSource.getMongoRepository(UserSettings);
         void this.list()
             .then(database => database.map(userSettings => this.cache.set(userSettings.userId, userSettings)));
     }

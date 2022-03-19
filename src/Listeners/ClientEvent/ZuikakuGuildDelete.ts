@@ -12,7 +12,7 @@ import { Guild, WebhookClient } from "discord.js";
 export default class ZuikakuGuildDelete extends ZuikakuListener {
     public async execute(guild: Guild): Promise<void> {
         if (!guild.available) return undefined;
-        await this.client.database.guilds.drop(guild.id)
+        await this.client.database.entity.guilds.drop(guild.id)
             .then(() => this.client.logger.info({ module: "DATABASE", message: `Remove Database Guild ${guild.name}` }));
         const sname = guild.name;
         const membert = guild.members.cache.size;

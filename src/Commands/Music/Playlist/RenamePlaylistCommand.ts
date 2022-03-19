@@ -29,9 +29,9 @@ import { MessageActionRow, MessageButton } from "discord.js";
 })
 export default class RenamePlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.users.get(ctx.author.id);
+        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id);
         if (!getUserDatabase) {
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist database")] });
             return undefined;
@@ -57,7 +57,7 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
             if (interaction.user.id === ctx.author.id) {
                 if (interaction.customId === "accept") {
                     getUserPlaylist.playlistName = ctx.options!.getString("name")!;
-                    await this.client.database.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
+                    await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
                     await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I have renamed your playlist to ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`)], components: [] }).catch(() => null);
                 } else {
                     await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You have canceled command")], components: [] }).catch(() => null);

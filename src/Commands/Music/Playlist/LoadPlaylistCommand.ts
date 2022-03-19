@@ -31,7 +31,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
     @isNoNodesAvailable()
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const getGuildDatabase = await this.client.database.guilds.get(ctx.guild!.id);
+        const getGuildDatabase = await this.client.database.entity.guilds.get(ctx.guild!.id);
         const fromGuildPlayer = getGuildDatabase?.guildPlayer?.channelId === ctx.channel?.id;
         if (getGuildDatabase?.guildPlayer?.channelId && getGuildDatabase.guildPlayer.channelId !== ctx.channel?.id) {
             await ctx.send({
@@ -42,7 +42,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 .catch(() => null);
             return undefined;
         }
-        const getUserDatabase = await this.client.database.users.get(ctx.author.id);
+        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id);
         if (!getUserDatabase) {
             await ctx.send({
                 embeds: [

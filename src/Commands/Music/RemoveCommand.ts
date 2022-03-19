@@ -34,7 +34,7 @@ export default class RemoveCommand extends ZuikakuCommand {
     @isSameVoiceChannel()
     @isSameTextChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
         const data = ctx.options!.getNumber("number")!;
