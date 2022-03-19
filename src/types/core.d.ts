@@ -76,12 +76,22 @@ export interface IInstagram {
     } | undefined;
 }
 
-interface IMusixmatch {
+export interface IMusixmatch {
     title?: string;
     artists?: string;
     lyrics?: string;
     albumImg?: string;
     url?: string;
+}
+
+interface ISpotifyLyrics {
+    trackName: string | null;
+    trackArtist: string | null;
+    trackId: string | null;
+    trackUrl: string | null;
+    imageUrl: string | null;
+    language: string | null;
+    lyrics: string[] | null;
 }
 
 export interface INPMSearchAPI {

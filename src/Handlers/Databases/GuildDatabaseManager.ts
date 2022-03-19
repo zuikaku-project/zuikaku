@@ -17,7 +17,7 @@ export class GuildDatabaseManager {
         if (cache) {
             return cache;
         }
-        const database = await this.collection.findOne({ guildId });
+        const database = await this.collection.findOne({ where: { guildId } });
         if (!database) {
             return undefined;
         }

@@ -1,9 +1,8 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent, IMusixmatch } from "@zuikaku/types";
+import { ICommandComponent, ISpotifyLyrics } from "@zuikaku/types";
 import { createEmbed } from "@zuikaku/Utils";
-import { Musixmatch } from "@zuikaku/Utils/";
 import { MessageEmbed } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
@@ -42,8 +41,16 @@ export default class LyricsCommand extends ZuikakuCommand {
             });
             return undefined;
         }
-        const fetch = await new Musixmatch().find(title).catch(() => null);
-        if (!fetch) {
+        // @ts-expect-error ts-migrate(2339) FIXME: Property 'lyrics' does not exist on type '{}'.
+        const fetch = await this.client.shoukaku.getNode().rest.router.lyrics({ title }).get().catch(() => null) as ISpotifyLyrics | null; // eslint-disable-line
+        if (
+            !fetch ||
+            !fetch.lyrics ||
+            !fetch.lyrics.length ||
+            !fetch.trackName ||
+            !fetch.trackArtist ||
+            !fetch.trackUrl
+        ) {
             await ctx.send({
                 embeds: [
                     createEmbed("info", "**Sorry i can't get song lyrics match that title**")
@@ -55,15 +62,15 @@ export default class LyricsCommand extends ZuikakuCommand {
         await new this.client.utils.pagination(ctx, splitdata).shortPagination();
     }
 
-    private splitString(b: IMusixmatch, ctx: CommandContext): MessageEmbed[] {
+    private splitString(b: ISpotifyLyrics, ctx: CommandContext): MessageEmbed[] {
         const em = []; const array = []; const array2 = [];
         let k = 0;
-        const title = b.title;
-        const artists = b.artists;
-        const lyrics = b.lyrics!.split("\n");
-        const image = b.albumImg;
-        const url = b.url;
-        for (const lyricses of lyrics.values()) {
+        const title = b.trackName!;
+        const artists = b.trackArtist!;
+        const url = b.trackUrl!;
+        const image = b.imageUrl;
+        const lyrics = b.lyrics!;
+        for (const lyricses of lyrics) {
             array.push(lyricses);
         }
         for (let a = 0; a < array.length; a += 40) {
@@ -74,7 +81,7 @@ export default class LyricsCommand extends ZuikakuCommand {
             const ly = array2[x].join("\n");
             const e = createEmbed("info")
                 .setAuthor({
-                    name: `🎶 | ${artists!} - ${title!}`,
+                    name: `🎶 | ${artists} - ${title}`,
                     iconURL: this.client.user!.displayAvatarURL({ format: "png", size: 4096 })!,
                     url
                 })

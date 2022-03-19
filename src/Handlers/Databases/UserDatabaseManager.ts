@@ -17,7 +17,7 @@ export class UserDatabaseManager {
         if (cache) {
             return cache;
         }
-        const database = await this.collection.findOne({ userId });
+        const database = await this.collection.findOne({ where: { userId } });
         if (!database) {
             return undefined;
         }
