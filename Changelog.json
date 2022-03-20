@@ -177,5 +177,14 @@
             "Fix play previous logic, guild player, and api error",
             "Use error event for error handling"
         ]
+    },
+    {
+        "date": "20 March 2022",
+        "title": "Release Zuikaku@3.9.0",
+        "content": [
+            "Play direct to spotify (Native)",
+            "Migrate lyrics service to spotify",
+            "Optimizing code"
+        ]
     }
 ]
