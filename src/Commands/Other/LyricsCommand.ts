@@ -56,8 +56,8 @@ export default class LyricsCommand extends ZuikakuCommand {
             });
             return undefined;
         }
-        if (fetch.trackName) fetch.trackName = title;
-        if (fetch.trackArtist) fetch.trackArtist = "UNKNOWN_ARTIST";
+        if (!fetch.trackName) fetch.trackName = title;
+        if (!fetch.trackArtist) fetch.trackArtist = "UNKNOWN_ARTIST";
         const splitdata = this.splitString(fetch, ctx);
         await new this.client.utils.pagination(ctx, splitdata).shortPagination();
     }
