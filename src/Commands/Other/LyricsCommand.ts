@@ -30,9 +30,9 @@ export default class LyricsCommand extends ZuikakuCommand {
         if (lyrics) {
             title = lyrics;
         } else if (ctx.member!.voice.channelId === queue?.voiceId) {
-            title = `${queue.current!.info.title!} - ${queue.current!.info.author!}`;
+            title = `${queue.current!.info.title!} ${queue.current!.info.author!}`;
         } else if (spotify) {
-            title = `${spotify.state!} - ${spotify.details!}`;
+            title = `${spotify.state!} ${spotify.details!}`;
         } else {
             await ctx.send({
                 embeds: [
@@ -47,8 +47,6 @@ export default class LyricsCommand extends ZuikakuCommand {
             !fetch ||
             !fetch.lyrics ||
             !fetch.lyrics.length ||
-            !fetch.trackName ||
-            !fetch.trackArtist ||
             !fetch.trackUrl
         ) {
             await ctx.send({
@@ -58,6 +56,8 @@ export default class LyricsCommand extends ZuikakuCommand {
             });
             return undefined;
         }
+        if (fetch.trackName) fetch.trackName = title;
+        if (fetch.trackArtist) fetch.trackArtist = "UNKNOWN_ARTIST";
         const splitdata = this.splitString(fetch, ctx);
         await new this.client.utils.pagination(ctx, splitdata).shortPagination();
     }

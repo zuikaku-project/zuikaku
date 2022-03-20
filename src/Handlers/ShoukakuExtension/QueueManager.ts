@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { createEmbed } from "@zuikaku/Utils";
 import { Guild, Message, MessageButton, StageChannel, TextChannel, ThreadChannel, VoiceChannel } from "discord.js";
 import { JoinOptions, ShoukakuPlayer, ShoukakuTrack } from "shoukaku";
@@ -16,7 +17,7 @@ export class QueueManager {
     public tracks!: ShoukakuTrack[];
     public previous!: ShoukakuTrack | null;
     public volume!: number;
-    public playerMessage!: Record<"lastExceptionMessage" | "lastNowplayingMessage" | "lastPlayerMessage", Message | null>;
+    public playerMessage!: Record<"lastNowplayingMessage" | "lastPlayerMessage" | "lastResolvingMessage", Message | null>;
     public exceptionCount!: number;
     public _timeout!: NodeJS.Timeout | null;
     public _isStopped!: boolean;
@@ -36,7 +37,7 @@ export class QueueManager {
             value: {
                 lastPlayerMessage: null,
                 lastNowplayingMessage: null,
-                lastExceptionMessage: null
+                lastResolvingMessage: null
             },
             enumerable: true,
             writable: true
@@ -132,16 +133,19 @@ export class QueueManager {
             }
             try {
                 if (!this.current.track.length) {
+                    await this.getText?.send({
+                        embeds: [
+                            createEmbed("info", "**<a:loading:804201332243955734> | Resolving track...**")
+                        ]
+                    })
+                        .then(x => this.playerMessage.lastResolvingMessage = x)
+                        .catch(() => null);
                     await this.current.resolve!();
                 }
-                Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
-                Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
-                Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });
-                this.player.playTrack(this.current, { startTime: this.current.info.uri?.startsWith("https://open.spotify.com") ? undefined : startTime });
             } catch {
                 this.exceptionCount++;
                 if (this.exceptionCount === 20) {
-                    this.getText?.send({
+                    await this.getText?.send({
                         embeds: [
                             createEmbed("info")
                                 .setAuthor({
@@ -157,8 +161,7 @@ export class QueueManager {
                 if (this.exceptionCount % 5 === 0) {
                     await new Promise(resolve => setTimeout(resolve, 5000));
                 }
-                if (this.playerMessage.lastExceptionMessage) this.playerMessage.lastExceptionMessage.delete().catch(() => null);
-                this.getText?.send({
+                await this.playerMessage.lastResolvingMessage?.edit({
                     embeds: [
                         createEmbed("info")
                             .setAuthor({
@@ -167,10 +170,17 @@ export class QueueManager {
                             })
                     ]
                 })
-                    .then(x => this.playerMessage.lastExceptionMessage = x)
                     .catch(() => null);
                 this.shoukaku.emit("playerTrackEnd", this.player);
             }
+        }
+        if (this.current?.track.length) {
+            Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
+            Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
+            Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });
+            this.player.playTrack(this.current, { startTime: this.current.info.uri?.startsWith("https://open.spotify.com") ? undefined : startTime });
+            this.playerMessage.lastResolvingMessage?.delete().catch(() => null);
+            this.playerMessage.lastResolvingMessage = null;
         }
     }
 
@@ -197,7 +207,6 @@ export class QueueManager {
 
     public destroyPlayer(): this {
         this._isStopped = true;
-        if (this.playerMessage.lastExceptionMessage) this.playerMessage.lastExceptionMessage.delete().catch(() => null);
         if (this.playerMessage.lastPlayerMessage) this.playerMessage.lastPlayerMessage.delete().catch(() => null);
         if (this.playerMessage.lastNowplayingMessage) this.playerMessage.lastNowplayingMessage.delete().catch(() => null);
         if (this._timeout) {

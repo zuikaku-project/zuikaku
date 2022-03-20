@@ -1,6 +1,5 @@
 import {
-    isNoNodesAvailable, isQueueReachLimit, isSameTextChannel,
-    isSameVoiceChannel, isUserInTheVoiceChannel, isValidVoiceChannel, ZuikakuDecorator
+    isNoNodesAvailable, isQueueReachLimit, isSameVoiceChannel, isUserInTheVoiceChannel, isValidVoiceChannel, ZuikakuDecorator
 } from "@zuikaku/Handlers/Decorators";
 import { QueueManager } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
@@ -37,7 +36,6 @@ export default class PlayCommand extends ZuikakuCommand {
     @isUserInTheVoiceChannel()
     @isValidVoiceChannel()
     @isSameVoiceChannel()
-    @isSameTextChannel()
     @isQueueReachLimit()
     @isNoNodesAvailable()
     public async execute(ctx: CommandContext): Promise<void> {
