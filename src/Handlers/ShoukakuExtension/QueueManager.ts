@@ -122,6 +122,7 @@ export class QueueManager {
     }
 
     public async playTrack(startTime = 0): Promise<void> {
+        if (this.playerMessage.lastResolvingMessage) return;
         const { requester, durationFormated } = this.current!;
         if (this.current) {
             if (this._timeout) {
@@ -171,6 +172,7 @@ export class QueueManager {
                     ]
                 })
                     .catch(() => null);
+                this.playerMessage.lastResolvingMessage = null;
                 this.shoukaku.emit("playerTrackEnd", this.player);
             }
         }
