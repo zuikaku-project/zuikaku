@@ -1,5 +1,5 @@
 import { IPluginComponent, AppleMusicMetaTagResponse, AppleTracks, DeezerTrack, ILavalinkPayloadTrack, IPluginOptions, SpotifyTrack } from "@zuikaku/types";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import { Collection } from "discord.js";
 import { join, resolve } from "node:path";
 import petitio from "petitio";
@@ -82,10 +82,6 @@ export class PluginManager {
     }
 
     public async retrieveTrack(unresolvedTrack: ILavalinkPayloadTrack): Promise<ShoukakuTrack | undefined> {
-        if (this.spotifyRegex.test(unresolvedTrack.info.uri ?? "")) {
-            const response = await this._getTracks(unresolvedTrack.info.uri!);
-            return response.tracks[0];
-        }
         const response = await this.getTracks(`${unresolvedTrack.info.author ?? ""} ${unresolvedTrack.info.title ?? ""}`);
         return response.tracks[0];
     }
@@ -142,7 +138,7 @@ export class PluginManager {
     public async fetchAppleToken(): Promise<void> {
         try {
             const textResponse = await petitio("https://music.apple.com/us/browse").text();
-            const $ = cheerio.load(textResponse);
+            const $ = load(textResponse);
             const token = JSON.parse(
                 decodeURIComponent(
                     $("meta[name=desktop-music-app/config/environment]").attr("content")!
@@ -205,16 +201,19 @@ export class PluginManager {
                     return this.buildResponse("LOAD_FAILED", []);
                 }
             }
-        } else if (this.spotifyRegex.test(getHTTPQuery)) {
-            const regExpExec = this.spotifyRegex.exec(getHTTPQuery) as unknown as regExpExec;
-            if (this.spotifyResolver.has(regExpExec.groups.type)) {
-                try {
-                    return await this.spotifyResolver.get(regExpExec.groups.type)?.fetch(regExpExec.groups.id);
-                } catch {
-                    return this.buildResponse("LOAD_FAILED", []);
-                }
-            }
         }
+        /*
+         * else if (this.spotifyRegex.test(getHTTPQuery)) {
+         *     const regExpExec = this.spotifyRegex.exec(getHTTPQuery) as unknown as regExpExec;
+         *     if (this.spotifyResolver.has(regExpExec.groups.type)) {
+         *         try {
+         *             return await this.spotifyResolver.get(regExpExec.groups.type)?.fetch(regExpExec.groups.id);
+         *         } catch {
+         *             return this.buildResponse("LOAD_FAILED", []);
+         *         }
+         *     }
+         * }
+         */
         return this._getTracks(query, options);
     }
 }
