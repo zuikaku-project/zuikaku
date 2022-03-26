@@ -9,9 +9,6 @@ nodes:
   - auth: youshallnotpass
     url: node-au.rahagia.tech:3003
     name: rahagia
-  - auth: ShipGirlWangy
-    url: node-au.panel.fab1o.xyz:2333
-    name: fabio
 devMode: false
 devGuild:
   - "770540956163899423"
