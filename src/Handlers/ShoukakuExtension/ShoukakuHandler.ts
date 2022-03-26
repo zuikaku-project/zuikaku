@@ -32,7 +32,7 @@ export class ShoukakuHandler extends Shoukaku {
     public getRandomNode(loadBalancer = true): string {
         const array = [...this.nodes.keys()];
         if (!array.length) {
-            this.client.config.nodes.filter(node => [...this.nodes.keys()].includes(node.name)).map(node => this.addNode(node));
+            this.client.config.nodes.map(node => this.addNode(node));
             return this.getRandomNode();
         }
         if (loadBalancer) {

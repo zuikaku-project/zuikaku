@@ -22,7 +22,7 @@ export class QueueManager {
     public _timeout!: NodeJS.Timeout | null;
     public _isStopped!: boolean;
     public _isFromPrev!: boolean;
-    public _isFromResolved!: boolean;
+    public _isResolved!: boolean;
     public constructor(public shoukaku: ShoukakuHandler, public player: ShoukakuPlayer, opts: JoinOptions) {
         Object.defineProperty(this, "options", { value: opts });
         Object.defineProperty(this, "textId", { value: opts.textId ?? null, enumerable: true, writable: true });
@@ -47,7 +47,7 @@ export class QueueManager {
         Object.defineProperty(this, "_timeout", { value: null, writable: true });
         Object.defineProperty(this, "_isStopped", { value: false, writable: true });
         Object.defineProperty(this, "_isFromPrev", { value: false, writable: true });
-        Object.defineProperty(this, "_isFromResolved", { value: true, writable: true });
+        Object.defineProperty(this, "_isResolved", { value: true, writable: true });
         this.shoukaku.queue.set(opts.guildId, this);
     }
 
@@ -124,7 +124,8 @@ export class QueueManager {
     }
 
     public async playTrack(startTime = 0): Promise<void> {
-        if (!this._isFromResolved) return;
+        if (!this._isResolved) return;
+        if (this.exceptionCount % 5 === 0) await new Promise(resolve => setTimeout(resolve, 5000));
         const { requester, durationFormated } = this.current!;
         if (this.current) {
             if (this._timeout) {
@@ -136,7 +137,7 @@ export class QueueManager {
             }
             try {
                 if (!this.current.track.length) {
-                    this._isFromResolved = false;
+                    this._isResolved = false;
                     await this.getText?.send({
                         embeds: [
                             createEmbed("info", "**<a:loading:804201332243955734> | Resolving track...**")
@@ -162,9 +163,6 @@ export class QueueManager {
                     this.destroyPlayer();
                     return;
                 }
-                if (this.exceptionCount % 5 === 0) {
-                    await new Promise(resolve => setTimeout(resolve, 5000));
-                }
                 await this.playerMessage.lastResolvingMessage?.edit({
                     embeds: [
                         createEmbed("info")
@@ -176,14 +174,14 @@ export class QueueManager {
                 })
                     .catch(() => null);
                 this.playerMessage.lastResolvingMessage = null;
-                this._isFromResolved = true;
+                this._isResolved = true;
                 this.shoukaku.emit("playerTrackEnd", this.player);
             }
         }
         if (this.current?.track.length) {
             this.playerMessage.lastResolvingMessage?.delete().catch(() => null);
             this.playerMessage.lastResolvingMessage = null;
-            this._isFromResolved = true;
+            this._isResolved = true;
             Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
             Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
             Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });

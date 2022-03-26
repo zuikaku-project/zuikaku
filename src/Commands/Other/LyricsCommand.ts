@@ -2,8 +2,7 @@ import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent, ISpotifyLyrics } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
-import { MessageEmbed } from "discord.js";
+import { chunk, createEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "lyrics",
@@ -46,8 +45,7 @@ export default class LyricsCommand extends ZuikakuCommand {
         if (
             !fetch ||
             !fetch.lyrics ||
-            !fetch.lyrics.length ||
-            !fetch.trackUrl
+            !fetch.lyrics.length
         ) {
             await ctx.send({
                 embeds: [
@@ -56,44 +54,25 @@ export default class LyricsCommand extends ZuikakuCommand {
             });
             return undefined;
         }
-        if (!fetch.trackName) fetch.trackName = title;
-        if (!fetch.trackArtist) fetch.trackArtist = "UNKNOWN_ARTIST";
-        const splitdata = this.splitString(fetch, ctx);
-        await new this.client.utils.pagination(ctx, splitdata).shortPagination();
-    }
-
-    private splitString(b: ISpotifyLyrics, ctx: CommandContext): MessageEmbed[] {
-        const em = []; const array = []; const array2 = [];
-        let k = 0;
-        const title = b.trackName!;
-        const artists = b.trackArtist!;
-        const url = b.trackUrl!;
-        const image = b.imageUrl;
-        const lyrics = b.lyrics!;
-        for (const lyricses of lyrics) {
-            array.push(lyricses);
-        }
-        for (let a = 0; a < array.length; a += 40) {
-            k += 40;
-            array2.push(array.slice(a, k));
-        }
-        for (let x = 0; x < array2.length; x++) {
-            const ly = array2[x].join("\n");
-            const e = createEmbed("info")
-                .setAuthor({
-                    name: `🎶 | ${artists} - ${title}`,
-                    iconURL: this.client.user!.displayAvatarURL({ format: "png", size: 4096 })!,
-                    url
-                })
-                .setDescription(ly)
-                .setThumbnail(image ?? "")
-                .setTimestamp()
-                .setFooter({
-                    text: `Page (${x + 1}/${array2.length})`,
-                    iconURL: ctx.author.displayAvatarURL({ dynamic: true, format: "png", size: 4096 })!
-                });
-            em.push(e);
-        }
-        return em;
+        const trackName = fetch.trackName ?? title;
+        const tractArtist = fetch.trackArtist ?? "UNKNOWN_ARTIST";
+        const trackUrl = fetch.trackUrl ?? "";
+        const imageUrl = fetch.imageUrl ?? "";
+        const lyricses = fetch.lyrics;
+        const generateChunks = chunk(lyricses, 30);
+        const generateEmbeds = generateChunks.map(x => createEmbed("info")
+            .setAuthor({
+                name: `🎶 | ${tractArtist} - ${trackName}`,
+                url: trackUrl,
+                iconURL: this.client.user!.displayAvatarURL({ format: "png", size: 4096 })!
+            })
+            .setDescription(x.join("\n"))
+            .setThumbnail(imageUrl)
+            .setTimestamp()
+            .setFooter({
+                text: `Page (${generateChunks.indexOf(x) + 1}/${generateChunks.length})`,
+                iconURL: ctx.author.displayAvatarURL({ dynamic: true, format: "png", size: 4096 })!
+            }));
+        await new this.client.utils.pagination(ctx, generateEmbeds).shortPagination();
     }
 }
