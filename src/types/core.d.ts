@@ -25,6 +25,10 @@ export interface IConfig {
         name: string;
         secure?: boolean;
     }[];
+    api: {
+        url: string;
+        auth: string;
+    };
     sessionid: string;
     spcid: string;
     spcs: string;

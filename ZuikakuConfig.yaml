@@ -9,6 +9,9 @@ nodes:
   - auth: youshallnotpass
     url: node-au.rahagia.tech:3003
     name: rahagia
+api:
+  auth: EnterpriseWangyWangyHuhHahHuhHah
+  url: http://node-au.rahagia.tech:3006/
 devMode: false
 devGuild:
   - "770540956163899423"

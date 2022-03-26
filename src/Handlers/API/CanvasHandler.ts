@@ -3,7 +3,6 @@ import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import petitio from "petitio";
 
 export class CanvasHandler {
-    public readonly baseURL = "https://zuikaku-canvas-api.maakoo.my.id/";
     public readonly endpoint = {
         brightness: "image/brightness",
         chip: "image/chip",
@@ -23,14 +22,20 @@ export class CanvasHandler {
         kleesay: "image/kleesay"
     };
 
-    public constructor(public client: ZuikakuClient) { }
+    private readonly baseURL: string;
+    private readonly auth: string;
+
+    public constructor(public client: ZuikakuClient) {
+        this.baseURL = this.client.config.api.url;
+        this.auth = this.client.config.api.auth;
+    }
 
     public async requestImageAPI(getEndpoint: keyof APIEndpoint, data: decodeBase64String): Promise<Buffer | undefined> {
         try {
             const getAPIData = await petitio(this.baseURL)
                 .path(this.endpoint[getEndpoint])
                 .query("base64", this.client.utils.encodeDecodeBase64String(encodeURIComponent(JSON.stringify(data))))
-                .header("Authorization", this.client.utils.encodeDecodeBase64String("243728573624614912.791271223077109820"))
+                .header("Authorization", this.auth)
                 .send();
             if (getAPIData.statusCode !== 200) {
                 return undefined;
