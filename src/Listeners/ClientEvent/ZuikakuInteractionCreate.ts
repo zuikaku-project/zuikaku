@@ -126,7 +126,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                                 ? [
                                     {
                                         // eslint-disable-next-line no-eval
-                                        name: `${getPlaylistFromId.playlistName} - ${getPlaylistFromId.playlistTracks.length} tracks (${this.client.utils.parseMs(eval(getPlaylistFromId.playlistTracks.map(x => x.trackLength).join("+")) as number, { colonNotation: true }).colonNotation}`,
+                                        name: `${getPlaylistFromId.playlistName} - ${getPlaylistFromId.playlistTracks.length} tracks (${this.client.utils.parseMs(eval(getPlaylistFromId.playlistTracks.map(x => x.trackLength).join("+")) as number, { colonNotation: true }).colonNotation})`,
                                         value: getPlaylistFromId.playlistId
                                     }
                                 ]
