@@ -16,10 +16,11 @@ import { ShoukakuTrackList } from "shoukaku";
         type: "SUB_COMMAND",
         options: [
             {
-                name: "id",
-                description: "Id of the playlist",
+                name: "playlist",
+                description: "Id or name of the playlist",
                 type: "STRING",
-                required: true
+                required: true,
+                autocomplete: true
             },
             {
                 name: "track",
@@ -48,7 +49,7 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
             return undefined;
         }
         const getUserPlaylist = getUserDatabase.playlists
-            .find(({ playlistId }) => playlistId === ctx.options!.getString("id")!);
+            .find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
         if (!getUserPlaylist) {
             await ctx.send({
                 embeds: [

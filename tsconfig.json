@@ -1,5 +1,5 @@
 {
-    "extends": "@hazmi35/eslint-config",
+    "extends": "@rahagia/eslint-config",
     "compilerOptions": {
         "alwaysStrict": true,
         "skipLibCheck": true,

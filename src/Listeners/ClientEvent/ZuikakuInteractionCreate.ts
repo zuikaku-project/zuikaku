@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 /* eslint-disable max-lines */
 import { GuildSettings, QueueManager, ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
@@ -88,26 +89,60 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
 
         if (interaction.isAutocomplete()) {
             if (interaction.commandName === "help") {
-                await interaction.respond(interaction.options.getString("command")
-                    ? this.client.commands
-                        .filter(
-                            command => command.meta.name === interaction.options.getString("command")?.split(" ")[0].trim()
-                        ).map(command => (
-                            {
-                                name: `${command.meta.name} - ${command.meta.description!} `,
-                                value: command.meta.name
-                            }
-                        ))
-                    : this.client.commands
-                        .filter(command => command.meta.slash !== undefined)
-                        .map(command => (
-                            {
-                                name: `${command.meta.name} - ${command.meta.description!} `,
-                                value: command.meta.name
-                            }
-                        ))
-                        .sort((b, a) => b.name.localeCompare(a.name))
-                        .slice(0, 25));
+                const getCommandOptions = interaction.options.getString("command");
+                await interaction.respond(
+                    getCommandOptions
+                        ? this.client.commands
+                            .filter(command => command.meta.name === getCommandOptions.split(" ")[0].trim())
+                            .map(command => (
+                                {
+                                    name: `${command.meta.name} - ${command.meta.description!} `,
+                                    value: command.meta.name
+                                }
+                            ))
+                        : this.client.commands
+                            .filter(command => command.meta.slash !== undefined)
+                            .map(command => (
+                                {
+                                    name: `${command.meta.name} - ${command.meta.description!} `,
+                                    value: command.meta.name
+                                }
+                            ))
+                            .sort((b, a) => b.name.localeCompare(a.name))
+                            .slice(0, 25)
+                );
+            }
+            if (interaction.commandName === "playlist") {
+                if (
+                    ["add", "load", "rename", "view", "playlist"].includes(interaction.options.getSubcommand(false) ?? "") ||
+                    (interaction.options.getSubcommandGroup(false) === "drop" && interaction.options.getSubcommand(false) === "track")
+                ) {
+                    const getUserData = this.client.database.entity.users.cache.get(interaction.user.id);
+                    const getPlaylist = interaction.options.getString("playlist");
+                    if (getUserData) {
+                        const getPlaylistFromId = getUserData.playlists.find(playlist => [playlist.playlistId, playlist.playlistName].includes(getPlaylist?.split(" ")[0].trim() ?? ""));
+                        const getPlaylistData =
+                            getPlaylistFromId
+                                ? [
+                                    {
+                                        // eslint-disable-next-line no-eval
+                                        name: `${getPlaylistFromId.playlistName} - ${getPlaylistFromId.playlistTracks.length} tracks (${this.client.utils.parseMs(eval(getPlaylistFromId.playlistTracks.map(x => x.trackLength).join("+")) as number, { colonNotation: true }).colonNotation}`,
+                                        value: getPlaylistFromId.playlistId
+                                    }
+                                ]
+                                : getUserData.playlists
+                                    .map(playlist => (
+                                        {
+                                            // eslint-disable-next-line no-eval
+                                            name: `${playlist.playlistName} - ${playlist.playlistTracks.length} tracks (${this.client.utils.parseMs(eval(playlist.playlistTracks.map(x => x.trackLength).join("+")) as number, { colonNotation: true }).colonNotation})`,
+                                            value: playlist.playlistId
+                                        }
+                                    ))
+                                    .sort((b, a) => b.name.localeCompare(a.name))
+                                    .slice(0, 25);
+                        await interaction.respond(getPlaylistData);
+                    }
+                }
             }
         }
 

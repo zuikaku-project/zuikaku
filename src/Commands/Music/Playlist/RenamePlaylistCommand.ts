@@ -13,10 +13,11 @@ import { MessageActionRow, MessageButton } from "discord.js";
         type: "SUB_COMMAND",
         options: [
             {
-                name: "id",
-                description: "Id of the playlist",
+                name: "playlist",
+                description: "Id or name of the playlist",
                 type: "STRING",
-                required: true
+                required: true,
+                autocomplete: true
             },
             {
                 name: "name",
@@ -46,7 +47,7 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
                 .setLabel("Decline")
                 .setStyle("DANGER")
         );
-        const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("id")!);
+        const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
         if (!getUserPlaylist) {
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id ")] });
             return undefined;

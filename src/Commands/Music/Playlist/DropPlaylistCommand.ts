@@ -18,10 +18,11 @@ import { MessageActionRow, MessageButton } from "discord.js";
                 type: "SUB_COMMAND",
                 options: [
                     {
-                        name: "id",
-                        description: "Id of the playlist",
+                        name: "playlist",
+                        description: "Id or name of the playlist",
                         type: "STRING",
-                        required: true
+                        required: true,
+                        autocomplete: true
                     }
                 ]
             },
@@ -31,10 +32,11 @@ import { MessageActionRow, MessageButton } from "discord.js";
                 type: "SUB_COMMAND",
                 options: [
                     {
-                        name: "id",
-                        description: "Id of the playlist",
+                        name: "playlist",
+                        description: "Id or name of the playlist",
                         type: "STRING",
-                        required: true
+                        required: true,
+                        autocomplete: true
                     },
                     {
                         name: "trackid",
@@ -67,7 +69,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                 .setStyle("DANGER")
         );
         if (ctx.options?.getSubcommand(false) === "playlist") {
-            const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("id")!);
+            const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
             if (!getUserPlaylist) {
                 await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id ")] });
                 return undefined;
@@ -97,7 +99,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                 if (reason !== "finished") void ctx.send({ embeds: [createEmbed("error", "**The request has been canceled because no respond!**")], components: [] }).catch(() => null);
             });
         } else {
-            const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("id")!);
+            const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
             if (!getUserPlaylist) {
                 await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id ")] });
                 return undefined;

@@ -18,7 +18,6 @@ export class QueueManager {
     public previous!: ShoukakuTrack | null;
     public volume!: number;
     public playerMessage!: Record<"lastNowplayingMessage" | "lastPlayerMessage" | "lastResolvingMessage", Message | null>;
-    public exceptionCount!: number;
     public _timeout!: NodeJS.Timeout | null;
     public _isStopped!: boolean;
     public _isFromPrev!: boolean;
@@ -43,7 +42,6 @@ export class QueueManager {
             enumerable: true,
             writable: true
         });
-        Object.defineProperty(this, "exceptionCount", { value: 0, enumerable: true, writable: true });
         Object.defineProperty(this, "_timeout", { value: null, writable: true });
         Object.defineProperty(this, "_isStopped", { value: false, writable: true });
         Object.defineProperty(this, "_isFromPrev", { value: false, writable: true });
@@ -125,7 +123,6 @@ export class QueueManager {
 
     public async playTrack(startTime = 0): Promise<void> {
         if (!this._isResolved) return;
-        if (this.exceptionCount % 5 === 0) await new Promise(resolve => setTimeout(resolve, 5000));
         const { requester, durationFormated } = this.current!;
         if (this.current) {
             if (this._timeout) {
@@ -135,53 +132,37 @@ export class QueueManager {
             if (this.getVoice?.type === "GUILD_STAGE_VOICE") {
                 await this.getGuild?.me?.voice.setSuppressed(false);
             }
-            try {
-                if (!this.current.track.length) {
-                    this._isResolved = false;
-                    await this.getText?.send({
-                        embeds: [
-                            createEmbed("info", "**<a:loading:804201332243955734> | Resolving track...**")
-                        ]
-                    })
-                        .then(x => this.playerMessage.lastResolvingMessage = x)
-                        .catch(() => null);
-                    await this.current.resolve!();
-                }
-            } catch {
-                this.exceptionCount++;
-                if (this.exceptionCount === 20) {
-                    await this.getText?.send({
-                        embeds: [
-                            createEmbed("info")
-                                .setAuthor({
-                                    name: "This Player has been automatically detroy because hit the limit of 20 exceptions",
-                                    iconURL: this.shoukaku.client.user!.displayAvatarURL()
-                                })
-                        ]
-                    })
-                        .catch(() => null);
-                    this.destroyPlayer();
-                    return;
-                }
-                await this.playerMessage.lastResolvingMessage?.edit({
+            if (!this.current.track.length) {
+                this._isResolved = false;
+                await this.getText?.send({
                     embeds: [
-                        createEmbed("info")
-                            .setAuthor({
-                                name: `Unable to resolve ${this.current.info.uri ?? this.current.info.title ?? "UNKNOWN_TRACK"}. Skipping...`,
-                                iconURL: this.shoukaku.client.user!.displayAvatarURL()
-                            })
+                        createEmbed("info", "**<a:loading:804201332243955734> | Resolving track...**")
                     ]
                 })
+                    .then(x => this.playerMessage.lastResolvingMessage = x)
                     .catch(() => null);
-                this.playerMessage.lastResolvingMessage = null;
-                this._isResolved = true;
-                this.shoukaku.emit("playerTrackEnd", this.player);
+                await this.current.resolve!()
+                    .then(async () => {
+                        this._isResolved = true;
+                        await this.playerMessage.lastResolvingMessage?.delete();
+                        this.playerMessage.lastResolvingMessage = null;
+                    })
+                    .catch(async () => {
+                        await this.playerMessage.lastResolvingMessage?.edit({
+                            embeds: [
+                                createEmbed("info")
+                                    .setAuthor({
+                                        name: `Unable to resolve ${this.current?.info.uri ?? this.current?.info.title ?? "UNKNOWN_TRACK"}. Skipping...`,
+                                        iconURL: this.shoukaku.client.user!.displayAvatarURL()
+                                    })
+                            ]
+                        })
+                            .catch(() => null);
+                        this.playerMessage.lastResolvingMessage = null;
+                        this._isResolved = true;
+                        return this.shoukaku.emit("playerTrackEnd", this.player);
+                    });
             }
-        }
-        if (this.current?.track.length) {
-            this.playerMessage.lastResolvingMessage?.delete().catch(() => null);
-            this.playerMessage.lastResolvingMessage = null;
-            this._isResolved = true;
             Object.defineProperty(this.current, "requester", { value: requester, enumerable: true, writable: true });
             Object.defineProperty(this.current, "durationFormated", { value: durationFormated, enumerable: true, writable: true });
             Object.defineProperty(this.current, "thumbnail", { value: await this.shoukaku.getThumbnail(this.current.info.uri!) });

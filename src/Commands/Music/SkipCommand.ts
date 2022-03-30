@@ -56,7 +56,7 @@ export default class SkipCommand extends ZuikakuCommand {
             } else {
                 queue.tracks = queue.tracks.slice(ctx.options!.getNumber("range")! - 1);
             }
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `You has been skipped [${ctx.options!.getNumber("range")! - 1}] track(s)`)] })
+            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `You has been skipped ${ctx.options!.getNumber("range")! - 1} track(s)`)] })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
