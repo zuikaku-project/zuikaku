@@ -1,4 +1,4 @@
-import { IPluginComponent, AppleMusicMetaTagResponse, AppleTracks, DeezerTrack, ILavalinkPayloadTrack, IPluginOptions, SpotifyTrack } from "@zuikaku/types";
+import { IPluginComponent, AppleMusicMetaTagResponse, AppleTracks, DeezerTrack, ILavalinkPayloadTrack, IPluginOptions, SpotifyTrack, PlaylistTrack } from "@zuikaku/types";
 import { load } from "cheerio";
 import { Collection } from "discord.js";
 import { join, resolve } from "node:path";
@@ -82,33 +82,45 @@ export class PluginManager {
     }
 
     public async retrieveTrack(unresolvedTrack: ILavalinkPayloadTrack): Promise<ShoukakuTrack | undefined> {
-        const response = await this.getTracks(`${unresolvedTrack.info.author ?? ""} ${unresolvedTrack.info.title ?? ""}`);
+        const isFromPlugin = this.appleRegex.test(unresolvedTrack.info.uri ?? "") || this.deezerRegex.test(unresolvedTrack.info.uri ?? "");
+        const response = await this.getTracks(
+            (
+                isFromPlugin
+                    ? `${unresolvedTrack.info.author ?? ""} ${unresolvedTrack.info.title ?? ""}`
+                    : unresolvedTrack.info.uri
+            ) ?? ""
+        );
         return response.tracks[0];
     }
 
-    public buildUnresolved(unresolvedTrack: AppleTracks | DeezerTrack | SpotifyTrack): ILavalinkPayloadTrack {
+    public buildUnresolved(unresolvedTrack: AppleTracks | DeezerTrack | PlaylistTrack | SpotifyTrack): ILavalinkPayloadTrack {
         return {
             track: "",
             info: {
                 identifier: (unresolvedTrack as AppleTracks).id ??
                     (unresolvedTrack as DeezerTrack).id ??
                     (unresolvedTrack as SpotifyTrack).id ??
+                    (unresolvedTrack as PlaylistTrack).trackId ??
                     "",
                 title: (unresolvedTrack as AppleTracks).name ??
                     (unresolvedTrack as DeezerTrack).title ??
                     (unresolvedTrack as SpotifyTrack).name ??
+                    (unresolvedTrack as PlaylistTrack).trackTitle ??
                     "",
                 author: (unresolvedTrack as AppleTracks).artistName ??
                     (unresolvedTrack as DeezerTrack).artist?.name ??
                     (unresolvedTrack as SpotifyTrack).artists?.map(x => x.name).join(" ") ??
+                    (unresolvedTrack as PlaylistTrack).trackAuthor ??
                     "",
                 length: (unresolvedTrack as AppleTracks).durationInMillis ??
                     (unresolvedTrack as DeezerTrack).duration ??
                     (unresolvedTrack as SpotifyTrack).duration_ms ??
+                    (unresolvedTrack as PlaylistTrack).trackLength ??
                     0,
                 uri: (unresolvedTrack as AppleTracks).url ??
                     (unresolvedTrack as DeezerTrack).link ??
                     (unresolvedTrack as SpotifyTrack).external_urls?.spotify ??
+                    (unresolvedTrack as PlaylistTrack).trackURL ??
                     ""
             }
         };

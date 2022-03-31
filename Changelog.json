@@ -186,5 +186,15 @@
             "Migrate lyrics service to spotify",
             "Optimizing code"
         ]
+    },
+    {
+        "date": "31 March 2022",
+        "title": "Release Zuikaku@3.10.0",
+        "content": [
+            "Load command will return with lazy track and need to resolve before play",
+            "Add Autocomplete to command playlist",
+            "Migrate canvas endpoint",
+            "Update package"
+        ]
     }
 ]

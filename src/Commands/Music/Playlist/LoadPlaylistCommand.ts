@@ -1,7 +1,7 @@
 import { isNoNodesAvailable, isQueueReachLimit, isSameTextChannel, isSameVoiceChannel, isUserInTheVoiceChannel, isValidVoiceChannel, ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
+import { ICommandComponent, PlaylistTrack } from "@zuikaku/types";
 import { createEmbed, createMusicEmbed } from "@zuikaku/Utils";
 import { Util } from "discord.js";
 
@@ -53,7 +53,9 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 .catch(() => null);
             return undefined;
         }
-        const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
+        const getUserPlaylist = getUserDatabase.playlists.find(
+            ({ playlistId }) => playlistId === ctx.options!.getString("playlist")!
+        );
         if (!getUserPlaylist) {
             await ctx.send({
                 embeds: [
@@ -71,17 +73,30 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 textId: ctx.channel!.id,
                 voiceId: ctx.member!.voice.channel!.id
             });
-            const getTracks = await Promise.all(getUserPlaylist.playlistTracks.map(({ trackURL }) => this.client.shoukaku.getTracks(trackURL).then(({ tracks }) => tracks[0])));
-            await guildQueue.addTrack(getTracks.map(track => {
-                Object.defineProperty(track, "requester", { value: ctx.author, enumerable: true, configurable: true });
-                Object.defineProperty(track, "durationFormated", { value: this.client.utils.parseMs(track.info.length!, { colonNotation: true }).colonNotation, enumerable: true, configurable: true });
-                return track;
-            }));
+            const buildUnresolved = getUserPlaylist.playlistTracks.map(
+                (x: PlaylistTrack) => this.client.shoukaku.plugin.buildUnresolved(x)
+            );
+            const buildResponse = this.client.shoukaku.plugin.buildResponse("PLAYLIST_LOADED", buildUnresolved, { name: getUserPlaylist.playlistName, selectedTrack: -1 });
+            await guildQueue.addTrack(
+                buildResponse.tracks.map(track => {
+                    Object.defineProperty(track, "requester", {
+                        value: ctx.author,
+                        enumerable: true,
+                        configurable: true
+                    });
+                    Object.defineProperty(track, "durationFormated", {
+                        value: this.client.utils.parseMs(track.info.length!, { colonNotation: true }).colonNotation,
+                        enumerable: true,
+                        configurable: true
+                    });
+                    return track;
+                })
+            );
             if (fromGuildPlayer) await this.client.shoukaku.updateGuildPlayerEmbed(ctx.guild!);
             await ctx.send({
                 embeds: [
                     // eslint-disable-next-line no-eval
-                    createMusicEmbed(ctx, "info", `I enqueued ${getTracks.length} track(s) from ${Util.escapeMarkdown(getUserPlaylist.playlistName)}(${this.client.utils.parseMs(Number(eval(getTracks.map(({ info }) => info.length).join("+"))), { colonNotation: true }).colonNotation})`)
+                    createMusicEmbed(ctx, "info", `I enqueued ${buildResponse.tracks.length} track(s) from ${Util.escapeMarkdown(getUserPlaylist.playlistName)} (${this.client.utils.parseMs(Number(eval(buildResponse.tracks.map(({ info }) => info.length).join("+"))), { colonNotation: true }).colonNotation})`)
                 ]
             })
                 .then(x => {

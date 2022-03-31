@@ -156,3 +156,11 @@ export interface SpotifyShow {
     id: string;
     name: string;
 }
+
+export interface PlaylistTrack {
+    trackId?: string;
+    trackAuthor?: string;
+    trackTitle?: string;
+    trackURL?: string;
+    trackLength?: number;
+}

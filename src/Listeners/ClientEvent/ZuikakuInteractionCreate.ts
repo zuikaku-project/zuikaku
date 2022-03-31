@@ -89,11 +89,11 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
 
         if (interaction.isAutocomplete()) {
             if (interaction.commandName === "help") {
-                const getCommandOptions = interaction.options.getString("command");
+                const getCommandFromName = interaction.options.getString("command");
                 await interaction.respond(
-                    getCommandOptions
+                    getCommandFromName
                         ? this.client.commands
-                            .filter(command => command.meta.name === getCommandOptions.split(" ")[0].trim())
+                            .filter(command => [command.meta.name, command.meta.category].includes(getCommandFromName.split(" ")[0].trim()))
                             .map(command => (
                                 {
                                     name: `${command.meta.name} - ${command.meta.description!} `,
