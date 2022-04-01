@@ -7,14 +7,14 @@ spcs: ec94116a9a2c4212936afc33f55b697b
 sessionid: 14643228375%3AwtGbRlhe4qGtU8%3A9
 nodes:
   - name: rahagia
-    url: node-au.rahagia.tech:3003
+    url: node-au.rahagia.tech:3004
     auth: EnterpriseWangy
   - name: fabio
     url: node-au.panel.fab1o.xyz:2333
     auth: EnterpriseWangy
 api:
   auth: EnterpriseWangyWangyHuhHahHuhHah
-  url: https://zuikaku-canvas-api.maakoo.my.id/
+  url: http://node-au.rahagia.tech:3008/
 devMode: false
 devGuild:
   - "770540956163899423"
