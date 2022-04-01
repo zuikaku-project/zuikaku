@@ -277,7 +277,12 @@ export default class PlayCommand extends ZuikakuCommand {
                     content: "ㅤ",
                     components: [rowSelectMenuEnd]
                 })
-                    .then(x => setTimeout(() => x.delete().catch(() => null), 5000)).catch(() => null);
+                    .then(x => {
+                        if (fromGuildPlayer) {
+                            setTimeout(() => x.delete().catch(() => null), 5000);
+                        }
+                    })
+                    .catch(() => null);
             }
         });
     }
