@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable func-names, @typescript-eslint/naming-convention */
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { createEmbed } from "@zuikaku/Utils/GenerateEmbed";
+import { createMusicEmbed } from "@zuikaku/Utils/GenerateEmbed";
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export function ZuikakuInhibitor<T extends (ctx: CommandContext, ...args: any[]) => Promise<string | void> | (string | void)>(func: T) {
@@ -18,7 +18,11 @@ export function ZuikakuInhibitor<T extends (ctx: CommandContext, ...args: any[])
                     if (ctx.isInteraction() && !ctx.deferred) {
                         await ctx.deferReply(ctx.channel?.id === getGuildDatabase?.guildPlayer?.channelId);
                     }
-                    const msg = await ctx.send({ embeds: [createEmbed("info", message)] });
+                    const msg = await ctx.send({
+                        embeds: [
+                            createMusicEmbed(ctx, "info", message)
+                        ]
+                    });
                     if (ctx.channel?.id === getGuildDatabase?.guildPlayer?.channelId) {
                         setTimeout(() => msg.delete().catch(() => null), 5000);
                     }
