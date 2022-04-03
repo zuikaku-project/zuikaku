@@ -57,6 +57,16 @@ app.get("/changelog", (_, res) => {
             content: x.content.map((z, i) => `${i + 1}. ${z}`)
         })));
 });
+app.get("/avatars", async (_, res) => {
+    const myAvatar = client.user?.displayAvatarURL({ format: "png", size: 4096 });
+    const ownerAvatar = await client.users.fetch(client.options.ownerId[0]).then(x => x.displayAvatarURL({ format: "png", size: 4096 }));
+    res
+        .status(200)
+        .send({
+            myAvatar,
+            ownerAvatar
+        });
+});
 app.listen(process.env.SERVER_PORT ?? 3002, () => {
     console.log(`Server is running on port ${process.env.SERVER_PORT ?? 3002}`);
 });
