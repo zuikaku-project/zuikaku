@@ -1,7 +1,4 @@
 {
-    "plugins": [
-        "prettier"
-    ],
     "extends": ["@rahagia/eslint-config/typescript"],
     "parserOptions": {
         "project": "./tsconfig.json"
