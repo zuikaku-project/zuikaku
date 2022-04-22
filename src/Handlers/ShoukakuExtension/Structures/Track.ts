@@ -72,7 +72,7 @@ export class Track {
 
     public static async getClosestTrack(shoukaku: ShoukakuHandler, track: Track): Promise<Track | undefined> {
         const isFromPlugin = shoukaku.plugin.appleRegex.test(track.info.uri ?? "") || shoukaku.plugin.deezerRegex.test(track.info.uri ?? "") || shoukaku.plugin.spotifyRegex.test(track.info.uri ?? "");
-        const response = await shoukaku.getTracks(
+        let response = await shoukaku.getTracks(
             track.isrc?.length
                 ? track.isrc
                 : (
@@ -81,6 +81,16 @@ export class Track {
                         : track.info.uri
                 ) ?? ""
         );
+        if (
+            ["LOAD_FAILED", "NO_MATCHES"].includes(response.type) ||
+            !response.tracks.length
+        ) {
+            response = await shoukaku.getTracks(
+                isFromPlugin
+                    ? `${track.info.author ?? ""} ${track.info.title ?? ""}`
+                    : track.info.uri ?? ""
+            );
+        }
         const firstTrack = response.tracks[0];
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (firstTrack) {
