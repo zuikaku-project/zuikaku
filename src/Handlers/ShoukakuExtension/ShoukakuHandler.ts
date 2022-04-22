@@ -45,7 +45,7 @@ export class ShoukakuHandler extends Shoukaku {
             return new TrackList(requestTracks);
         }
         // @ts-expect-error ts-migrate(2339) FIXME: Property 'getTracks' does not exist on type 'ShoukakuHandler'.
-        const requestTracks = await this.getNode()?.rest.router.loadtracks({ identifier: `${searchTypes[option ?? "youtube"]}:${query}` }).get() as unknown as LoadTrackResponse // eslint-disable-line
+        const requestTracks = await this.getNode()?.rest.router.loadtracks({ identifier: `${searchTypes[option ?? "youtube"]}${query}` }).get() as unknown as LoadTrackResponse // eslint-disable-line
         return new TrackList(requestTracks);
     }
 
