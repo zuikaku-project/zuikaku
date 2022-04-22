@@ -22,8 +22,8 @@ export default class StopCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        queue.destroyPlayer();
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        dispatcher.destroyPlayer();
         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been stopped Music Player")] })
             .then(x => {
                 if (fromGuildPlayer) {

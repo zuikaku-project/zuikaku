@@ -24,12 +24,12 @@ export default class LyricsCommand extends ZuikakuCommand {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const spotify = ctx.member?.presence?.activities.filter(x => x.name === "Spotify")[0];
         const lyrics = ctx.options?.getString("title");
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id);
         let title;
         if (lyrics) {
             title = lyrics;
-        } else if (ctx.member!.voice.channelId === queue?.voiceId) {
-            title = `${queue.current!.info.title!} ${queue.current!.info.author!}`;
+        } else if (ctx.member!.voice.channelId === dispatcher?.voiceId) {
+            title = `${dispatcher.queue.current!.info.title!} ${dispatcher.queue.current!.info.author!}`;
         } else if (spotify) {
             title = `${spotify.state!} ${spotify.details!}`;
         } else {

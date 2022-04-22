@@ -13,14 +13,14 @@ import { ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
     public async execute(player: ShoukakuPlayer): Promise<void> {
-        const queue = this.client.shoukaku.queue.get(player.connection.guildId);
-        if (queue) {
-            const getGuildDatabase = await queue.getGuildDatabase;
-            if (queue.playerMessage.lastPlayerMessage) {
-                queue.playerMessage.lastPlayerMessage.delete().catch(() => null);
+        const dispatcher = this.client.shoukaku.dispatcher.get(player.connection.guildId);
+        if (dispatcher) {
+            const getGuildDatabase = await dispatcher.getGuildDatabase;
+            if (dispatcher.queueMessage.lastPlayerMessage) {
+                dispatcher.queueMessage.lastPlayerMessage.delete().catch(() => null);
             }
             if (getGuildDatabase?.guildPlayer?.channelId) {
-                await queue.shoukaku.updateGuildPlayerEmbed(queue.getGuild);
+                await dispatcher.shoukaku.updateGuildPlayerEmbed(dispatcher.getGuild);
             } else {
                 const playerButton = new MessageActionRow().addComponents(
                     // Stop
@@ -39,9 +39,9 @@ export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
                     new MessageButton()
                         .setLabel("BACK")
                         .setEmoji(":last_track:940768883554525235")
-                        .setStyle(queue.previous ? "PRIMARY" : "SECONDARY")
+                        .setStyle(dispatcher.queue.previous ? "PRIMARY" : "SECONDARY")
                         .setCustomId(this.client.utils.encodeDecodeBase64String("Player_LAST-TRACK"))
-                        .setDisabled(!queue.previous),
+                        .setDisabled(!dispatcher.queue.previous),
                     // Skip
                     new MessageButton()
                         .setLabel("NEXT")
@@ -50,22 +50,22 @@ export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
                         .setCustomId(this.client.utils.encodeDecodeBase64String("Player_NEXT-TRACK")),
                     // Repeat
                     new MessageButton()
-                        .setLabel(queue.queueRepeat ? "TRACK" : queue.trackRepeat ? "DISABLE" : "QUEUE")
-                        .setEmoji(queue.queueRepeat ? ":repeat_one:924117419960725534" : queue.trackRepeat ? ":no_repeat:941342881845768282" : ":repeat:891234382097031168")
+                        .setLabel(dispatcher.queueRepeat ? "TRACK" : dispatcher.trackRepeat ? "DISABLE" : "QUEUE")
+                        .setEmoji(dispatcher.queueRepeat ? ":repeat_one:924117419960725534" : dispatcher.trackRepeat ? ":no_repeat:941342881845768282" : ":repeat:891234382097031168")
                         .setStyle("PRIMARY")
                         .setCustomId(this.client.utils.encodeDecodeBase64String("Player_REPEAT"))
                 );
-                const lastMusicMessageId = await queue.getText?.send({
+                const lastMusicMessageId = await dispatcher.getText?.send({
                     components: [playerButton],
                     embeds: [
                         createEmbed("info")
-                            .setAuthor({ name: `${queue.current!.info.title!} (${queue.current!.durationFormated!})` })
-                            .setThumbnail(queue.current?.thumbnail ?? "")
+                            .setAuthor({ name: `${dispatcher.queue.current!.info.title!} (${dispatcher.queue.current!.durationFormated!})` })
+                            .setThumbnail(dispatcher.queue.current?.thumbnail ?? "")
                     ]
                 }).catch(() => null);
-                queue.playerMessage.lastPlayerMessage = lastMusicMessageId ?? null;
-                if (queue._isFromPrev) {
-                    queue._isFromPrev = false;
+                dispatcher.queueMessage.lastPlayerMessage = lastMusicMessageId ?? null;
+                if (dispatcher.queueChecker._isFromPrevious) {
+                    dispatcher.queueChecker._isFromPrevious = false;
                 }
             }
         }

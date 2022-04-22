@@ -10,22 +10,22 @@ import { PlayerUpdate, ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuPlayerUpdate extends ZuikakuListener {
     public async execute(player: ShoukakuPlayer, payload: PlayerUpdate): Promise<void> {
-        const queue = this.client.shoukaku.queue.get(player.connection.guildId);
-        if (queue) {
+        const dispatcher = this.client.shoukaku.dispatcher.get(player.connection.guildId);
+        if (dispatcher) {
             await this.client.database.entity.guilds.set(
-                queue.player.connection.guildId,
+                dispatcher.player.connection.guildId,
                 "persistenceQueue",
                 JSON.parse(
                     JSON.stringify({
                         guildId: payload.guildId,
-                        textId: queue.textId,
-                        voiceId: queue.voiceId,
-                        tracks: queue.tracks.filter(x => x.track.length),
-                        current: queue.current,
-                        previous: queue.previous,
-                        queueRepeat: queue.queueRepeat,
-                        trackRepeat: queue.trackRepeat,
-                        volume: queue.volume,
+                        textId: dispatcher.textId,
+                        voiceId: dispatcher.voiceId,
+                        tracks: dispatcher.queue.tracks.filter(x => x.track.length),
+                        current: dispatcher.queue.current,
+                        previous: dispatcher.queue.previous,
+                        queueRepeat: dispatcher.queueRepeat,
+                        trackRepeat: dispatcher.trackRepeat,
+                        volume: dispatcher.volume,
                         position: payload.state.position ?? 0
                     })
                 )

@@ -29,15 +29,15 @@ export default class SkipCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (ctx.options!.getNumber("range")! > 0) {
-            if (ctx.options!.getNumber("range")! > queue.tracks.length) {
+            if (ctx.options!.getNumber("range")! > dispatcher.queue.tracks.length) {
                 await ctx.send({
                     embeds: [
                         createMusicEmbed(
                             ctx,
                             "info",
-                            `I am sorry, but ${queue.tracks.length ? `only ${queue.tracks.length} track(s) in the queue` : "Nothing track(s) in the queue"}**`
+                            `I am sorry, but ${dispatcher.queue.tracks.length ? `only ${dispatcher.queue.tracks.length} track(s) in the queue` : "Nothing track(s) in the queue"}**`
                         )
                     ]
                 })
@@ -49,12 +49,12 @@ export default class SkipCommand extends ZuikakuCommand {
                     .catch(() => null);
                 return undefined;
             }
-            if (queue.queueRepeat) {
+            if (dispatcher.queueRepeat) {
                 for (let i = 0; i < ctx.options!.getNumber("range")! - 1; i++) {
-                    queue.tracks.push(queue.tracks.shift()!);
+                    dispatcher.queue.tracks.push(dispatcher.queue.tracks.shift()!);
                 }
             } else {
-                queue.tracks = queue.tracks.slice(ctx.options!.getNumber("range")! - 1);
+                dispatcher.queue.tracks = dispatcher.queue.tracks.slice(ctx.options!.getNumber("range")! - 1);
             }
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `You has been skipped ${ctx.options!.getNumber("range")! - 1} track(s)`)] })
                 .then(x => {
@@ -63,7 +63,7 @@ export default class SkipCommand extends ZuikakuCommand {
                     }
                 })
                 .catch(() => null);
-            queue.stopTrack();
+            dispatcher.stopTrack();
         } else {
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been skipped currently playing")] })
                 .then(x => {
@@ -72,7 +72,7 @@ export default class SkipCommand extends ZuikakuCommand {
                     }
                 })
                 .catch(() => null);
-            queue.stopTrack();
+            dispatcher.stopTrack();
         }
     }
 }

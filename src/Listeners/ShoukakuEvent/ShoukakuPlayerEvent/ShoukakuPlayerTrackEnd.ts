@@ -10,28 +10,28 @@ import { ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuPlayerTrackEnd extends ZuikakuListener {
     public async execute(player: ShoukakuPlayer): Promise<void> {
-        const queue = this.client.shoukaku.queue.get(player.connection.guildId);
-        if (queue) {
-            if (queue.playerMessage.lastPlayerMessage) {
-                queue.playerMessage.lastPlayerMessage.delete().catch(() => null);
-                queue.playerMessage.lastPlayerMessage = null;
+        const dispatcher = this.client.shoukaku.dispatcher.get(player.connection.guildId);
+        if (dispatcher) {
+            if (dispatcher.queueMessage.lastPlayerMessage) {
+                dispatcher.queueMessage.lastPlayerMessage.delete().catch(() => null);
+                dispatcher.queueMessage.lastPlayerMessage = null;
             }
-            if (queue.trackRepeat) queue.tracks.unshift(queue.current!);
-            if (queue.queueRepeat) await queue.addTrack(queue.current!);
-            if (!queue._isFromPrev && !queue.trackRepeat) {
-                queue.previous = queue.current!;
+            if (dispatcher.trackRepeat) dispatcher.queue.tracks.unshift(dispatcher.queue.current!);
+            if (dispatcher.queueRepeat) await dispatcher.queue.addTrack(dispatcher.queue.current!);
+            if (!dispatcher.queueChecker._isFromPrevious && !dispatcher.trackRepeat) {
+                dispatcher.queue.previous = dispatcher.queue.current!;
             }
-            queue.current = null;
-            if (queue.tracks.length === 0) {
-                const getGuildDatabase = await queue.getGuildDatabase;
+            dispatcher.queue.current = null;
+            if (dispatcher.queue.tracks.length === 0) {
+                const getGuildDatabase = await dispatcher.getGuildDatabase;
                 if (getGuildDatabase?.guildPlayer?.channelId) {
-                    setTimeout(() => queue.shoukaku.updateGuildPlayerEmbed(queue.getGuild), 500);
+                    setTimeout(() => dispatcher.shoukaku.updateGuildPlayerEmbed(dispatcher.getGuild), 500);
                 }
-                queue.setTimeout(3 * 6e4, "Inactive player for 3 minutes. The player has been destroyed");
+                dispatcher.setTimeout(3 * 6e4, "Inactive player for 3 minutes. The player has been destroyed");
                 return;
             }
-            queue.current = queue.tracks.shift()!;
-            await queue.playTrack();
+            dispatcher.queue.current = dispatcher.queue.tracks.shift()!;
+            await dispatcher.playTrack();
         }
     }
 }

@@ -1,16 +1,16 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import { TrackList } from "@zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "@zuikaku/Structures/ZuikakuPlugin";
-import { IPluginComponent } from "@zuikaku/types";
+import { IPluginComponent, LavalinkTrack } from "@zuikaku/types";
 import petitio from "petitio";
-import { ShoukakuTrack, ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<IPluginComponent>({
-    name: "artist",
+    name: "album",
     category: "apple"
 })
-export default class appleArtistResolver extends ZuikakuPlugin {
-    public cache: Map<string, { tracks: ShoukakuTrack[]; playlistName: string }> = new Map();
-    public async fetch(trackId: string): Promise<ShoukakuTrackList | undefined> {
+export default class appleAlbumResolver extends ZuikakuPlugin {
+    public cache: Map<string, { tracks: LavalinkTrack[]; playlistName: string }> = new Map();
+    public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {
             if (this.cache.has(trackId)) {
                 return this.plugin.buildResponse("PLAYLIST_LOADED",
@@ -20,7 +20,7 @@ export default class appleArtistResolver extends ZuikakuPlugin {
                         selectedTrack: -1
                     });
             }
-            const request = await petitio(`${this.plugin.appleBaseURL}/artists/${trackId}?views=top-songs`)
+            const request = await petitio(`${this.plugin.appleBaseURL}/albums/${trackId}`)
                 .header("Authorization", this.plugin.appleToken)
                 .send()
                 .catch(() => null);
@@ -30,27 +30,16 @@ export default class appleArtistResolver extends ZuikakuPlugin {
             }
             const data: AppleAPIResponse = request.json();
             if (data.errors || !data.data) {
-                console.log(data);
                 return this.plugin.buildResponse("LOAD_FAILED", []);
             }
-            const appleArtist = data.data.filter(x => x.type === "artists")[0]!;
-            const playlistName = appleArtist.attributes.name;
-            const filterData = appleArtist.views["top-songs"].data.filter(x => x.type === "songs");
-            while (data.data[0].views["top-songs"].next) {
-                const nextData: AppleMusicPaginationTrack = await petitio(
-                    `${this.plugin.appleBaseURL}/${data.data[0].views["top-songs"].next.split("/").slice(4).join("/")}`
-                )
-                    .header("Authorization", this.plugin.appleToken)
-                    .json();
-                data.data[0].views["top-songs"].next = nextData.next;
-                filterData.push(...nextData.data.filter(x => x.type === "songs"));
-            }
+            const appleAlbum = data.data.filter(x => x.type === "albums")[0]!;
+            const playlistName = appleAlbum.attributes.name;
+            const filterData = appleAlbum.relationships.tracks.data.filter(x => x.type === "songs");
             filterData.map(x => x.attributes.id = x.id);
             const unresolvedAppleTrack = filterData.map(x => this.plugin.buildUnresolved(x.attributes));
             if (trackId) this.cache.set(trackId, { tracks: unresolvedAppleTrack, playlistName });
             return this.plugin.buildResponse("PLAYLIST_LOADED", unresolvedAppleTrack, { name: playlistName, selectedTrack: -1 });
-        } catch (e) {
-            console.log(e);
+        } catch {
             return this.plugin.buildResponse("LOAD_FAILED", []);
         }
     }
@@ -60,13 +49,12 @@ interface AppleAPIResponse {
     errors?: unknown[];
     data?: {
         id: string;
-        type?: "artists";
+        type?: "albums";
         attributes: {
             name: string;
         };
-        views: {
-            "top-songs": {
-                next?: string;
+        relationships: {
+            tracks: {
                 data: {
                     id: string;
                     type?: "songs";
@@ -79,21 +67,6 @@ interface AppleAPIResponse {
                     };
                 }[];
             };
-        };
-    }[];
-}
-
-interface AppleMusicPaginationTrack {
-    next?: string;
-    data: {
-        id: string;
-        type?: "songs";
-        attributes: {
-            id: string;
-            artistName: string;
-            url: string;
-            name: string;
-            durationInMillis: number;
         };
     }[];
 }

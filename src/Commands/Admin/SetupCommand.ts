@@ -39,7 +39,7 @@ import { Message, MessageActionRow, MessageButton, TextChannel } from "discord.j
 export default class SetupCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (ctx.options?.getSubcommand(false) === "delete") {
             const getGuildDatabase = await this.client.database.entity.guilds.get(ctx.guild!.id);
             const alreadySet = this.client.channels.resolve(getGuildDatabase?.guildPlayer?.channelId ?? "");
@@ -47,7 +47,7 @@ export default class SetupCommand extends ZuikakuCommand {
                 (await (alreadySet as TextChannel).messages
                     .fetch(getGuildDatabase?.guildPlayer?.messageId ?? "")
                     .catch(() => null))?.delete().catch(() => null);
-                if (queue) {
+                if (dispatcher) {
                     await this.client.database.entity.guilds.reset(ctx.guild!.id, "guildPlayer");
                 } else {
                     await this.client.database.entity.guilds.drop(ctx.guild!.id);
@@ -136,8 +136,8 @@ export default class SetupCommand extends ZuikakuCommand {
                         messageId: msg.id
                     }
                 );
-                if (queue) {
-                    queue.textId = (msg.channel as TextChannel).id;
+                if (dispatcher) {
+                    dispatcher.textId = (msg.channel as TextChannel).id;
                     setTimeout(() => this.client.shoukaku.updateGuildPlayerEmbed(ctx.guild!), 500);
                 }
                 await ctx.send({

@@ -1,7 +1,7 @@
 import { isNoNodesAvailable, isQueueReachLimit, isSameTextChannel, isSameVoiceChannel, isUserInTheVoiceChannel, isValidVoiceChannel, ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent, PlaylistTrack } from "@zuikaku/types";
+import { ICommandComponent } from "@zuikaku/types";
 import { createEmbed, createMusicEmbed } from "@zuikaku/Utils";
 import { Util } from "discord.js";
 
@@ -73,22 +73,22 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 textId: ctx.channel!.id,
                 voiceId: ctx.member!.voice.channel!.id
             });
-            const buildUnresolved = getUserPlaylist.playlistTracks.map(
-                (x: PlaylistTrack) => this.client.shoukaku.plugin.buildUnresolved(x)
-            );
+            const buildUnresolved = getUserPlaylist.playlistTracks.map(playlistTrack => {
+                const isrc = playlistTrack.trackIsrc ?? "";
+                const identifier = playlistTrack.trackId;
+                const author = playlistTrack.trackAuthor;
+                const title = playlistTrack.trackTitle;
+                const uri = playlistTrack.trackURL;
+                const length = playlistTrack.trackLength;
+                const artworkUrl = playlistTrack.trackArtwork ?? "";
+                const sourceName = playlistTrack.trackSource;
+                return this.client.shoukaku.plugin.buildUnresolved({ isrc, identifier, author, title, uri, length, artworkUrl, sourceName });
+            });
             const buildResponse = this.client.shoukaku.plugin.buildResponse("PLAYLIST_LOADED", buildUnresolved, { name: getUserPlaylist.playlistName, selectedTrack: -1 });
-            await guildQueue.addTrack(
+            await guildQueue.queue.addTrack(
                 buildResponse.tracks.map(track => {
-                    Object.defineProperty(track, "requester", {
-                        value: ctx.author,
-                        enumerable: true,
-                        configurable: true
-                    });
-                    Object.defineProperty(track, "durationFormated", {
-                        value: this.client.utils.parseMs(track.info.length!, { colonNotation: true }).colonNotation,
-                        enumerable: true,
-                        configurable: true
-                    });
+                    track.setRequester(ctx.author);
+                    track.setShoukaku(this.client.shoukaku);
                     return track;
                 })
             );

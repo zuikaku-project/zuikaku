@@ -21,13 +21,13 @@ export default class NightcoreCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.audioFilters.has("nightcore")) {
-            queue.audioFilters.setNightcore(false);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.filter.has("nightcore")) {
+            dispatcher.filter.setNightcore(false);
         } else {
-            queue.audioFilters.setNightcore();
+            dispatcher.filter.setNightcore();
         }
-        await ctx.send({ embeds: [createEmbed("info", `**Nightcore filter has been ${queue.audioFilters.has("nightcore") ? "activated" : "deactivated"}**`)] }).then(x => {
+        await ctx.send({ embeds: [createEmbed("info", `**Nightcore filter has been ${dispatcher.filter.has("nightcore") ? "activated" : "deactivated"}**`)] }).then(x => {
             if (fromGuildPlayer) {
                 setTimeout(() => x.delete().catch(() => null), 5000);
             }

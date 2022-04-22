@@ -22,8 +22,8 @@ export default class ResumeCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.player.paused) {
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.player.paused) {
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You can't resume player if the player is not paused")] })
                 .then(x => {
                     if (fromGuildPlayer) {
@@ -32,7 +32,7 @@ export default class ResumeCommand extends ZuikakuCommand {
                 })
                 .catch(() => null);
         } else {
-            await queue.setPaused(false);
+            await dispatcher.setPaused(false);
             await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been resumed the player")] })
                 .then(x => {
                     if (fromGuildPlayer) {

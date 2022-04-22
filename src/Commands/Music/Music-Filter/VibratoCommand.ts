@@ -21,13 +21,13 @@ export default class VibratoCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.audioFilters.has("vibrato")) {
-            queue.audioFilters.setVibrato(false);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.filter.has("vibrato")) {
+            dispatcher.filter.setVibrato(false);
         } else {
-            queue.audioFilters.setVibrato();
+            dispatcher.filter.setVibrato();
         }
-        await ctx.send({ embeds: [createEmbed("info", `**Vibrato filter has been ${queue.audioFilters.has("vibrato") ? "activated" : "deactivated"}**`)] }).then(x => {
+        await ctx.send({ embeds: [createEmbed("info", `**Vibrato filter has been ${dispatcher.filter.has("vibrato") ? "activated" : "deactivated"}**`)] }).then(x => {
             if (fromGuildPlayer) {
                 setTimeout(() => x.delete().catch(() => null), 5000);
             }

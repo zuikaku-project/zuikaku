@@ -1,11 +1,10 @@
-import { IPluginComponent, AppleMusicMetaTagResponse, AppleTracks, DeezerTrack, ILavalinkPayloadTrack, IPluginOptions, SpotifyTrack, PlaylistTrack } from "@zuikaku/types";
+import { AppleMusicMetaTagResponse, IPluginComponent, IPluginOptions, LavalinkTrack } from "@zuikaku/types";
 import { load } from "cheerio";
 import { Collection } from "discord.js";
 import { join, resolve } from "node:path";
 import petitio from "petitio";
-import { LavalinkSource, ShoukakuSocket, ShoukakuTrack, ShoukakuTrackList } from "shoukaku";
-import { ShoukakuHandler } from "..";
-import Util from "./Util";
+import { LavalinkSource, ShoukakuSocket } from "shoukaku";
+import { ShoukakuHandler, TrackList } from "..";
 
 export class PluginManager {
     public headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36" };
@@ -22,7 +21,7 @@ export class PluginManager {
     public readonly deezerResolver!: Collection<string, IPluginComponent>;
     public readonly spotifyResolver!: Collection<string, IPluginComponent>;
 
-    private readonly _getTracks!: (query: string, options?: LavalinkSource) => Promise<ShoukakuTrackList>;
+    private readonly _getTracks!: (query: string, options?: LavalinkSource) => Promise<TrackList>;
     private spotifyNextRequest?: NodeJS.Timeout;
 
     public constructor(public shoukaku: ShoukakuHandler, public pluginOptions: IPluginOptions) {
@@ -65,86 +64,55 @@ export class PluginManager {
         return this.shoukaku.getNode(query);
     }
 
-    public async resolve(unresolvedTrack: ILavalinkPayloadTrack): Promise<ShoukakuTrack | undefined> {
-        const lavaTrack = await this.retrieveTrack(unresolvedTrack);
-        if (lavaTrack) {
-            if (this.pluginOptions.usePluginMetadata) {
-                Object.assign(lavaTrack.info, {
-                    identifier: unresolvedTrack.info.identifier,
-                    author: unresolvedTrack.info.author,
-                    title: unresolvedTrack.info.title,
-                    uri: unresolvedTrack.info.uri,
-                    length: unresolvedTrack.info.length
-                });
-            }
+    public buildUnresolved(
+        {
+            isrc,
+            identifier,
+            author,
+            title,
+            uri,
+            length,
+            artworkUrl,
+            sourceName
+        }: {
+            isrc: string;
+            identifier: string;
+            author: string;
+            title: string;
+            uri: string;
+            length: number;
+            artworkUrl: string;
+            sourceName: string;
         }
-        return Util.structuredClone(lavaTrack);
-    }
-
-    public async retrieveTrack(unresolvedTrack: ILavalinkPayloadTrack): Promise<ShoukakuTrack | undefined> {
-        const isFromPlugin = this.appleRegex.test(unresolvedTrack.info.uri ?? "") || this.deezerRegex.test(unresolvedTrack.info.uri ?? "");
-        const response = await this.getTracks(
-            (
-                isFromPlugin
-                    ? `${unresolvedTrack.info.author ?? ""} ${unresolvedTrack.info.title ?? ""}`
-                    : unresolvedTrack.info.uri
-            ) ?? ""
-        );
-        return response.tracks[0];
-    }
-
-    public buildUnresolved(unresolvedTrack: AppleTracks | DeezerTrack | PlaylistTrack | SpotifyTrack): ILavalinkPayloadTrack {
+    ): LavalinkTrack {
         return {
             track: "",
+            isrc,
             info: {
-                identifier: (unresolvedTrack as AppleTracks).id ??
-                    (unresolvedTrack as DeezerTrack).id ??
-                    (unresolvedTrack as SpotifyTrack).id ??
-                    (unresolvedTrack as PlaylistTrack).trackId ??
-                    "",
-                title: (unresolvedTrack as AppleTracks).name ??
-                    (unresolvedTrack as DeezerTrack).title ??
-                    (unresolvedTrack as SpotifyTrack).name ??
-                    (unresolvedTrack as PlaylistTrack).trackTitle ??
-                    "",
-                author: (unresolvedTrack as AppleTracks).artistName ??
-                    (unresolvedTrack as DeezerTrack).artist?.name ??
-                    (unresolvedTrack as SpotifyTrack).artists?.map(x => x.name).join(" ") ??
-                    (unresolvedTrack as PlaylistTrack).trackAuthor ??
-                    "",
-                length: (unresolvedTrack as AppleTracks).durationInMillis ??
-                    (unresolvedTrack as DeezerTrack).duration ??
-                    (unresolvedTrack as SpotifyTrack).duration_ms ??
-                    (unresolvedTrack as PlaylistTrack).trackLength ??
-                    0,
-                uri: (unresolvedTrack as AppleTracks).url ??
-                    (unresolvedTrack as DeezerTrack).link ??
-                    (unresolvedTrack as SpotifyTrack).external_urls?.spotify ??
-                    (unresolvedTrack as PlaylistTrack).trackURL ??
-                    ""
+                identifier,
+                author,
+                title,
+                uri,
+                length,
+                artworkUrl,
+                isStream: false,
+                isSeekable: true,
+                sourceName,
+                position: 0
             }
         };
     }
 
-    public buildResponse(loadType: "LOAD_FAILED" | "NO_MATCHES", tracks: []): ShoukakuTrackList;
-    public buildResponse(loadType: "SEARCH_RESULT" | "TRACK_LOADED", tracks: ShoukakuTrack[]): ShoukakuTrackList;
-    public buildResponse(loadType: "PLAYLIST_LOADED", tracks: ShoukakuTrack[], playlistInfo: { name: string; selectedTrack: number }): ShoukakuTrackList;
-    public buildResponse(loadType: "LOAD_FAILED" | "NO_MATCHES" | "PLAYLIST_LOADED" | "SEARCH_RESULT" | "TRACK_LOADED", tracks: ShoukakuTrack[] = [], playlistInfo?: { name?: string; selectedTrack?: number }): ShoukakuTrackList {
-        const buildShoukakuTrackList = new ShoukakuTrackList({
+    public buildResponse(loadType: "LOAD_FAILED" | "NO_MATCHES", tracks: []): TrackList;
+    public buildResponse(loadType: "SEARCH_RESULT" | "TRACK_LOADED", tracks: LavalinkTrack[]): TrackList;
+    public buildResponse(loadType: "PLAYLIST_LOADED", tracks: LavalinkTrack[], playlistInfo: { name: string; selectedTrack: number }): TrackList;
+    public buildResponse(loadType: "LOAD_FAILED" | "NO_MATCHES" | "PLAYLIST_LOADED" | "SEARCH_RESULT" | "TRACK_LOADED", tracks: LavalinkTrack[] = [], playlistInfo?: { name: string; selectedTrack: number }): TrackList {
+        const buildTrackList = new TrackList({
             loadType,
             tracks,
             playlistInfo
         });
-        buildShoukakuTrackList.tracks.map(track => {
-            track.resolve = async () => {
-                const validated = buildShoukakuTrackList.tracks.find(trk => trk.info.identifier === track.info.identifier);
-                const resolved = await this.resolve(track as ILavalinkPayloadTrack);
-                // @ts-expect-error silent error delete any
-                Object.getOwnPropertyNames(validated).forEach(prop => delete validated[prop]); // eslint-disable-line
-                Object.assign(validated!, resolved);
-            };
-        });
-        return buildShoukakuTrackList;
+        return buildTrackList;
     }
 
     public async fetchAppleToken(): Promise<void> {
@@ -192,7 +160,7 @@ export class PluginManager {
     }
 
 
-    public async getTracks(query: string, options?: LavalinkSource): Promise<ShoukakuTrackList> {
+    public async getTracks(query: string, options?: LavalinkSource): Promise<TrackList> {
         const getHTTPQuery = query.slice(query.search("http") >= 0 ? query.search("http") : 0).split(" ")[0];
         if (this.appleRegex.test(getHTTPQuery)) {
             const regExpExec = this.appleRegex.exec(getHTTPQuery) as unknown as regExpExec;
@@ -213,19 +181,16 @@ export class PluginManager {
                     return this.buildResponse("LOAD_FAILED", []);
                 }
             }
+        } else if (this.spotifyRegex.test(getHTTPQuery)) {
+            const regExpExec = this.spotifyRegex.exec(getHTTPQuery) as unknown as regExpExec;
+            if (this.spotifyResolver.has(regExpExec.groups.type)) {
+                try {
+                    return await this.spotifyResolver.get(regExpExec.groups.type)?.fetch(regExpExec.groups.id);
+                } catch {
+                    return this.buildResponse("LOAD_FAILED", []);
+                }
+            }
         }
-        /*
-         * else if (this.spotifyRegex.test(getHTTPQuery)) {
-         *     const regExpExec = this.spotifyRegex.exec(getHTTPQuery) as unknown as regExpExec;
-         *     if (this.spotifyResolver.has(regExpExec.groups.type)) {
-         *         try {
-         *             return await this.spotifyResolver.get(regExpExec.groups.type)?.fetch(regExpExec.groups.id);
-         *         } catch {
-         *             return this.buildResponse("LOAD_FAILED", []);
-         *         }
-         *     }
-         * }
-         */
         return this._getTracks(query, options);
     }
 }

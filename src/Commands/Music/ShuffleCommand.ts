@@ -22,8 +22,8 @@ export default class ShuffleCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        queue.shuffleTrack();
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        dispatcher.queue.shuffleTrack();
         await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been shuffled track(s)")] })
             .then(x => {
                 if (fromGuildPlayer) {
