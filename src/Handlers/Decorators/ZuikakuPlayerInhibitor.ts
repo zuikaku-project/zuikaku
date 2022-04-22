@@ -2,8 +2,8 @@ import { ZuikakuInhibitor } from "./ZuikakuInhibitor";
 
 export function isMusicPlaying(): any {
     return ZuikakuInhibitor(ctx => {
-        const queue = ctx.client.shoukaku.queue.get(ctx.guild!.id);
-        if (!queue) {
+        const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
+        if (!dispatcher) {
             return "I am sorry but I am not playing anything right now.";
         }
     });
@@ -19,7 +19,7 @@ export function isUserInTheVoiceChannel(): any {
 
 export function isSameVoiceChannel(): any {
     return ZuikakuInhibitor(ctx => {
-        const queue = ctx.client.shoukaku.queue.get(ctx.guild!.id);
+        const queue = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (!ctx.guild?.me?.voice.channel?.id) return undefined;
         if (ctx.member?.voice.channel?.id !== queue?.voiceId) {
             return "I am sorry but you are not in the same voice channel as me.";
@@ -29,9 +29,9 @@ export function isSameVoiceChannel(): any {
 
 export function isSameTextChannel(): any {
     return ZuikakuInhibitor(ctx => {
-        const queue = ctx.client.shoukaku.queue.get(ctx.guild!.id);
-        if (queue && ctx.channel?.id !== queue.textId) {
-            return `I am sorry but this player can only be used in ${ctx.client.channels.cache.get(queue.textId ?? "")?.toString() ?? ""}`;
+        const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
+        if (dispatcher && ctx.channel?.id !== dispatcher.textId) {
+            return `I am sorry but this player can only be used in ${ctx.client.channels.cache.get(dispatcher.textId ?? "")?.toString() ?? ""}`;
         }
     });
 }
@@ -53,8 +53,8 @@ export function isValidVoiceChannel(): any {
 
 export function isQueueReachLimit(): any {
     return ZuikakuInhibitor(ctx => {
-        const queue = ctx.client.shoukaku.queue.get(ctx.guild!.id);
-        if (queue && queue.tracks.length > 250) {
+        const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
+        if (dispatcher && dispatcher.queue.tracks.length > 250) {
             return "I am sorry but the queue is full (250 tracks).";
         }
     });

@@ -1,7 +1,7 @@
 import { ShoukakuPlayer } from "shoukaku";
-import { ShoukakuHandler } from "./ShoukakuHandler";
+import { ShoukakuHandler } from "../ShoukakuHandler";
 
-export class FilterManager extends Set {
+export class Filter extends Set {
     public player!: ShoukakuPlayer;
     public constructor(player: ShoukakuPlayer) {
         super();
@@ -211,8 +211,8 @@ export class FilterManager extends Set {
 
     private updatePlayerFilterWithSeeking(): ShoukakuPlayer {
         if (
-            !(this.player.connection.node.shoukaku as ShoukakuHandler).queue
-                .get(this.player.connection.guildId)?.current?.info.uri?.startsWith("https://open.spotify.com")
+            !(this.player.connection.node.shoukaku as ShoukakuHandler).dispatcher
+                .get(this.player.connection.guildId)?.queue.current?.info.uri?.startsWith("https://open.spotify.com")
         ) {
             return this.player.seekTo(this.player.position);
         }

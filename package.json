@@ -1,6 +1,6 @@
 {
   "name": "zuikaku",
-  "version": "3.9.0",
+  "version": "4.0.0",
   "description": "The best Discord Bot that can serve you everytime, Fast, Secure, Always on, Best Audio, No Configuration",
   "main": "./dist/ZuikakuBase.js",
   "scripts": {

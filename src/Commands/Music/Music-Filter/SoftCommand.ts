@@ -21,13 +21,13 @@ export default class SoftCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.audioFilters.has("soft")) {
-            queue.audioFilters.setSoft(false);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.filter.has("soft")) {
+            dispatcher.filter.setSoft(false);
         } else {
-            queue.audioFilters.setSoft();
+            dispatcher.filter.setSoft();
         }
-        await ctx.send({ embeds: [createEmbed("info", `**Soft filter has been ${queue.audioFilters.has("soft") ? "activated" : "deactivated"}**`)] }).then(x => {
+        await ctx.send({ embeds: [createEmbed("info", `**Soft filter has been ${dispatcher.filter.has("soft") ? "activated" : "deactivated"}**`)] }).then(x => {
             if (fromGuildPlayer) {
                 setTimeout(() => x.delete().catch(() => null), 5000);
             }

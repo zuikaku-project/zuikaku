@@ -1,4 +1,4 @@
-import { ShoukakuTrack } from "shoukaku";
+import { Track } from "@zuikaku/Handlers";
 import { Entity, Column, ObjectID, ObjectIdColumn, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "guilds" })
@@ -19,9 +19,9 @@ export class GuildSettings {
     public persistenceQueue!: {
         textId: string;
         voiceId: string;
-        current?: ShoukakuTrack;
-        tracks: ShoukakuTrack[] | [];
-        previous?: ShoukakuTrack;
+        current?: Track;
+        tracks: Track[] | [];
+        previous?: Track;
         queueRepeat: boolean;
         trackRepeat: boolean;
         volume: number;

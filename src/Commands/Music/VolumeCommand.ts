@@ -30,9 +30,9 @@ export default class VolumeCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if ((/^(?:[1-9]?\d|100)$/).test(`${ctx.options!.getNumber("volume")!}`)) {
-            queue.setVolume(ctx.options!.getNumber("volume")!);
+            dispatcher.setVolume(ctx.options!.getNumber("volume")!);
             await ctx.send({
                 embeds: [
                     createMusicEmbed(ctx, "info", `Player volume has been change to ${ctx.options!.getNumber("volume")!}`)

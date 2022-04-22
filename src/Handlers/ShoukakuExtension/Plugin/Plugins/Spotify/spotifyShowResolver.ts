@@ -1,16 +1,16 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import { TrackList } from "@zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "@zuikaku/Structures/ZuikakuPlugin";
-import { IPluginComponent, SpotifyShow } from "@zuikaku/types";
+import { IPluginComponent, LavalinkTrack, SpotifyShow } from "@zuikaku/types";
 import petitio from "petitio";
-import { ShoukakuTrack, ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<IPluginComponent>({
     name: "show",
     category: "spotify"
 })
 export default class spotifyShowResolver extends ZuikakuPlugin {
-    public cache: Map<string, { tracks: ShoukakuTrack[]; playlistName: string }> = new Map();
-    public async fetch(trackId: string): Promise<ShoukakuTrackList | undefined> {
+    public cache: Map<string, { tracks: LavalinkTrack[]; playlistName: string }> = new Map();
+    public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {
             if (this.cache.has(trackId)) {
                 return this.plugin.buildResponse("PLAYLIST_LOADED",
@@ -39,7 +39,17 @@ export default class spotifyShowResolver extends ZuikakuPlugin {
                 nextPage = spotifyEpisodePage.next;
                 pageLoaded++;
             }
-            const unresolvedSpotifyTracks = spotifyShow.episodes.items.map(x => this.plugin.buildUnresolved(x));
+            const unresolvedSpotifyTracks = spotifyShow.episodes.items.map(spotifyEpisode => {
+                const isrc = "";
+                const identifier = spotifyEpisode.id;
+                const author = spotifyShow.publisher;
+                const title = spotifyEpisode.name;
+                const uri = spotifyEpisode.external_urls.spotify;
+                const length = spotifyEpisode.duration_ms;
+                const artworkUrl = spotifyEpisode.images[0].url;
+                const sourceName = "spotify";
+                return this.plugin.buildUnresolved({ isrc, identifier, author, title, uri, length, artworkUrl, sourceName });
+            });
             if (trackId) this.cache.set(trackId, { tracks: unresolvedSpotifyTracks, playlistName: spotifyShow.name });
             return this.plugin.buildResponse("PLAYLIST_LOADED", unresolvedSpotifyTracks, { name: spotifyShow.name, selectedTrack: -1 });
         } catch {

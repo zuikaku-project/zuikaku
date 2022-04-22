@@ -19,6 +19,9 @@ export class UserSettings {
             trackTitle: string;
             trackURL: string;
             trackLength: number;
+            trackArtwork?: string;
+            trackSource: string;
+            trackIsrc?: string;
         }[];
     }[];
 }

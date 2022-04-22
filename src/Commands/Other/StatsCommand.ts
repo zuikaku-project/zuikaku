@@ -37,9 +37,18 @@ export default class StatsCommand extends ZuikakuCommand {
     }
 
     private displayNodesStats(ctx: CommandContext): void {
+        if ([...this.client.shoukaku.nodes].length === 0) {
+            void ctx.send({
+                embeds: [
+                    createEmbed("info", "No nodes found")
+                ],
+                deleteButton: { reference: ctx.author.id }
+            });
+            return;
+        }
         const shoukakuNodes = [...this.client.shoukaku.nodes.values()].map(({ name, state, stats }) => ({ name, state, core: stats.cpu.cores, uptime: this.client.utils.parseMs(stats.uptime, { humanTime: true }).humanTime, memory: this.getBytes(stats.memory.used), players: `${stats.playingPlayers}/${stats.players}` }));
         const nodesStatsEmbed = [] as EmbedField[];
-        shoukakuNodes.map(({ name, state, core, uptime, memory, players }) => nodesStatsEmbed.push({
+        nodesStatsEmbed.push(...shoukakuNodes.map(({ name, state, core, uptime, memory, players }) => ({
             name,
             value: "```\n" +
                 `• State : ${ShoukakuSocketState[state]}\n` +
@@ -49,8 +58,7 @@ export default class StatsCommand extends ZuikakuCommand {
                 `• Memory Usage : ${memory}` +
                 "\n```",
             inline: false
-        }));
-
+        })));
         const statsEmbed = createEmbed("info").setFields(nodesStatsEmbed);
         void ctx.send({ embeds: [statsEmbed], deleteButton: { reference: ctx.author.id } });
     }

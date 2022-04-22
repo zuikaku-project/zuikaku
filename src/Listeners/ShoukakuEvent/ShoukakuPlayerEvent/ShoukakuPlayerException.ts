@@ -10,9 +10,9 @@ import { ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuPlayerException extends ZuikakuListener {
     public execute(player: ShoukakuPlayer): void {
-        const queue = this.client.shoukaku.queue.get(player.connection.guildId);
-        if (queue) {
-            queue.playerMessage.lastPlayerMessage?.delete().catch(() => null);
+        const dispatcher = this.client.shoukaku.dispatcher.get(player.connection.guildId);
+        if (dispatcher) {
+            dispatcher.queueMessage.lastPlayerMessage?.delete().catch(() => null);
         }
     }
 }

@@ -22,8 +22,8 @@ export default class BackCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (!queue.previous) {
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (!dispatcher.queue.previous) {
             await ctx.send({
                 embeds: [
                     createMusicEmbed(ctx, "info", "This player doesn't have last playing track(s)")
@@ -33,7 +33,7 @@ export default class BackCommand extends ZuikakuCommand {
             }).catch(() => null);
             return undefined;
         }
-        await queue.playPrevious();
+        await dispatcher.playPrevious();
         await ctx.send({
             embeds: [
                 createMusicEmbed(ctx, "info", "This player playing the last track played")

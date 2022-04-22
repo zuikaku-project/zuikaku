@@ -1,16 +1,16 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import { TrackList } from "@zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "@zuikaku/Structures/ZuikakuPlugin";
-import { IPluginComponent, SpotifyPlaylist } from "@zuikaku/types";
+import { IPluginComponent, LavalinkTrack, SpotifyPlaylist } from "@zuikaku/types";
 import petitio from "petitio";
-import { ShoukakuTrack, ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<IPluginComponent>({
     name: "playlist",
     category: "spotify"
 })
 export default class spotifyPlaylistResolver extends ZuikakuPlugin {
-    public cache: Map<string, { tracks: ShoukakuTrack[]; playlistName: string }> = new Map();
-    public async fetch(trackId: string): Promise<ShoukakuTrackList | undefined> {
+    public cache: Map<string, { tracks: LavalinkTrack[]; playlistName: string }> = new Map();
+    public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {
             if (this.cache.has(trackId)) {
                 return this.plugin.buildResponse("PLAYLIST_LOADED",
@@ -39,8 +39,18 @@ export default class spotifyPlaylistResolver extends ZuikakuPlugin {
                 pageLoaded++;
             }
             const unresolvedSpotifyTracks = spotifyPlaylist.tracks.items
-                .filter(x => x.track)
-                .map(x => this.plugin.buildUnresolved(x.track!));
+                .filter(spotifyTrack => spotifyTrack.track)
+                .map(spotifyTrack => {
+                    const isrc = spotifyTrack.track?.external_ids?.isrc ?? "";
+                    const identifier = spotifyTrack.track?.id ?? "";
+                    const author = (spotifyTrack.track?.artists ? spotifyTrack.track.artists[0].name : undefined) ?? "";
+                    const title = spotifyTrack.track?.name ?? "";
+                    const uri = spotifyTrack.track?.external_urls?.spotify ?? "";
+                    const length = spotifyTrack.track?.duration_ms ?? 0;
+                    const artworkUrl = (spotifyTrack.track?.album?.images[0] ? spotifyTrack.track.album.images[0].url : undefined) ?? "";
+                    const sourceName = "spotify";
+                    return this.plugin.buildUnresolved({ isrc, identifier, author, title, uri, length, artworkUrl, sourceName });
+                });
             if (trackId) this.cache.set(trackId, { tracks: unresolvedSpotifyTracks, playlistName: spotifyPlaylist.name });
             return this.plugin.buildResponse("PLAYLIST_LOADED", unresolvedSpotifyTracks, { name: spotifyPlaylist.name, selectedTrack: -1 });
         } catch {

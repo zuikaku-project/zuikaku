@@ -79,12 +79,15 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
             return undefined;
         }
         const getLazyTracks = getTracks.tracks
-            .map(({ info }) => ({
+            .map(({ info, isrc }) => ({
                 trackId: this.getRandomTrackId(getUserPlaylist),
                 trackAuthor: info.author!,
                 trackTitle: info.title!,
                 trackURL: info.uri!,
-                trackLength: info.length!
+                trackLength: info.length!,
+                trackArtwork: info.artworkUrl ?? "",
+                trackSource: info.sourceName!,
+                trackIsrc: isrc ?? ""
             }));
         if (getTracks.type === "PLAYLIST") {
             getUserPlaylist.playlistTracks.push(...getLazyTracks);

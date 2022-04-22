@@ -10,11 +10,11 @@ import { TextChannel, ThreadChannel } from "discord.js";
 })
 export default class ZuikakuThreadDelete extends ZuikakuListener {
     public execute(channel: ThreadChannel): void {
-        const queue = this.client.shoukaku.queue.get(channel.guild.id);
-        if (!queue) return;
+        const dispatcher = this.client.shoukaku.dispatcher.get(channel.guild.id);
+        if (!dispatcher) return;
         if (
             channel.archived ||
             !channel.guild.channels.cache.get(channel.id)
-        ) queue.textId = (channel.parent as TextChannel).id;
+        ) dispatcher.textId = (channel.parent as TextChannel).id;
     }
 }

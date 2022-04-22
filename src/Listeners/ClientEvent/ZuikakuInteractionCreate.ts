@@ -1,6 +1,6 @@
 /* eslint-disable max-depth */
 /* eslint-disable max-lines */
-import { GuildSettings, QueueManager, ZuikakuDecorator } from "@zuikaku/Handlers";
+import { Dispatcher, GuildSettings, ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
@@ -28,7 +28,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                     const getDecodeCommand = decodeBase64Interaction
                         .split("_")[1] as "LAST-TRACK" | "NEXT-TRACK" | "PLAY-PAUSE" | "REPEAT" | "SHUFFLE" | "STOP";
                     const getGuildDatabase = await this.client.database.entity.guilds.get(interaction.guild!.id);
-                    const getGuildQueue = this.client.shoukaku.queue.get(interaction.guild!.id);
+                    const dispatcher = this.client.shoukaku.dispatcher.get(interaction.guild!.id);
                     const member = interaction.guild?.members.cache.get(interaction.user.id);
                     const vc = interaction.guild?.channels.cache.get(member?.voice.channelId ?? "") as GuildChannel | undefined;
                     if (!vc) {
@@ -62,7 +62,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                         setTimeout(() => this.isMessage(msg).delete().catch(() => null), 5000);
                         return;
                     }
-                    if (getGuildQueue) await this.handleButtonPlayer(interaction, getDecodeCommand, getGuildQueue, getGuildDatabase);
+                    if (dispatcher) await this.handleButtonPlayer(interaction, getDecodeCommand, dispatcher, getGuildDatabase);
                 }
                 const user = decodeBase64Interaction.split("_")[0] ?? "";
                 const getDecodeCommand = decodeBase64Interaction.split("_")[1] ?? "";
@@ -285,57 +285,57 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
     private async handleButtonPlayer(
         interaction: ButtonInteraction,
         getDecodeCommand: "LAST-TRACK" | "NEXT-TRACK" | "PLAY-PAUSE" | "REPEAT" | "SHUFFLE" | "STOP",
-        getGuildQueue: QueueManager,
+        dispatcher: Dispatcher,
         getGuildDatabase?: GuildSettings
     ): Promise<void> {
         if (getGuildDatabase?.guildPlayer?.channelId === interaction.channelId) {
             if (getDecodeCommand === "STOP") {
-                getGuildQueue.destroyPlayer();
+                dispatcher.destroyPlayer();
             }
             if (getDecodeCommand === "PLAY-PAUSE") {
-                await getGuildQueue.setPaused(!getGuildQueue.player.paused);
+                await dispatcher.setPaused(!dispatcher.player.paused);
             }
             if (getDecodeCommand === "NEXT-TRACK") {
-                getGuildQueue.stopTrack();
+                dispatcher.stopTrack();
             }
             if (getDecodeCommand === "REPEAT") {
-                if (getGuildQueue.trackRepeat) {
-                    await getGuildQueue.setQueueRepeat(false);
-                    await getGuildQueue.setTrackRepeat(false);
-                } else if (getGuildQueue.queueRepeat) {
-                    await getGuildQueue.setTrackRepeat();
+                if (dispatcher.trackRepeat) {
+                    await dispatcher.setQueueRepeat(false);
+                    await dispatcher.setTrackRepeat(false);
+                } else if (dispatcher.queueRepeat) {
+                    await dispatcher.setTrackRepeat();
                 } else {
-                    await getGuildQueue.setQueueRepeat();
+                    await dispatcher.setQueueRepeat();
                 }
             }
             if (getDecodeCommand === "SHUFFLE") {
-                getGuildQueue.shuffleTrack();
+                dispatcher.queue.shuffleTrack();
             }
         } else {
             if (getDecodeCommand === "STOP") {
-                getGuildQueue.destroyPlayer();
+                dispatcher.destroyPlayer();
             }
             if (getDecodeCommand === "PLAY-PAUSE") {
-                if (getGuildQueue.player.paused) {
-                    await getGuildQueue.setPaused(false);
+                if (dispatcher.player.paused) {
+                    await dispatcher.setPaused(false);
                 } else {
-                    await getGuildQueue.setPaused();
+                    await dispatcher.setPaused();
                 }
             }
             if (getDecodeCommand === "LAST-TRACK") {
-                await getGuildQueue.playPrevious();
+                await dispatcher.playPrevious();
             }
             if (getDecodeCommand === "NEXT-TRACK") {
-                getGuildQueue.stopTrack();
+                dispatcher.stopTrack();
             }
             if (getDecodeCommand === "REPEAT") {
-                if (getGuildQueue.queueRepeat) {
-                    await getGuildQueue.setTrackRepeat();
-                } else if (getGuildQueue.trackRepeat) {
-                    await getGuildQueue.setQueueRepeat(false);
-                    await getGuildQueue.setTrackRepeat(false);
+                if (dispatcher.queueRepeat) {
+                    await dispatcher.setTrackRepeat();
+                } else if (dispatcher.trackRepeat) {
+                    await dispatcher.setQueueRepeat(false);
+                    await dispatcher.setTrackRepeat(false);
                 } else {
-                    await getGuildQueue.setQueueRepeat();
+                    await dispatcher.setQueueRepeat();
                 }
             }
         }

@@ -37,9 +37,9 @@ export default class RepeatCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (ctx.options?.getSubcommand(false) === "all") {
-            await queue.setQueueRepeat();
+            await dispatcher.setQueueRepeat();
             await ctx.send({ embeds: [createEmbed("info", "**🔁| Repeat mode: Queue**")] })
                 .then(x => {
                     if (fromGuildPlayer) {
@@ -48,7 +48,7 @@ export default class RepeatCommand extends ZuikakuCommand {
                 })
                 .catch(() => null);
         } else if (ctx.options?.getSubcommand(false) === "track") {
-            await queue.setTrackRepeat();
+            await dispatcher.setTrackRepeat();
             await ctx.send({ embeds: [createEmbed("info", "**🔂| Repeat mode: Track**")] })
                 .then(x => {
                     if (fromGuildPlayer) {
@@ -57,8 +57,8 @@ export default class RepeatCommand extends ZuikakuCommand {
                 })
                 .catch(() => null);
         } else {
-            await queue.setTrackRepeat(false);
-            await queue.setQueueRepeat(false);
+            await dispatcher.setTrackRepeat(false);
+            await dispatcher.setQueueRepeat(false);
             await ctx.send({ embeds: [createEmbed("info", "**▶| Repeat mode: none**")] })
                 .then(x => {
                     if (fromGuildPlayer) {

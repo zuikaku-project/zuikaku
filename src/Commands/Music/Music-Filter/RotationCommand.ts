@@ -21,13 +21,13 @@ export default class RotationCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.audioFilters.has("eightd")) {
-            queue.audioFilters.setEightD(false);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.filter.has("eightd")) {
+            dispatcher.filter.setEightD(false);
         } else {
-            queue.audioFilters.setEightD();
+            dispatcher.filter.setEightD();
         }
-        await ctx.send({ embeds: [createEmbed("info", `**8D filter has been ${queue.audioFilters.has("eightd") ? "activated" : "deactivated"}**`)] }).then(x => {
+        await ctx.send({ embeds: [createEmbed("info", `**8D filter has been ${dispatcher.filter.has("eightd") ? "activated" : "deactivated"}**`)] }).then(x => {
             if (fromGuildPlayer) {
                 setTimeout(() => x.delete().catch(() => null), 5000);
             }

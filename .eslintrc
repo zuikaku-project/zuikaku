@@ -1,5 +1,5 @@
 {
-    "extends": "@rahagia/eslint-config/typescript",
+    "extends": ["@rahagia/eslint-config/typescript"],
     "parserOptions": {
         "project": "./tsconfig.json"
     },

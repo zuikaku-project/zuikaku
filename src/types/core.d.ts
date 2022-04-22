@@ -290,10 +290,7 @@ declare module "discord.js" {
 
 declare module "shoukaku" {
     export interface ShoukakuTrack {
-        durationFormated?: string;
-        requester?: User;
-        thumbnail?: string;
-        resolve?: () => Promise<void>;
+        isrc?: string;
     }
 
     export interface JoinOptions {

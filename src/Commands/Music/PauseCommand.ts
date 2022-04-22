@@ -23,8 +23,8 @@ export default class PauseCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.player.paused) {
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.player.paused) {
             await ctx.send({
                 embeds: [
                     createMusicEmbed(ctx, "info", "You can't paused player if the player is not playing")
@@ -37,7 +37,7 @@ export default class PauseCommand extends ZuikakuCommand {
                 })
                 .catch(() => null);
         } else {
-            await queue.setPaused(true);
+            await dispatcher.setPaused(true);
             await ctx.send({
                 embeds: [
                     createMusicEmbed(ctx, "info", "You has been paused the player")

@@ -21,13 +21,13 @@ export default class DaycoreCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const queue = this.client.shoukaku.queue.get(ctx.guild!.id)!;
-        if (queue.audioFilters.has("daycore")) {
-            queue.audioFilters.setDaycore(false);
+        const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
+        if (dispatcher.filter.has("daycore")) {
+            dispatcher.filter.setDaycore(false);
         } else {
-            queue.audioFilters.setDaycore();
+            dispatcher.filter.setDaycore();
         }
-        await ctx.send({ embeds: [createEmbed("info", `**Daycore filter has been ${queue.audioFilters.has("daycore") ? "activated" : "deactivated"}**`)] }).then(x => {
+        await ctx.send({ embeds: [createEmbed("info", `**Daycore filter has been ${dispatcher.filter.has("daycore") ? "activated" : "deactivated"}**`)] }).then(x => {
             if (fromGuildPlayer) {
                 setTimeout(() => x.delete().catch(() => null), 5000);
             }

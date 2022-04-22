@@ -1,13 +1,12 @@
 import {
     isNoNodesAvailable, isQueueReachLimit, isSameVoiceChannel, isUserInTheVoiceChannel, isValidVoiceChannel, ZuikakuDecorator
 } from "@zuikaku/Handlers/Decorators";
-import { QueueManager } from "@zuikaku/Handlers/ShoukakuExtension";
+import { Dispatcher, TrackList } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
 import { createEmbed, createMusicEmbed } from "@zuikaku/Utils";
 import { MessageActionRow, MessageSelectMenu, Util } from "discord.js";
-import { ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "play",
@@ -96,17 +95,9 @@ export default class PlayCommand extends ZuikakuCommand {
         }
 
         if (getTracks.type === "PLAYLIST") {
-            await guildQueue.addTrack(getTracks.tracks.map(track => {
-                Object.defineProperty(track, "requester", {
-                    value: ctx.author,
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(track, "durationFormated", {
-                    value: this.client.utils.parseMs(track.info.length!, { colonNotation: true }).colonNotation,
-                    enumerable: true,
-                    configurable: true
-                });
+            await guildQueue.queue.addTrack(getTracks.tracks.map(track => {
+                track.setRequester(ctx.author);
+                track.setShoukaku(this.client.shoukaku);
                 return track;
             }));
             if (fromGuildPlayer) {
@@ -140,19 +131,11 @@ export default class PlayCommand extends ZuikakuCommand {
         } else if (ctx.args.includes("--search") || ctx.options?.getBoolean("search")) {
             return this.flags(ctx, getTracks, guildQueue, fromGuildPlayer);
         } else {
-            await guildQueue
+            await guildQueue.queue
                 .addTrack(getTracks.tracks.slice(0, 1)
                     .map(track => {
-                        Object.defineProperty(track, "requester", {
-                            value: ctx.author,
-                            enumerable: true,
-                            configurable: true
-                        });
-                        Object.defineProperty(track, "durationFormated", {
-                            value: this.client.utils.parseMs(track.info.length!, { colonNotation: true }).colonNotation,
-                            enumerable: true,
-                            configurable: true
-                        });
+                        track.setRequester(ctx.author);
+                        track.setShoukaku(this.client.shoukaku);
                         return track;
                     }));
             if (fromGuildPlayer) {
@@ -181,8 +164,8 @@ export default class PlayCommand extends ZuikakuCommand {
 
     private async flags(
         ctx: CommandContext,
-        getTracks: ShoukakuTrackList,
-        guildQueue: QueueManager,
+        getTracks: TrackList,
+        dispatcher: Dispatcher,
         fromGuildPlayer: boolean
     ): Promise<void> {
         const tracks = getTracks.tracks.slice(0, 10);
@@ -213,22 +196,14 @@ export default class PlayCommand extends ZuikakuCommand {
                 if (int.user.id === ctx.author.id) {
                     const resolveTrack = int.values.map(value => tracks[value as unknown as number]);
                     resolveTrack.map(track => {
-                        Object.defineProperty(track, "requester", {
-                            value: ctx.author,
-                            enumerable: true,
-                            configurable: true
-                        });
-                        Object.defineProperty(track, "durationFormated", {
-                            value: this.client.utils.parseMs(track.info.length!, { colonNotation: true }).colonNotation,
-                            enumerable: true,
-                            configurable: true
-                        });
+                        track.setRequester(ctx.author);
+                        track.setShoukaku(this.client.shoukaku);
                         return track;
                     });
-                    await guildQueue.addTrack(resolveTrack);
+                    await dispatcher.queue.addTrack(resolveTrack);
                     await this.client.shoukaku.updateGuildPlayerEmbed(ctx.guild!);
-                    if (guildQueue._timeout || !guildQueue.player.track) {
-                        await guildQueue.playTrack();
+                    if (dispatcher._timeout || !dispatcher.player.track) {
+                        await dispatcher.playTrack();
                     }
                     await ctx.send({
                         embeds: [

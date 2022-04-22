@@ -196,5 +196,15 @@
             "Migrate canvas endpoint",
             "Update package"
         ]
+    },
+    {
+        "date": "22 April 2022",
+        "title": "Release Zuikaku@4.0.0",
+        "content": [
+            "Refactor track resolve, music service, and more",
+            "Remove play to spotify (native). Server issue",
+            "Search lazy track by isrc if present",
+            "Update package"
+        ]
     }
 ]

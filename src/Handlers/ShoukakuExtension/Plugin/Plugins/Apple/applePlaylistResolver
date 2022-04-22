@@ -1,16 +1,16 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import { TrackList } from "@zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "@zuikaku/Structures/ZuikakuPlugin";
-import { IPluginComponent } from "@zuikaku/types";
+import { IPluginComponent, LavalinkTrack } from "@zuikaku/types";
 import petitio from "petitio";
-import { ShoukakuTrack, ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<IPluginComponent>({
     name: "playlist",
     category: "apple"
 })
 export default class applePlaylistResolver extends ZuikakuPlugin {
-    public cache: Map<string, { tracks: ShoukakuTrack[]; playlistName: string }> = new Map();
-    public async fetch(trackId: string): Promise<ShoukakuTrackList | undefined> {
+    public cache: Map<string, { tracks: LavalinkTrack[]; playlistName: string }> = new Map();
+    public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {
             if (this.cache.has(trackId)) {
                 return this.plugin.buildResponse("PLAYLIST_LOADED",
