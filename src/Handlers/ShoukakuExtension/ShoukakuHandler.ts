@@ -67,8 +67,7 @@ export class ShoukakuHandler extends Shoukaku {
             .slice(
                 identifier.search("http") >= 0 ? identifier.search("http") : 0
             )
-            .split(" ")[0]
-            .includes("http");
+            .split(" ")[0];
         const node = this.getNode();
         const url = new URL(node.rest.url);
         url.pathname = "/loadtracks";
@@ -76,7 +75,7 @@ export class ShoukakuHandler extends Shoukaku {
             const response = await petitio(url)
                 .query(
                     "identifier",
-                    parseQueryUrl
+                    parseQueryUrl.includes("http")
                         ? parseQueryUrl
                         : `${searchTypes[options ?? "youtube"]}${identifier}`
                 )
