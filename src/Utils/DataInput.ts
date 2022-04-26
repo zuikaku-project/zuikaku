@@ -7,7 +7,8 @@ export class DataInput {
     private readonly view: DataView;
 
     public constructor(bytes: Uint8Array | string) {
-        if (typeof bytes === "string") bytes = new Uint8Array(Buffer.from(bytes, "base64"));
+        if (typeof bytes === "string")
+            bytes = new Uint8Array(Buffer.from(bytes, "base64"));
         this.buf = bytes;
         this.view = new DataView(bytes.buffer);
     }
@@ -31,7 +32,7 @@ export class DataInput {
     public readLong(): bigint {
         const msb = this.view.getInt32(this._advance(4), false);
         const lsb = this.view.getUint32(this._advance(4), false);
-        return BigInt(msb) << 32n | BigInt(lsb);
+        return (BigInt(msb) << 32n) | BigInt(lsb);
     }
 
     public readUTF(): string {
@@ -42,7 +43,9 @@ export class DataInput {
 
     private _advance(bytes: number): number {
         if (this.pos + bytes > this.buf.length) {
-            throw new Error(`EOF: Tried to read ${bytes} bytes at offset ${this.pos}, but buffer size is only ${this.buf.length}`);
+            throw new Error(
+                `EOF: Tried to read ${bytes} bytes at offset ${this.pos}, but buffer size is only ${this.buf.length}`
+            );
         }
         const p = this.pos;
         this.pos += bytes;

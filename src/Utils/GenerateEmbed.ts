@@ -9,17 +9,29 @@ const color: Record<colortype, `#${string}`> = {
     error: "#FF0000"
 };
 
-export const createEmbed = (type?: colortype, message?: string): MessageEmbed => {
+export const createEmbed = (
+    type?: colortype,
+    message?: string
+): MessageEmbed => {
     const embed = new MessageEmbed();
     if (type) embed.setColor(color[type]);
     if (message) embed.setDescription(message);
     return embed;
 };
 
-export const createMusicEmbed = (ctx: CommandContext, type?: colortype, author?: string, message?: string): MessageEmbed => {
+export const createMusicEmbed = (
+    ctx: CommandContext,
+    type?: colortype,
+    author?: string,
+    message?: string
+): MessageEmbed => {
     const embed = new MessageEmbed();
     if (type) embed.setColor(color[type]);
-    if (author) embed.setAuthor({ name: author, iconURL: ctx.author.displayAvatarURL({ dynamic: true }) });
+    if (author)
+        embed.setAuthor({
+            name: author,
+            iconURL: ctx.author.displayAvatarURL({ dynamic: true })
+        });
     if (message) embed.setDescription(message);
     return embed;
 };
