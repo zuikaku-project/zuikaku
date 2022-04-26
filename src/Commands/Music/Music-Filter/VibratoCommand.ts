@@ -1,5 +1,9 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
-import { isMusicPlaying, isSameVoiceChannel, isUserInTheVoiceChannel } from "@zuikaku/Handlers/Decorators/ZuikakuPlayerInhibitor";
+import {
+    isMusicPlaying,
+    isSameVoiceChannel,
+    isUserInTheVoiceChannel
+} from "@zuikaku/Handlers/Decorators/ZuikakuPlayerInhibitor";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -19,7 +23,9 @@ export default class VibratoCommand extends ZuikakuCommand {
     @isUserInTheVoiceChannel()
     @isSameVoiceChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (dispatcher.filter.has("vibrato")) {
@@ -27,10 +33,23 @@ export default class VibratoCommand extends ZuikakuCommand {
         } else {
             dispatcher.filter.setVibrato();
         }
-        await ctx.send({ embeds: [createEmbed("info", `**Vibrato filter has been ${dispatcher.filter.has("vibrato") ? "activated" : "deactivated"}**`)] }).then(x => {
-            if (fromGuildPlayer) {
-                setTimeout(() => x.delete().catch(() => null), 5000);
-            }
-        });
+        await ctx
+            .send({
+                embeds: [
+                    createEmbed(
+                        "info",
+                        `**Vibrato filter has been ${
+                            dispatcher.filter.has("vibrato")
+                                ? "activated"
+                                : "deactivated"
+                        }**`
+                    )
+                ]
+            })
+            .then(x => {
+                if (fromGuildPlayer) {
+                    setTimeout(() => x.delete().catch(() => null), 5000);
+                }
+            });
     }
 }

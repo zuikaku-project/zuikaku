@@ -10,7 +10,10 @@ export class Filter extends Set {
 
     public setNightcore(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(this.has("daycore") ? "daycore" : undefined, "nightcore");
+            this.updateSet(
+                this.has("daycore") ? "daycore" : undefined,
+                "nightcore"
+            );
             this.player.setTimescale({ pitch: 1.3, speed: 1.2, rate: 1 });
         } else {
             if (this.has("nightcore")) this.player.setTimescale({});
@@ -21,7 +24,10 @@ export class Filter extends Set {
 
     public setDaycore(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(this.has("nightcore") ? "nightcore" : undefined, "daycore");
+            this.updateSet(
+                this.has("nightcore") ? "nightcore" : undefined,
+                "daycore"
+            );
             this.player.setTimescale({ speed: 1, rate: 1, pitch: 0.9 });
         } else {
             if (this.has("daycore")) this.player.setTimescale({});
@@ -32,10 +38,20 @@ export class Filter extends Set {
 
     public setVaporwave(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(["pop", "soft", "treblebass", "earrape"], "vaporwave");
-            this.player.setEqualizer([{ band: 1, gain: 0.3 }, { band: 0, gain: 0.3 }]).setTimescale({ pitch: 0.9 }).setTremolo({ depth: 0.3, frequency: 14 });
+            this.updateSet(
+                ["pop", "soft", "treblebass", "earrape"],
+                "vaporwave"
+            );
+            this.player
+                .setEqualizer([
+                    { band: 1, gain: 0.3 },
+                    { band: 0, gain: 0.3 }
+                ])
+                .setTimescale({ pitch: 0.9 })
+                .setTremolo({ depth: 0.3, frequency: 14 });
         } else {
-            if (this.has("vaporwave")) this.player.setEqualizer([]).setTimescale({}).setTremolo({});
+            if (this.has("vaporwave"))
+                this.player.setEqualizer([]).setTimescale({}).setTremolo({});
             this.updateSet("vaporwave");
         }
         return this.updatePlayerFilterWithSeeking();
@@ -43,7 +59,10 @@ export class Filter extends Set {
 
     public setPop(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(["vaporwave", "soft", "treblebass", "earrape"], "pop");
+            this.updateSet(
+                ["vaporwave", "soft", "treblebass", "earrape"],
+                "pop"
+            );
             this.player.setEqualizer([
                 { band: 0, gain: 0.65 },
                 { band: 1, gain: 0.45 },
@@ -69,7 +88,10 @@ export class Filter extends Set {
 
     public setSoft(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(["vaporwave", "pop", "treblebass", "earrape"], "soft");
+            this.updateSet(
+                ["vaporwave", "pop", "treblebass", "earrape"],
+                "soft"
+            );
             this.player.setEqualizer([
                 { band: 0, gain: 0 },
                 { band: 1, gain: 0 },
@@ -95,7 +117,10 @@ export class Filter extends Set {
 
     public setTreblebass(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(["vaporwave", "pop", "soft", "earrape"], "treblebass");
+            this.updateSet(
+                ["vaporwave", "pop", "soft", "earrape"],
+                "treblebass"
+            );
             this.player.setEqualizer([
                 { band: 0, gain: 0.6 },
                 { band: 1, gain: 0.67 },
@@ -133,7 +158,12 @@ export class Filter extends Set {
     public setKaraoke(active = true): ShoukakuPlayer {
         if (active) {
             this.updateSet(undefined, "karaoke");
-            this.player.setKaraoke({ level: 1, monoLevel: 1, filterBand: 220, filterWidth: 100 });
+            this.player.setKaraoke({
+                level: 1,
+                monoLevel: 1,
+                filterBand: 220,
+                filterWidth: 100
+            });
         } else {
             if (this.has("karaoke")) this.player.setKaraoke({});
             this.updateSet("karaoke");
@@ -165,8 +195,15 @@ export class Filter extends Set {
 
     public setEarrape(active = true): ShoukakuPlayer {
         if (active) {
-            this.updateSet(["vaporwave", "pop", "soft", "treblebass"], "earrape");
-            this.player.setEqualizer([...Array(6).fill(0).map((_, i) => ({ band: i, gain: 0.5 }))]);
+            this.updateSet(
+                ["vaporwave", "pop", "soft", "treblebass"],
+                "earrape"
+            );
+            this.player.setEqualizer([
+                ...Array(6)
+                    .fill(0)
+                    .map((_, i) => ({ band: i, gain: 0.5 }))
+            ]);
         } else {
             if (this.has("earrape")) this.player.setEqualizer([]);
             this.updateSet("earrape");
@@ -177,7 +214,16 @@ export class Filter extends Set {
     public setDistortion(active = true): ShoukakuPlayer {
         if (active) {
             this.updateSet(undefined, "distortion");
-            this.player.setDistortion({ sinOffset: 0, sinScale: 1, cosOffset: 0, cosScale: 1, tanOffset: 0, tanScale: 1, offset: 0, scale: 1 });
+            this.player.setDistortion({
+                sinOffset: 0,
+                sinScale: 1,
+                cosOffset: 0,
+                cosScale: 1,
+                tanOffset: 0,
+                tanScale: 1,
+                offset: 0,
+                scale: 1
+            });
         } else {
             if (this.has("distortion")) this.player.setDistortion({});
             this.updateSet("distortion");
@@ -191,7 +237,10 @@ export class Filter extends Set {
         return this.updatePlayerFilterWithSeeking();
     }
 
-    public updateSet(deletes: string[] | string | undefined, setup?: string[] | string): this {
+    public updateSet(
+        deletes: string[] | string | undefined,
+        setup?: string[] | string
+    ): this {
         if (deletes) {
             if (Array.isArray(deletes)) {
                 deletes.forEach(x => this.delete(x));
@@ -211,8 +260,13 @@ export class Filter extends Set {
 
     private updatePlayerFilterWithSeeking(): ShoukakuPlayer {
         if (
-            !(this.player.connection.node.shoukaku as ShoukakuHandler).dispatcher
-                .get(this.player.connection.guildId)?.queue.current?.info.uri?.startsWith("https://open.spotify.com")
+            !(
+                this.player.connection.node.shoukaku as ShoukakuHandler
+            ).dispatcher
+                .get(this.player.connection.guildId)
+                ?.queue.current?.info.uri?.startsWith(
+                    "https://open.spotify.com"
+                )
         ) {
             return this.player.seekTo(this.player.position);
         }

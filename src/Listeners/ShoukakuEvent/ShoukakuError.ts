@@ -8,12 +8,14 @@ import { IListenerComponent } from "@zuikaku/types";
     emitter: "shoukaku"
 })
 export default class ShoukakuError extends ZuikakuListener {
-    public execute(name: string, error: any): void {
-        this.client.logger.error({
-            module: "LAVALINK",
-            message: `Node ${name} Error Caught`,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            error: error.message
-        });
+    public execute(name: string, error: Error): void {
+        const errorMessage =
+            error.stack?.replace(new RegExp(`${__dirname}/`, "g"), "./") ??
+            error.message;
+        this.client.logger.error(
+            "shoukaku",
+            `Node ${name} Error Caught: `,
+            errorMessage
+        );
     }
 }

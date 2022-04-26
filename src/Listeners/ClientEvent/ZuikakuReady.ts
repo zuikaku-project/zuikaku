@@ -9,38 +9,48 @@ import { IListenerComponent } from "@zuikaku/types";
 })
 export default class ZuikakuReady extends ZuikakuListener {
     public async execute(): Promise<void> {
-        await this.client.apis.dbl.postStats({
-            serverCount: this.client.guilds.cache.size
-        }).catch(() => null);
+        await this.client.apis.dbl
+            .postStats({
+                serverCount: this.client.guilds.cache.size
+            })
+            .catch(() => null);
         await this.client.database.dataSource
             .initialize()
             .catch((error: Error) => {
-                this.client.logger.error({
-                    module: "DATABASE",
-                    message: "caught database error",
-                    error
-                });
-                this.client.logger.info({
-                    module: "DATABASE",
-                    message: "could not connect to database, exiting process"
-                });
+                const errorMessage =
+                    error.stack?.replace(
+                        new RegExp(`${__dirname}/`, "g"),
+                        "./"
+                    ) ?? error.message;
+                this.client.logger.error(
+                    "database",
+                    "Error Caught: ",
+                    errorMessage
+                );
+                this.client.logger.error(
+                    "database",
+                    "Couldn't connect to database. Exiting proces...",
+                    errorMessage
+                );
                 process.exit(1);
             })
             .then(() => {
-                const databaseEntity = Object.values(this.client.database.entity);
+                const databaseEntity = Object.values(
+                    this.client.database.entity
+                );
                 for (const database of databaseEntity) {
                     database._init(this.client.database.dataSource);
                 }
-                this.client.logger.log({
-                    module: "DATABASE",
-                    message: `${databaseEntity.length} Database has been initiated`
-                });
-                this.client.shoukaku.assignPersistenceQueue();
+                this.client.logger.info(
+                    "database",
+                    `${databaseEntity.length} Database has been initiated`
+                );
             });
         await this.client.commands.load();
-        this.client.logger.ready({
-            module: this.meta.name.toUpperCase(),
-            message: "五航戦、瑞鶴出撃よ！ - CarDiv 5, Zuikaku, launching!"
-        });
+        await this.client.shoukaku.persistentQueue.assign();
+        this.client.logger.info(
+            "zuikaku",
+            "五航戦、瑞鶴出撃よ！ - CarDiv 5, Zuikaku, launching!"
+        );
     }
 }

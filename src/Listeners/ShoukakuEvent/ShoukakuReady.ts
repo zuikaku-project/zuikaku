@@ -9,9 +9,9 @@ import { IListenerComponent } from "@zuikaku/types";
 })
 export default class ShoukakuReady extends ZuikakuListener {
     public execute(name: string, reconnect: boolean): void {
-        this.client.logger.ready({
-            module: "LAVALINK",
-            message: `Node ${name}: ${reconnect ? "Reconnected" : "Connected"}`
-        });
+        this.client.logger.info(
+            "shoukaku",
+            `Node ${name}: ${reconnect ? "Reconnected" : "Connected"}`
+        );
     }
 }

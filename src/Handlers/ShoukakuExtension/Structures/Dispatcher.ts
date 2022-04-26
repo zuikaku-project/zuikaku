@@ -1,12 +1,23 @@
-import { createEmbed } from "@zuikaku/Utils";
-import { Guild, Message, MessageButton, StageChannel, TextChannel, ThreadChannel, VoiceChannel } from "discord.js";
+/* eslint-disable max-lines */
+import { createEmbed, Utils } from "@zuikaku/Utils";
+import {
+    Guild,
+    Message,
+    MessageButton,
+    StageChannel,
+    TextChannel,
+    ThreadChannel,
+    VoiceChannel
+} from "discord.js";
 import { JoinOptions, ShoukakuPlayer } from "shoukaku";
 import { GuildSettings } from "../../Databases";
 import { Filter } from "./Filter";
 import { Queue } from "./Queue";
 import { ShoukakuHandler } from "../ShoukakuHandler";
+import { EmbedPlayer } from "./EmbedPlayer";
 
 export class Dispatcher {
+    public readonly client = this.shoukaku.client;
     public guildId = this.opts.guildId;
     public voiceId = this.opts.voiceId ?? null;
     public textId = this.opts.textId ?? null;
@@ -15,10 +26,22 @@ export class Dispatcher {
     public filter = new Filter(this.player);
     public queue = new Queue(this);
     public volume = 0;
-    public queueMessage!: Record<"lastNowplayingMessage" | "lastPlayerMessage" | "lastResolvingMessage", Message | null>;
-    public queueChecker!: Record<"_isFromPrevious" | "_isResolved" | "_isStopped", boolean>;
+    public queueMessage!: Record<
+        "lastNowplayingMessage" | "lastPlayerMessage" | "lastResolvingMessage",
+        Message | null
+    >;
+
+    public queueChecker!: Record<
+        "_isFromPrevious" | "_isResolved" | "_isStopped",
+        boolean
+    >;
+
     public _timeout!: NodeJS.Timeout | null;
-    public constructor(public readonly shoukaku: ShoukakuHandler, public readonly player: ShoukakuPlayer, public readonly opts: JoinOptions) {
+    public constructor(
+        public readonly shoukaku: ShoukakuHandler,
+        public readonly player: ShoukakuPlayer,
+        public readonly opts: JoinOptions
+    ) {
         Object.defineProperties(this, {
             queueMessage: {
                 value: {
@@ -53,12 +76,22 @@ export class Dispatcher {
         return this.shoukaku.client.database.entity.guilds.get(this.guildId);
     }
 
+    public get getEmbedPlayer(): EmbedPlayer | undefined {
+        return this.shoukaku.embedPlayers.get(this.guildId);
+    }
+
     public get getVoice(): StageChannel | VoiceChannel | undefined {
-        return this.getGuild?.channels.cache.get(this.voiceId ?? "") as StageChannel | VoiceChannel | undefined;
+        return this.getGuild?.channels.cache.get(this.voiceId ?? "") as
+            | StageChannel
+            | VoiceChannel
+            | undefined;
     }
 
     public get getText(): TextChannel | ThreadChannel | undefined {
-        return this.getGuild?.channels.cache.get(this.textId ?? "") as TextChannel | ThreadChannel | undefined;
+        return this.getGuild?.channels.cache.get(this.textId ?? "") as
+            | TextChannel
+            | ThreadChannel
+            | undefined;
     }
 
     public async playTrack(startTime = 0): Promise<void> {
@@ -73,36 +106,55 @@ export class Dispatcher {
             }
             if (!this.queue.current.track.length) {
                 this.queueChecker._isResolved = false;
-                await this.getText?.send({
-                    embeds: [
-                        createEmbed("info", "**<a:loading:804201332243955734> | Resolving track...**")
-                    ]
-                })
-                    .then(x => this.queueMessage.lastResolvingMessage = x)
+                await this.getText
+                    ?.send({
+                        embeds: [
+                            createEmbed(
+                                "info",
+                                "**<a:loading:804201332243955734> | Resolving track...**"
+                            )
+                        ]
+                    })
+                    .then(x => (this.queueMessage.lastResolvingMessage = x))
                     .catch(() => null);
-                await this.queue.current.resolve()
+                await this.queue.current
+                    .resolve()
                     .then(async () => {
                         this.queueChecker._isResolved = true;
                         await this.queueMessage.lastResolvingMessage?.delete();
                         this.queueMessage.lastResolvingMessage = null;
                     })
                     .catch(async () => {
-                        await this.queueMessage.lastResolvingMessage?.edit({
-                            embeds: [
-                                createEmbed("info")
-                                    .setAuthor({
-                                        name: `Unable to resolve ${this.queue.current?.info.uri ?? this.queue.current?.info.title ?? "UNKNOWN_TRACK"}. Skipping...`,
-                                        iconURL: this.shoukaku.client.user!.displayAvatarURL()
+                        await this.queueMessage.lastResolvingMessage
+                            ?.edit({
+                                embeds: [
+                                    createEmbed("info").setAuthor({
+                                        name: `Unable to resolve ${
+                                            this.queue.current?.info.uri ??
+                                            this.queue.current?.info.title ??
+                                            "UNKNOWN_TRACK"
+                                        }. Skipping...`,
+                                        iconURL:
+                                            this.shoukaku.client.user!.displayAvatarURL()
                                     })
-                            ]
-                        })
+                                ]
+                            })
                             .catch(() => null);
                         this.queueMessage.lastResolvingMessage = null;
                         this.queueChecker._isResolved = true;
-                        return this.shoukaku.emit("playerTrackEnd", this.player);
+                        return this.shoukaku.emit(
+                            "playerTrackEnd",
+                            this.player
+                        );
                     });
             }
-            this.player.playTrack(this.queue.current.track, { startTime: this.queue.current.info.uri?.startsWith("https://open.spotify.com") ? undefined : startTime });
+            this.player.playTrack(this.queue.current.track, {
+                startTime: this.queue.current.info.uri?.startsWith(
+                    "https://open.spotify.com"
+                )
+                    ? undefined
+                    : startTime
+            });
         }
     }
 
@@ -129,22 +181,26 @@ export class Dispatcher {
 
     public destroyPlayer(): this {
         this.queueChecker._isStopped = true;
-        if (this.queueMessage.lastPlayerMessage) this.queueMessage.lastPlayerMessage.delete().catch(() => null);
-        if (this.queueMessage.lastNowplayingMessage) this.queueMessage.lastNowplayingMessage.delete().catch(() => null);
+        if (this.queueMessage.lastPlayerMessage)
+            this.queueMessage.lastPlayerMessage.delete().catch(() => null);
+        if (this.queueMessage.lastNowplayingMessage)
+            this.queueMessage.lastNowplayingMessage.delete().catch(() => null);
         if (this._timeout) {
             clearTimeout(this._timeout);
             this._timeout = null;
         }
         this.player.connection.disconnect();
         void this.getGuildDatabase.then(guildSettings => {
-            if (guildSettings?.guildPlayer?.channelId) setTimeout(() => this.shoukaku.updateGuildPlayerEmbed(this.getGuild), 500);
+            if (guildSettings?.guildPlayer?.channelId)
+                setTimeout(() => this.getEmbedPlayer?.update(), 500);
         });
         return this;
     }
 
     public setTimeout(time: number, message: string): NodeJS.Timeout {
         this._timeout = setTimeout(() => {
-            this.getText?.send({ embeds: [createEmbed("info", `**${message}**`)] })
+            this.getText
+                ?.send({ embeds: [createEmbed("info", `**${message}**`)] })
                 .then(async x => {
                     if ((await this.getGuildDatabase)?.guildPlayer?.channelId) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -165,18 +221,31 @@ export class Dispatcher {
             this.queueRepeat = false;
         }
         const getGuildDatabase = await this.getGuildDatabase;
-        if (getGuildDatabase?.guildPlayer?.channelId) setTimeout(() => this.shoukaku.updateGuildPlayerEmbed(this.getGuild), 500);
+        if (getGuildDatabase?.guildPlayer?.channelId)
+            setTimeout(() => this.getEmbedPlayer?.update(), 500);
         if (this.queueMessage.lastPlayerMessage) {
             const row = this.queueMessage.lastPlayerMessage.components[0];
-            const findRepeatButton = row.components.find(x => this.shoukaku.client.utils.encodeDecodeBase64String(x.customId ?? "", true).split("_")[1] === "REPEAT") as MessageButton | undefined;
+            const findRepeatButton = row.components.find(
+                x =>
+                    Utils.encodeDecodeBase64String(
+                        x.customId ?? "",
+                        true
+                    ).split("_")[1] === "REPEAT"
+            ) as MessageButton | undefined;
             if (findRepeatButton) {
                 if (active) {
-                    findRepeatButton.setEmoji(":no_repeat:941342881845768282").setLabel("DISABLE");
+                    findRepeatButton
+                        .setEmoji(":no_repeat:941342881845768282")
+                        .setLabel("DISABLE");
                 } else {
-                    findRepeatButton.setEmoji(":repeat:891234382097031168").setLabel("QUEUE");
+                    findRepeatButton
+                        .setEmoji(":repeat:891234382097031168")
+                        .setLabel("QUEUE");
                 }
             }
-            await this.queueMessage.lastPlayerMessage.edit({ components: [row] }).catch(() => null);
+            await this.queueMessage.lastPlayerMessage
+                .edit({ components: [row] })
+                .catch(() => null);
         }
         return this;
     }
@@ -190,18 +259,31 @@ export class Dispatcher {
             this.queueRepeat = false;
         }
         const getGuildDatabase = await this.getGuildDatabase;
-        if (getGuildDatabase?.guildPlayer?.channelId) setTimeout(() => this.shoukaku.updateGuildPlayerEmbed(this.getGuild), 500);
+        if (getGuildDatabase?.guildPlayer?.channelId)
+            setTimeout(() => this.getEmbedPlayer?.update(), 500);
         if (this.queueMessage.lastPlayerMessage) {
             const row = this.queueMessage.lastPlayerMessage.components[0];
-            const findRepeatButton = row.components.find(x => this.shoukaku.client.utils.encodeDecodeBase64String(x.customId ?? "", true).split("_")[1] === "REPEAT") as MessageButton | undefined;
+            const findRepeatButton = row.components.find(
+                x =>
+                    Utils.encodeDecodeBase64String(
+                        x.customId ?? "",
+                        true
+                    ).split("_")[1] === "REPEAT"
+            ) as MessageButton | undefined;
             if (findRepeatButton) {
                 if (active) {
-                    findRepeatButton.setEmoji(":repeat_one:924117419960725534").setLabel("TRACK");
+                    findRepeatButton
+                        .setEmoji(":repeat_one:924117419960725534")
+                        .setLabel("TRACK");
                 } else {
-                    findRepeatButton.setEmoji(":repeat:891234382097031168").setLabel("QUEUE");
+                    findRepeatButton
+                        .setEmoji(":repeat:891234382097031168")
+                        .setLabel("QUEUE");
                 }
             }
-            await this.queueMessage.lastPlayerMessage.edit({ components: [row] }).catch(() => null);
+            await this.queueMessage.lastPlayerMessage
+                .edit({ components: [row] })
+                .catch(() => null);
         }
         return this;
     }
@@ -209,21 +291,36 @@ export class Dispatcher {
     public async setPaused(paused = true): Promise<this> {
         this.player.setPaused(paused);
         if (paused) {
-            this.setTimeout(2 * 6e5, "I've paused for 20 minutes, destroying player!");
+            this.setTimeout(
+                2 * 6e5,
+                "I've paused for 20 minutes, destroying player!"
+            );
         } else {
             clearTimeout(this._timeout!);
         }
         if (this.queueMessage.lastPlayerMessage) {
             const row = this.queueMessage.lastPlayerMessage.components[0];
-            const findPlayPauseButton = row.components.find(x => this.shoukaku.client.utils.encodeDecodeBase64String(x.customId ?? "", true).split("_")[1] === "PLAY-PAUSE") as MessageButton | undefined;
+            const findPlayPauseButton = row.components.find(
+                x =>
+                    Utils.encodeDecodeBase64String(
+                        x.customId ?? "",
+                        true
+                    ).split("_")[1] === "PLAY-PAUSE"
+            ) as MessageButton | undefined;
             if (findPlayPauseButton) {
                 if (paused) {
-                    findPlayPauseButton.setEmoji(":play:941327026160283680").setLabel("PLAY");
+                    findPlayPauseButton
+                        .setEmoji(":play:941327026160283680")
+                        .setLabel("PLAY");
                 } else {
-                    findPlayPauseButton.setEmoji(":pause:941343422017581086").setLabel("PAUSE");
+                    findPlayPauseButton
+                        .setEmoji(":pause:941343422017581086")
+                        .setLabel("PAUSE");
                 }
             }
-            await this.queueMessage.lastPlayerMessage.edit({ components: [row] }).catch(() => null);
+            await this.queueMessage.lastPlayerMessage
+                .edit({ components: [row] })
+                .catch(() => null);
         }
         return this;
     }

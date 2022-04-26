@@ -31,7 +31,11 @@ export function isSameTextChannel(): any {
     return ZuikakuInhibitor(ctx => {
         const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (dispatcher && ctx.channel?.id !== dispatcher.textId) {
-            return `I am sorry but this player can only be used in ${ctx.client.channels.cache.get(dispatcher.textId ?? "")?.toString() ?? ""}`;
+            return `I am sorry but this player can only be used in ${
+                ctx.client.channels.cache
+                    .get(dispatcher.textId ?? "")
+                    ?.toString() ?? ""
+            }`;
         }
     });
 }
@@ -60,10 +64,12 @@ export function isQueueReachLimit(): any {
     });
 }
 
-export function isNoNodesAvailable(): any {
+export function isNoNodesAvailable(lyrics = false): any {
     return ZuikakuInhibitor(ctx => {
         if (!Array.from(ctx.client.shoukaku.nodes).length) {
-            return "I am sorry but I cannot play music because there are no nodes available.";
+            return `I am sorry but I cannot ${
+                lyrics ? "get lyrics" : "play music"
+            } because there are no nodes available.`;
         }
     });
 }

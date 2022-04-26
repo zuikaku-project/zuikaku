@@ -1,5 +1,8 @@
 import {
-    isMusicPlaying, isSameVoiceChannel, isUserInTheVoiceChannel, ZuikakuDecorator
+    isMusicPlaying,
+    isSameVoiceChannel,
+    isUserInTheVoiceChannel,
+    ZuikakuDecorator
 } from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -20,11 +23,22 @@ export default class ResumeCommand extends ZuikakuCommand {
     @isUserInTheVoiceChannel()
     @isSameVoiceChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (dispatcher.player.paused) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You can't resume player if the player is not paused")] })
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            "You can't resume player if the player is not paused"
+                        )
+                    ]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -33,7 +47,16 @@ export default class ResumeCommand extends ZuikakuCommand {
                 .catch(() => null);
         } else {
             await dispatcher.setPaused(false);
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You has been resumed the player")] })
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            "You has been resumed the player"
+                        )
+                    ]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);

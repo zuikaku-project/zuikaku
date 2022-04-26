@@ -1,16 +1,22 @@
 import {
-    AnilistManager, CanvasHandler, CommandHandler, GuildDatabaseManager,
-    JikanManager, ListenerHandler, ShoukakuHandler,
-    TopggHandler, UserDatabaseManager, WeebyManager
+    AnilistManager,
+    CanvasHandler,
+    CommandHandler,
+    GuildDatabaseManager,
+    JikanManager,
+    ListenerHandler,
+    ShoukakuHandler,
+    TopggHandler,
+    UserDatabaseManager,
+    WeebyManager
 } from "@zuikaku/Handlers";
-import { Logger, parseYaml } from "@zuikaku/Utils";
-import UtilHandler from "@zuikaku/Utils/Utils";
+import { Logger, Utils } from "@zuikaku/Utils";
 import { Client, Intents, Options, Sweepers } from "discord.js";
 import { join, resolve } from "node:path";
 import process from "node:process";
 import { DataSource } from "typeorm";
 
-const config = parseYaml(join(__dirname, "../../ZuikakuConfig.yaml"));
+const config = Utils.parseYaml(join(__dirname, "../../ZuikakuConfig.yaml"));
 
 export class ZuikakuClient extends Client {
     public constructor() {
@@ -58,7 +64,7 @@ export class ZuikakuClient extends Client {
             value: new Logger()
         });
         Object.defineProperty(this, "utils", {
-            value: new UtilHandler(this)
+            value: new Utils()
         });
         Object.defineProperty(this, "apis", {
             value: {
@@ -79,13 +85,18 @@ export class ZuikakuClient extends Client {
                 dataSource: new DataSource({
                     database: "database",
                     type: "mongodb",
-                    url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${this.config.devMode ? "development" : "database"}`,
+                    url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${
+                        this.config.devMode ? "development" : "database"
+                    }`,
                     useUnifiedTopology: true,
                     ssl: true,
                     sslValidate: true,
                     useNewUrlParser: true,
                     entities: [
-                        `${resolve(__dirname, "../Handlers/Databases/Entities")}/**/*.js`
+                        `${resolve(
+                            __dirname,
+                            "../Handlers/Databases/Entities"
+                        )}/**/*.js`
                     ]
                 }),
                 entity: {
@@ -105,23 +116,31 @@ export class ZuikakuClient extends Client {
     public start(): this {
         void this.listeners.load();
         if (this.config.devMode) {
-            void this.login("OTExMTQ3Mjg5NzMxNTQzMDky.YZdKCg.HyKyzRHUHtREREVpG5Pj0QJzRgk");
+            void this.login(
+                "OTExMTQ3Mjg5NzMxNTQzMDky.YZdKCg.HyKyzRHUHtREREVpG5Pj0QJzRgk"
+            );
         } else {
-            void this.login("NzkxMjcxMjIzMDc3MTA5ODIw.X-MuwA.XTpdWsnWaAt3Qm7qGqkQr7zL3cM");
+            void this.login(
+                "NzkxMjcxMjIzMDc3MTA5ODIw.X-MuwA.XTpdWsnWaAt3Qm7qGqkQr7zL3cM"
+            );
         }
         return this;
     }
 
     public async totalGuilds(): Promise<number | undefined> {
         if (!this.shard) return this.guilds.cache.size;
-        const guilds = await this.shard.broadcastEval(client => client.guilds.cache.size);
+        const guilds = await this.shard.broadcastEval(
+            client => client.guilds.cache.size
+        );
         return guilds.reduce((a, b) => a + b, 0);
     }
 
     public async totalChannels(): Promise<number | undefined> {
         if (!this.shard) return this.channels.cache.size;
-        const channels = await this.shard.broadcastEval(client => client.channels.cache.size);
-        return channels.reduce((a, b) => a = b, 0);
+        const channels = await this.shard.broadcastEval(
+            client => client.channels.cache.size
+        );
+        return channels.reduce((a, b) => a + b, 0);
     }
 
     public totalUsers(): number | undefined {
@@ -135,9 +154,21 @@ export class ZuikakuClient extends Client {
     public totalMemory(type: keyof NodeJS.MemoryUsageFn): string | undefined {
         const formatBytes = (bytes: number): string => {
             if (bytes === 0) return "0 Bytes";
-            const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+            const sizes = [
+                "Bytes",
+                "KB",
+                "MB",
+                "GB",
+                "TB",
+                "PB",
+                "EB",
+                "ZB",
+                "YB"
+            ];
             const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+            return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${
+                sizes[i]
+            }`;
         };
         if (!this.shard) return formatBytes(process.memoryUsage[type]());
     }

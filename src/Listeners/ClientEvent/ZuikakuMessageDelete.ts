@@ -14,22 +14,33 @@ export default class ZuikakuMessageDelete extends ZuikakuListener {
         const snipes = this.client.snipe.get(message.channel.id) ?? [];
         snipes.unshift({
             content: message.reference
-                ? `([**\`Replied to ${(
-                    await message.channel.messages.fetch(message.reference.messageId!,
-                        {
-                            cache: false,
-                            force: true
-                        })).author.username}\`**]` +
-                `(${(
-                    await message.channel.messages.fetch(message.reference.messageId!,
-                        {
-                            cache: false,
-                            force: true
-                        })
-                ).url}))\n${message.content}`
+                ? `([**\`Replied to ${
+                      (
+                          await message.channel.messages.fetch(
+                              message.reference.messageId!,
+                              {
+                                  cache: false,
+                                  force: true
+                              }
+                          )
+                      ).author.username
+                  }\`**]` +
+                  `(${
+                      (
+                          await message.channel.messages.fetch(
+                              message.reference.messageId!,
+                              {
+                                  cache: false,
+                                  force: true
+                              }
+                          )
+                      ).url
+                  }))\n${message.content}`
                 : message.content,
             author: message.author,
-            attachments: message.attachments.map(({ name, url }) => `[${name ?? ""}](<${url}>)`),
+            attachments: message.attachments.map(
+                ({ name, url }) => `[${name ?? ""}](<${url}>)`
+            ),
             date: (new Date().getTime() / 1000).toFixed(0)
         });
         snipes.splice(10);

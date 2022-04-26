@@ -10,7 +10,9 @@ import { VoiceState } from "discord.js";
 })
 export default class ZuikakuVoiceStateUpdate extends ZuikakuListener {
     public execute(oldState: VoiceState, newState: VoiceState): any {
-        const dispatcher = this.client.shoukaku.dispatcher.get(newState.guild.id);
+        const dispatcher = this.client.shoukaku.dispatcher.get(
+            newState.guild.id
+        );
         if (!dispatcher) return;
         // handle disconnect
         if (
@@ -20,20 +22,19 @@ export default class ZuikakuVoiceStateUpdate extends ZuikakuListener {
         ) {
             try {
                 if (dispatcher._timeout) clearTimeout(dispatcher._timeout);
-                if (!dispatcher.queueChecker._isStopped) dispatcher.destroyPlayer();
+                if (!dispatcher.queueChecker._isStopped)
+                    dispatcher.destroyPlayer();
                 return;
             } catch (e) {
-                this.client.logger.error({
-                    module: this.meta.name.toUpperCase(),
-                    message: "Voice State Update Error",
-                    error: e
-                });
+                this.client.logger.error(
+                    "zuikaku",
+                    "Voice State Update Err: ",
+                    e
+                );
             }
         }
-        if (
-            newState.mute !== oldState.mute ||
-            newState.deaf !== oldState.deaf
-        ) return undefined;
+        if (newState.mute !== oldState.mute || newState.deaf !== oldState.deaf)
+            return undefined;
         // handle bot moved
         if (
             newState.member?.id === this.client.user?.id &&
@@ -43,7 +44,10 @@ export default class ZuikakuVoiceStateUpdate extends ZuikakuListener {
         ) {
             if (newState.channel.type === "GUILD_STAGE_VOICE") {
                 setTimeout(() => {
-                    newState.guild.members.cache.get(this.client.user!.id)?.voice.setSuppressed(false).catch(() => null);
+                    newState.guild.members.cache
+                        .get(this.client.user!.id)
+                        ?.voice.setSuppressed(false)
+                        .catch(() => null);
                 }, 3000);
             }
             dispatcher.voiceId = newState.channel.id;

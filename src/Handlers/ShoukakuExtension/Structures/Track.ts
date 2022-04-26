@@ -1,4 +1,4 @@
-import { DataInput } from "@zuikaku/Utils";
+import { DataInput, Utils } from "@zuikaku/Utils";
 import { User } from "discord.js";
 import { ShoukakuTrack } from "shoukaku";
 import Util from "../Plugin/Util";
@@ -17,11 +17,14 @@ export class Track {
 
     public get thumbnail(): string | undefined {
         if (this.info.artworkUrl) return this.info.artworkUrl;
-        return `https://i.ytimg.com/vi/${this.info.identifier!}/maxresdefault.jpg`;
+        return `https://i.ytimg.com/vi/${this.info
+            .identifier!}/maxresdefault.jpg`;
     }
 
     public get durationFormated(): string | undefined {
-        return this.shoukaku?.client.utils.parseMs(this.raw.info.length!, { colonNotation: true }).colonNotation;
+        return Utils.parseMs(this.raw.info.length!, {
+            colonNotation: true
+        }).colonNotation;
     }
 
     public get shoukaku(): ShoukakuHandler | undefined {
@@ -70,16 +73,20 @@ export class Track {
         }
     }
 
-    public static async getClosestTrack(shoukaku: ShoukakuHandler, track: Track): Promise<Track | undefined> {
-        const isFromPlugin = shoukaku.plugin.appleRegex.test(track.info.uri ?? "") || shoukaku.plugin.deezerRegex.test(track.info.uri ?? "") || shoukaku.plugin.spotifyRegex.test(track.info.uri ?? "");
+    public static async getClosestTrack(
+        shoukaku: ShoukakuHandler,
+        track: Track
+    ): Promise<Track | undefined> {
+        const isFromPlugin =
+            shoukaku.plugin.appleRegex.test(track.info.uri ?? "") ||
+            shoukaku.plugin.deezerRegex.test(track.info.uri ?? "") ||
+            shoukaku.plugin.spotifyRegex.test(track.info.uri ?? "");
         let response = await shoukaku.getTracks(
             track.isrc?.length
                 ? track.isrc
-                : (
-                    isFromPlugin
-                        ? `${track.info.author ?? ""} ${track.info.title ?? ""}`
-                        : track.info.uri
-                ) ?? ""
+                : (isFromPlugin
+                      ? `${track.info.author ?? ""} ${track.info.title ?? ""}`
+                      : track.info.uri) ?? ""
         );
         if (
             ["LOAD_FAILED", "NO_MATCHES"].includes(response.type) ||
@@ -107,11 +114,16 @@ export class Track {
         return Util.structuredClone(firstTrack);
     }
 
-    public static async resolve(shoukaku: ShoukakuHandler, track: Track): Promise<void> {
+    public static async resolve(
+        shoukaku: ShoukakuHandler,
+        track: Track
+    ): Promise<void> {
         const validated = track;
         const resolved = await Track.getClosestTrack(shoukaku, track);
-        // @ts-expect-error dynamical delete
-        Object.getOwnPropertyNames(track).filter(key => ["track", "info", "resolve", "isrc"].includes(key)).forEach(key => delete track[key]); // eslint-disable-line
+        Object.getOwnPropertyNames(track)
+            .filter(key => ["track", "info", "resolve", "isrc"].includes(key))
+            // @ts-expect-error dynamical delete
+            .forEach(key => delete track[key]); // eslint-disable-line
         Object.assign(validated, resolved);
     }
 }

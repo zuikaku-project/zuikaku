@@ -1,13 +1,25 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable max-lines */
 import {
     AnilistManager,
-    CanvasHandler, CommandHandler, GuildDatabaseManager, JikanManager, ListenerHandler, ShoukakuHandler,
-    TopggHandler, UserDatabaseManager, WeebyManager
+    CanvasHandler,
+    CommandHandler,
+    GuildDatabaseManager,
+    JikanManager,
+    ListenerHandler,
+    ShoukakuHandler,
+    TopggHandler,
+    UserDatabaseManager,
+    WeebyManager
 } from "@zuikaku/Handlers";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { Logger } from "@zuikaku/Utils";
-import UtilHandler from "@zuikaku/Utils/Utils";
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, PermissionResolvable, Snowflake, User } from "discord.js";
+import { Logger, Utils } from "@zuikaku/Utils";
+import {
+    ApplicationCommandOptionData,
+    ApplicationCommandOptionType,
+    PermissionResolvable,
+    Snowflake,
+    User
+} from "discord.js";
 import { DataSource } from "typeorm";
 import { UnresolvedPluginTrack } from "./plugin";
 
@@ -60,25 +72,27 @@ export interface decodeBase64String {
 }
 
 export interface IInstagram {
-    graphql: {
-        user: {
-            biography: string | null;
-            edge_follow: {
-                count: number;
-            };
-            edge_followed_by: {
-                count: number;
-            };
-            edge_owner_to_timeline_media: {
-                count: number;
-            };
-            full_name: string;
-            is_private: boolean;
-            is_verified: boolean;
-            profile_pic_url_hd: string;
-            username: string;
-        };
-    } | undefined;
+    graphql:
+        | {
+              user: {
+                  biography: string | null;
+                  edge_follow: {
+                      count: number;
+                  };
+                  edge_followed_by: {
+                      count: number;
+                  };
+                  edge_owner_to_timeline_media: {
+                      count: number;
+                  };
+                  full_name: string;
+                  is_private: boolean;
+                  is_verified: boolean;
+                  profile_pic_url_hd: string;
+                  username: string;
+              };
+          }
+        | undefined;
 }
 
 export interface IMusixmatch {
@@ -154,7 +168,13 @@ export interface INPMRegistryAPI {
         readmeFilename: string;
         _id: string;
         description?: string;
-        dist: { integrity: string; shasum: string; tarball: string; fileCount: number; unpackedSize: number };
+        dist: {
+            integrity: string;
+            shasum: string;
+            tarball: string;
+            fileCount: number;
+            unpackedSize: number;
+        };
         _npmVersion: string;
         _npmUser: INPMRegistryAPI["author"];
         maintainers: INPMRegistryAPI["author"][];
@@ -232,14 +252,17 @@ declare module "discord.js" {
     export interface Client {
         ownerId: Snowflake[];
         config: IConfig;
-        snipe: Map<Snowflake, {
-            content: string;
-            author: User;
-            attachments: string[];
-            date: string;
-        }[]>;
+        snipe: Map<
+            Snowflake,
+            {
+                content: string;
+                author: User;
+                attachments: string[];
+                date: string;
+            }[]
+        >;
         logger: Logger;
-        utils: UtilHandler;
+        utils: Utils;
         apis: {
             dbl: TopggHandler;
             canvas: CanvasHandler;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export interface JikanAnimeInterface {
     pagination: {
         last_visible_page: number;

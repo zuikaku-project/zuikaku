@@ -1,5 +1,8 @@
 import {
-    isMusicPlaying, isSameVoiceChannel, isUserInTheVoiceChannel, ZuikakuDecorator
+    isMusicPlaying,
+    isSameVoiceChannel,
+    isUserInTheVoiceChannel,
+    ZuikakuDecorator
 } from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -20,26 +23,44 @@ export default class BackCommand extends ZuikakuCommand {
     @isUserInTheVoiceChannel()
     @isSameVoiceChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (!dispatcher.queue.previous) {
-            await ctx.send({
-                embeds: [
-                    createMusicEmbed(ctx, "info", "This player doesn't have last playing track(s)")
-                ]
-            }).then(x => {
-                if (fromGuildPlayer) setTimeout(() => x.delete().catch(() => null), 5000);
-            }).catch(() => null);
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            "This player doesn't have last playing track(s)"
+                        )
+                    ]
+                })
+                .then(x => {
+                    if (fromGuildPlayer)
+                        setTimeout(() => x.delete().catch(() => null), 5000);
+                })
+                .catch(() => null);
             return undefined;
         }
         await dispatcher.playPrevious();
-        await ctx.send({
-            embeds: [
-                createMusicEmbed(ctx, "info", "This player playing the last track played")
-            ]
-        }).then(x => {
-            if (fromGuildPlayer) setTimeout(() => x.delete().catch(() => null), 5000);
-        }).catch(() => null);
+        await ctx
+            .send({
+                embeds: [
+                    createMusicEmbed(
+                        ctx,
+                        "info",
+                        "This player playing the last track played"
+                    )
+                ]
+            })
+            .then(x => {
+                if (fromGuildPlayer)
+                    setTimeout(() => x.delete().catch(() => null), 5000);
+            })
+            .catch(() => null);
     }
 }

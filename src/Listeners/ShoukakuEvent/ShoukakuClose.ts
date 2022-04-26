@@ -9,12 +9,13 @@ import { IListenerComponent } from "@zuikaku/types";
 })
 export default class ShoukakuClose extends ZuikakuListener {
     public execute(name: string, code: number, reason: string): void {
-        this.client.logger.warn({
-            module: "LAVALINK",
-            message: `Node ${name} Closed, Code: ${code}, Reason: ${["string", "boolean", "number"].includes(typeof reason)
-                ? reason
-                : "No reason"}`,
-            warn: reason
-        });
+        this.client.logger.warn(
+            "shoukaku",
+            `Node ${name} Closed, Code: ${code}, Reason: ${
+                ["string", "boolean", "number"].includes(typeof reason)
+                    ? reason
+                    : "No reason"
+            }`
+        );
     }
 }

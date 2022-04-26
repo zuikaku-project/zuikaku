@@ -30,11 +30,24 @@ import { MessageActionRow, MessageButton } from "discord.js";
 })
 export default class RenamePlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
-        if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id);
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
+        if (ctx.isInteraction() && !ctx.deferred)
+            await ctx.deferReply(fromGuildPlayer);
+        const getUserDatabase = await this.client.database.entity.users.get(
+            ctx.author.id
+        );
         if (!getUserDatabase) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist database")] });
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(
+                        ctx,
+                        "info",
+                        "I am sorry, but you don't have any playlist database"
+                    )
+                ]
+            });
             return undefined;
         }
         const asksButton = new MessageActionRow().addComponents(
@@ -47,30 +60,102 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
                 .setLabel("Decline")
                 .setStyle("DANGER")
         );
-        const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
+        const getUserPlaylist = getUserDatabase.playlists.find(
+            ({ playlistId }) =>
+                playlistId === ctx.options!.getString("playlist")!
+        );
         if (!getUserPlaylist) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id ")] });
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(
+                        ctx,
+                        "info",
+                        "I am sorry, but you don't have any playlist matches that id "
+                    )
+                ]
+            });
             return undefined;
         }
-        const sendMessageForCollector = await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I will rename playlist ${getUserPlaylist.playlistName} to ${ctx.options!.getString("name")!}, continue?`)], components: [asksButton] });
-        const buttonCollector = sendMessageForCollector.createMessageComponentCollector({ filter: x => ["accept", "decline"].includes(x.customId), time: 10000 });
+        const sendMessageForCollector = await ctx.send({
+            embeds: [
+                createMusicEmbed(
+                    ctx,
+                    "info",
+                    `I will rename playlist ${
+                        getUserPlaylist.playlistName
+                    } to ${ctx.options!.getString("name")!}, continue?`
+                )
+            ],
+            components: [asksButton]
+        });
+        const buttonCollector =
+            sendMessageForCollector.createMessageComponentCollector({
+                filter: x => ["accept", "decline"].includes(x.customId),
+                time: 10000
+            });
         buttonCollector.on("collect", async interaction => {
             if (interaction.user.id === ctx.author.id) {
                 if (interaction.customId === "accept") {
-                    getUserPlaylist.playlistName = ctx.options!.getString("name")!;
-                    await this.client.database.entity.users.set(ctx.author.id, "playlists", getUserDatabase.playlists);
-                    await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I have renamed your playlist to ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`)], components: [] }).catch(() => null);
+                    getUserPlaylist.playlistName =
+                        ctx.options!.getString("name")!;
+                    await this.client.database.entity.users.set(
+                        ctx.author.id,
+                        "playlists",
+                        getUserDatabase.playlists
+                    );
+                    await ctx
+                        .send({
+                            embeds: [
+                                createMusicEmbed(
+                                    ctx,
+                                    "info",
+                                    `I have renamed your playlist to ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`
+                                )
+                            ],
+                            components: []
+                        })
+                        .catch(() => null);
                 } else {
-                    await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "You have canceled command")], components: [] }).catch(() => null);
+                    await ctx
+                        .send({
+                            embeds: [
+                                createMusicEmbed(
+                                    ctx,
+                                    "info",
+                                    "You have canceled command"
+                                )
+                            ],
+                            components: []
+                        })
+                        .catch(() => null);
                 }
             } else {
-                await interaction.reply({ embeds: [createEmbed("info", `**Sorry, but this interaction only for ${ctx.author.toString()}**`)], ephemeral: true });
+                await interaction.reply({
+                    embeds: [
+                        createEmbed(
+                            "info",
+                            `**Sorry, but this interaction only for ${ctx.author.toString()}**`
+                        )
+                    ],
+                    ephemeral: true
+                });
             }
             await interaction.deferUpdate();
             buttonCollector.stop("finished");
         });
         buttonCollector.on("end", (_, reason) => {
-            if (reason !== "finished") void ctx.send({ embeds: [createEmbed("error", "**The request has been canceled because no respond!**")], components: [] }).catch(() => null);
+            if (reason !== "finished")
+                void ctx
+                    .send({
+                        embeds: [
+                            createEmbed(
+                                "error",
+                                "**The request has been canceled because no respond!**"
+                            )
+                        ],
+                        components: []
+                    })
+                    .catch(() => null);
         });
     }
 }

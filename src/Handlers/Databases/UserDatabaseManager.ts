@@ -1,5 +1,9 @@
 import { Collection } from "discord.js";
-import { DataSource, DeleteWriteOpResultObject, MongoRepository } from "typeorm";
+import {
+    DataSource,
+    DeleteWriteOpResultObject,
+    MongoRepository
+} from "typeorm";
 import { UserSettings } from "./Entities/UserSettings";
 
 export class UserDatabaseManager {
@@ -8,8 +12,11 @@ export class UserDatabaseManager {
 
     public _init(dataSource: DataSource): void {
         this.collection = dataSource.getMongoRepository(UserSettings);
-        void this.list()
-            .then(database => database.map(userSettings => this.cache.set(userSettings.userId, userSettings)));
+        void this.list().then(database =>
+            database.map(userSettings =>
+                this.cache.set(userSettings.userId, userSettings)
+            )
+        );
     }
 
     public async get(userId: string): Promise<UserSettings | undefined> {
@@ -24,8 +31,12 @@ export class UserDatabaseManager {
         return database;
     }
 
-    public async set(userId: string, key: keyof UserSettings, value: any): Promise<UserSettings> {
-        let database = this.cache.get(userId) ?? await this.get(userId);
+    public async set(
+        userId: string,
+        key: keyof UserSettings,
+        value: any
+    ): Promise<UserSettings> {
+        let database = this.cache.get(userId) ?? (await this.get(userId));
         if (!database) {
             const newUserDatabase = this.collection.create({ userId });
             if (!this.cache.has(userId)) {
@@ -51,7 +62,10 @@ export class UserDatabaseManager {
         return this.collection.find({});
     }
 
-    public async reset(userId: string, key: keyof UserSettings): Promise<UserSettings> {
+    public async reset(
+        userId: string,
+        key: keyof UserSettings
+    ): Promise<UserSettings> {
         let value = {};
         if (key === "playlists") value = [];
         return this.set(userId, key, value);

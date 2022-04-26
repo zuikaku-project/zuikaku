@@ -2,7 +2,7 @@ import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
-import { chunk, createMusicEmbed } from "@zuikaku/Utils";
+import { Utils, createMusicEmbed } from "@zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "view",
@@ -24,26 +24,76 @@ import { chunk, createMusicEmbed } from "@zuikaku/Utils";
 })
 export default class ViewPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
-        if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(ctx.author.id);
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
+        if (ctx.isInteraction() && !ctx.deferred)
+            await ctx.deferReply(fromGuildPlayer);
+        const getUserDatabase = await this.client.database.entity.users.get(
+            ctx.author.id
+        );
         if (!getUserDatabase) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist database")] }).catch(() => null);
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            "I am sorry, but you don't have any playlist database"
+                        )
+                    ]
+                })
+                .catch(() => null);
             return undefined;
         }
-        const getUserPlaylist = getUserDatabase.playlists.find(({ playlistId }) => playlistId === ctx.options!.getString("playlist")!);
+        const getUserPlaylist = getUserDatabase.playlists.find(
+            ({ playlistId }) =>
+                playlistId === ctx.options!.getString("playlist")!
+        );
         if (!getUserPlaylist) {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", "I am sorry, but you don't have any playlist matches that id")] });
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(
+                        ctx,
+                        "info",
+                        "I am sorry, but you don't have any playlist matches that id"
+                    )
+                ]
+            });
             return undefined;
         }
         if (getUserPlaylist.playlistTracks.length) {
             let i = 1;
-            const playlistTracksArray = getUserPlaylist.playlistTracks.map(({ trackId, trackTitle, trackLength }) => `**${i++} • \`${trackId}\` | ${trackTitle} (${this.client.utils.parseMs(trackLength, { colonNotation: true }).colonNotation})**`);
-            const generateTracksChunks = chunk(playlistTracksArray, 10);
-            const generateEmbeds = generateTracksChunks.map(tracks => createMusicEmbed(ctx, "info", `Playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`).setDescription(tracks.join("\n")));
-            await new this.client.utils.pagination(ctx, generateEmbeds).Pagination();
+            const playlistTracksArray = getUserPlaylist.playlistTracks.map(
+                ({ trackId, trackTitle, trackLength }) =>
+                    `**${i++} • \`${trackId}\` | ${trackTitle} (${
+                        Utils.parseMs(trackLength, {
+                            colonNotation: true
+                        }).colonNotation
+                    })**`
+            );
+            const generateTracksChunks = Utils.chunk(playlistTracksArray, 10);
+            const generateEmbeds = generateTracksChunks.map(tracks =>
+                createMusicEmbed(
+                    ctx,
+                    "info",
+                    `Playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`
+                ).setDescription(tracks.join("\n"))
+            );
+            await new this.client.utils.pagination(
+                ctx,
+                generateEmbeds
+            ).Pagination();
         } else {
-            await ctx.send({ embeds: [createMusicEmbed(ctx, "info", `I am sorry, but your playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId}) don't have any tracks`)] });
+            await ctx.send({
+                embeds: [
+                    createMusicEmbed(
+                        ctx,
+                        "info",
+                        `I am sorry, but your playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId}) don't have any tracks`
+                    )
+                ]
+            });
         }
     }
 }

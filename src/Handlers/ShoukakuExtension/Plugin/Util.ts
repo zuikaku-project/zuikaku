@@ -11,7 +11,9 @@ export default class Util {
         }
     }
 
-    public static async tryPromise<T>(fn: () => Promise<T>): Promise<T | undefined> {
+    public static async tryPromise<T>(
+        fn: () => Promise<T>
+    ): Promise<T | undefined> {
         try {
             return await fn();
         } catch {

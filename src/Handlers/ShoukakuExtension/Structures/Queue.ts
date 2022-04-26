@@ -1,3 +1,4 @@
+import { Utils } from "@zuikaku/Utils";
 import { MessageButton } from "discord.js";
 import { ShoukakuTrack } from "shoukaku";
 import { Dispatcher } from "./Dispatcher";
@@ -8,7 +9,7 @@ export class Queue {
     public previous: Track | null = null;
     public tracks: Track[] = [];
 
-    public constructor(public readonly dispatcher: Dispatcher) { }
+    public constructor(public readonly dispatcher: Dispatcher) {}
 
     public get getTrackSize(): number {
         return this.tracks.length + (this.current ? 1 : 0);
@@ -32,28 +33,53 @@ export class Queue {
             this.tracks.push(track);
         }
         if (this.dispatcher.queueMessage.lastPlayerMessage) {
-            const row = this.dispatcher.queueMessage.lastPlayerMessage.components[0];
-            const findNextTrackButton = row.components.find(x => this.dispatcher.shoukaku.client.utils.encodeDecodeBase64String(x.customId ?? "", true).split("_")[1] === "NEXT-TRACK") as MessageButton | undefined;
+            const row =
+                this.dispatcher.queueMessage.lastPlayerMessage.components[0];
+            const findNextTrackButton = row.components.find(
+                x =>
+                    Utils.encodeDecodeBase64String(
+                        x.customId ?? "",
+                        true
+                    ).split("_")[1] === "NEXT-TRACK"
+            ) as MessageButton | undefined;
             if (findNextTrackButton) {
                 findNextTrackButton.setDisabled(false).setStyle("PRIMARY");
                 row.components.splice(3, 1, findNextTrackButton);
             }
-            await this.dispatcher.queueMessage.lastPlayerMessage.edit({ components: [row] }).catch(() => null);
+            await this.dispatcher.queueMessage.lastPlayerMessage
+                .edit({ components: [row] })
+                .catch(() => null);
         }
     }
 
-    public async removeTrack(track: number, range: number): Promise<ShoukakuTrack[]> {
+    public async removeTrack(
+        track: number,
+        range: number
+    ): Promise<ShoukakuTrack[]> {
         const spliced = this.tracks.splice(track, range ? range : 1);
         const getGuildDatabase = await this.dispatcher.getGuildDatabase;
-        if (getGuildDatabase?.guildPlayer?.channelId) setTimeout(() => this.dispatcher.shoukaku.updateGuildPlayerEmbed(this.dispatcher.getGuild), 500);
-        if (this.dispatcher.queueMessage.lastPlayerMessage && !this.tracks.length) {
-            const row = this.dispatcher.queueMessage.lastPlayerMessage.components[0];
-            const findNextTrackButton = row.components.find(x => this.dispatcher.shoukaku.client.utils.encodeDecodeBase64String(x.customId ?? "", true).split("_")[1] === "NEXT-TRACK") as MessageButton | undefined;
+        if (getGuildDatabase?.guildPlayer?.channelId)
+            setTimeout(() => this.dispatcher.getEmbedPlayer?.update(), 500);
+        if (
+            this.dispatcher.queueMessage.lastPlayerMessage &&
+            !this.tracks.length
+        ) {
+            const row =
+                this.dispatcher.queueMessage.lastPlayerMessage.components[0];
+            const findNextTrackButton = row.components.find(
+                x =>
+                    Utils.encodeDecodeBase64String(
+                        x.customId ?? "",
+                        true
+                    ).split("_")[1] === "NEXT-TRACK"
+            ) as MessageButton | undefined;
             if (findNextTrackButton) {
                 findNextTrackButton.setDisabled(true).setStyle("SECONDARY");
                 row.components.splice(3, 1, findNextTrackButton);
             }
-            await this.dispatcher.queueMessage.lastPlayerMessage.edit({ components: [row] }).catch(() => null);
+            await this.dispatcher.queueMessage.lastPlayerMessage
+                .edit({ components: [row] })
+                .catch(() => null);
         }
         return spliced;
     }
@@ -64,7 +90,8 @@ export class Queue {
             [this.tracks[i], this.tracks[j]] = [this.tracks[j], this.tracks[i]];
         }
         void this.dispatcher.getGuildDatabase.then(guildSettings => {
-            if (guildSettings?.guildPlayer?.channelId) setTimeout(() => this.dispatcher.shoukaku.updateGuildPlayerEmbed(this.dispatcher.getGuild), 500);
+            if (guildSettings?.guildPlayer?.channelId)
+                setTimeout(() => this.dispatcher.getEmbedPlayer?.update(), 500);
         });
     }
 }

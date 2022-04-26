@@ -1,5 +1,9 @@
 import {
-    isMusicPlaying, isSameTextChannel, isSameVoiceChannel, isUserInTheVoiceChannel, ZuikakuDecorator
+    isMusicPlaying,
+    isSameTextChannel,
+    isSameVoiceChannel,
+    isUserInTheVoiceChannel,
+    ZuikakuDecorator
 } from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -21,15 +25,22 @@ export default class PauseCommand extends ZuikakuCommand {
     @isSameVoiceChannel()
     @isSameTextChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (dispatcher.player.paused) {
-            await ctx.send({
-                embeds: [
-                    createMusicEmbed(ctx, "info", "You can't paused player if the player is not playing")
-                ]
-            })
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            "You can't paused player if the player is not playing"
+                        )
+                    ]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -38,11 +49,16 @@ export default class PauseCommand extends ZuikakuCommand {
                 .catch(() => null);
         } else {
             await dispatcher.setPaused(true);
-            await ctx.send({
-                embeds: [
-                    createMusicEmbed(ctx, "info", "You has been paused the player")
-                ]
-            })
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            "You has been paused the player"
+                        )
+                    ]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);

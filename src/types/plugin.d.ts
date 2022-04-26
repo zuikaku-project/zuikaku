@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/method-signature-style */
-/* eslint-disable @typescript-eslint/naming-convention */
+export interface IregExpExec {
+    index: number;
+    input: string;
+    groups: {
+        id: string;
+        link: string;
+        type: string;
+    };
+}
+
 export interface IPluginOptions {
     clientId?: string;
     clientSecret?: string;
@@ -19,7 +28,12 @@ export interface ILavalinkPayloadTrack {
 }
 
 export interface ILavalinkPayloadTrackList {
-    loadType: "LOAD_FAILED" | "NO_MATCHES" | "PLAYLIST_LOADED" | "SEARCH_RESULT" | "TRACK_LOADED";
+    loadType:
+        | "LOAD_FAILED"
+        | "NO_MATCHES"
+        | "PLAYLIST_LOADED"
+        | "SEARCH_RESULT"
+        | "TRACK_LOADED";
     playlistInfo?: {
         name?: string;
         selectedTrack?: number;
@@ -55,14 +69,12 @@ export interface DeezerTrack {
     md5_image?: string;
 }
 
-
 export interface DeezerArtist {
     id?: number;
     name?: string;
     tracklist?: string;
     type?: string;
 }
-
 
 export interface DeezerPlaylist {
     creator: DeezerArtist;
@@ -72,7 +84,6 @@ export interface DeezerPlaylist {
         checksum: string;
     };
 }
-
 
 export interface DeezerAlbum {
     artist: DeezerArtist;

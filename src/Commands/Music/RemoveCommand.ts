@@ -1,5 +1,8 @@
 import {
-    isMusicPlaying, isSameVoiceChannel, isUserInTheVoiceChannel, ZuikakuDecorator
+    isMusicPlaying,
+    isSameVoiceChannel,
+    isUserInTheVoiceChannel,
+    ZuikakuDecorator
 } from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -33,15 +36,26 @@ export default class RemoveCommand extends ZuikakuCommand {
     @isUserInTheVoiceChannel()
     @isSameVoiceChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         const data = ctx.options!.getNumber("number")!;
         const data2 = ctx.options!.getNumber("range");
-        const embed2 = createMusicEmbed(ctx, "info", `I am sorry, but ${dispatcher.queue.tracks.length ? `only ${dispatcher.queue.tracks.length} track(s) in the queue` : "Nothing track(s) in the queue"}`);
+        const embed2 = createMusicEmbed(
+            ctx,
+            "info",
+            `I am sorry, but ${
+                dispatcher.queue.tracks.length
+                    ? `only ${dispatcher.queue.tracks.length} track(s) in the queue`
+                    : "Nothing track(s) in the queue"
+            }`
+        );
         if (data < 1) return;
         if (data > dispatcher.queue.tracks.length) {
-            await ctx.send({ embeds: [embed2] })
+            await ctx
+                .send({ embeds: [embed2] })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -53,10 +67,14 @@ export default class RemoveCommand extends ZuikakuCommand {
         if (data2) {
             if (data > data2) return;
             if (data2 > dispatcher.queue.tracks.length) {
-                await ctx.send({ embeds: [embed2] })
+                await ctx
+                    .send({ embeds: [embed2] })
                     .then(x => {
                         if (fromGuildPlayer) {
-                            setTimeout(() => x.delete().catch(() => null), 5000);
+                            setTimeout(
+                                () => x.delete().catch(() => null),
+                                5000
+                            );
                         }
                     })
                     .catch(() => null);
@@ -64,11 +82,18 @@ export default class RemoveCommand extends ZuikakuCommand {
             }
             const calculate = data2 - data;
             await dispatcher.queue.removeTrack(data - 1, calculate + 1);
-            await ctx.send({
-                embeds: [
-                    createMusicEmbed(ctx, "info", `You has been removed ${calculate + 1} track(s) from queue`)
-                ]
-            })
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            `You has been removed ${
+                                calculate + 1
+                            } track(s) from queue`
+                        )
+                    ]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -77,11 +102,17 @@ export default class RemoveCommand extends ZuikakuCommand {
                 .catch(() => null);
         } else {
             const get = await dispatcher.queue.removeTrack(data - 1, data2!);
-            await ctx.send({
-                embeds: [
-                    createMusicEmbed(ctx, "info", `You has been removed ${get[0].info.title!} track from queue`)
-                ]
-            })
+            await ctx
+                .send({
+                    embeds: [
+                        createMusicEmbed(
+                            ctx,
+                            "info",
+                            `You has been removed ${get[0].info
+                                .title!} track from queue`
+                        )
+                    ]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);

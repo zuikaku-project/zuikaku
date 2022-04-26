@@ -12,7 +12,7 @@ import { Guild, WebhookClient } from "discord.js";
 export default class ZuikakuGuildCreate extends ZuikakuListener {
     public async execute(guild: Guild): Promise<void> {
         if (!guild.available) return undefined;
-        this.client.logger.info({ module: "DATABASE", message: `New Guild ${guild.name}, database has been assigned` });
+        this.client.logger.info("zuikaku", `New Guild ${guild.name}`);
         const sname = guild.name;
         const membert = guild.members.cache.size;
         const memberbot = guild.members.cache.filter(x => x.user.bot).size;
@@ -22,17 +22,18 @@ export default class ZuikakuGuildCreate extends ZuikakuListener {
             .setAuthor({ name: "I Joined new Server" })
             .setDescription(
                 "**Server Information\n" +
-                "```asciidoc\n" +
-                `Server Name   :: ${sname} | ${guild.id}\n` +
-                `Server Owner  :: ${owner!.tag} | ${owner!.id}\n` +
-                `Member Count  :: ${membert} Member\n` +
-                `              :: ${memberuser} User\n` +
-                `              :: ${memberbot} Bot\n` +
-                "```**"
+                    "```asciidoc\n" +
+                    `Server Name   :: ${sname} | ${guild.id}\n` +
+                    `Server Owner  :: ${
+                        owner ? `${owner.tag} | ${owner.id}` : "Unknown Owner"
+                    } \n` +
+                    `Member Count  :: ${membert} Member\n` +
+                    `              :: ${memberuser} User\n` +
+                    `              :: ${memberbot} Bot\n` +
+                    "```**"
             );
         const webhook = new WebhookClient({
-            url:
-                "https://discord.com/api/webhooks/875557228495659038/Fbfz3LmnXm8etVl4uOwXKdxRxJgqMane10byBydp8-vMgXAKiJYaB-OQSrbal3SMqBiK"
+            url: "https://discord.com/api/webhooks/875557228495659038/Fbfz3LmnXm8etVl4uOwXKdxRxJgqMane10byBydp8-vMgXAKiJYaB-OQSrbal3SMqBiK"
         });
         await webhook.send({ embeds: [e] });
     }

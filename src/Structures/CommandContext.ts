@@ -3,11 +3,26 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { MessageInteractionAction } from "@zuikaku/types/core";
 import { InteractionTypes, MessageComponentTypes } from "@zuikaku/types/enum";
+import { Utils } from "@zuikaku/Utils";
 import {
-    ButtonInteraction, Collection, CommandInteraction, CommandInteractionOptionResolver,
-    ContextMenuInteraction, GuildMember, Interaction, InteractionReplyOptions, Message,
-    MessageActionRow, MessageAttachment, MessageButton, MessageMentions, MessageOptions,
-    MessagePayload, SelectMenuInteraction, TextBasedChannel, User
+    ButtonInteraction,
+    Collection,
+    CommandInteraction,
+    CommandInteractionOptionResolver,
+    ContextMenuInteraction,
+    GuildMember,
+    Interaction,
+    InteractionReplyOptions,
+    Message,
+    MessageActionRow,
+    MessageAttachment,
+    MessageButton,
+    MessageMentions,
+    MessageOptions,
+    MessagePayload,
+    SelectMenuInteraction,
+    TextBasedChannel,
+    User
 } from "discord.js";
 import { ZuikakuClient } from "./ZuikakuClient";
 
@@ -18,9 +33,14 @@ export class CommandContext {
     public activateCollector = false;
     public constructor(
         public client: ZuikakuClient,
-        public readonly context: CommandInteraction | ContextMenuInteraction | Interaction | Message | SelectMenuInteraction,
+        public readonly context:
+            | CommandInteraction
+            | ContextMenuInteraction
+            | Interaction
+            | Message
+            | SelectMenuInteraction,
         public args: string[] = []
-    ) { }
+    ) {}
 
     public setAdditionalArgs(key: string, value: any): this {
         this.additionalArgs.set(key, value);
@@ -29,39 +49,55 @@ export class CommandContext {
 
     public async deferReply(ephemeral = false): Promise<void> {
         if (this.isInteraction()) {
-            return (this.context as CommandInteraction).deferReply({ ephemeral });
+            return (this.context as CommandInteraction).deferReply({
+                ephemeral
+            });
         }
         return Promise.resolve(undefined);
     }
 
-    public async send(options: InteractionReplyOptions | MessageOptions | MessagePayload | string | { deleteButton?: { reference: string } }, type: MessageInteractionAction = "editReply"): Promise<Message> {
-        const row = new MessageActionRow()
-            .addComponents(
-                new MessageButton()
-                    .setEmoji("<:trash:851270257501929472>")
-                    .setStyle("DANGER")
-            );
+    public async send(
+        options:
+            | InteractionReplyOptions
+            | MessageOptions
+            | MessagePayload
+            | string
+            | { deleteButton?: { reference: string } },
+        type: MessageInteractionAction = "editReply"
+    ): Promise<Message> {
+        const row = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setEmoji("<:trash:851270257501929472>")
+                .setStyle("DANGER")
+        );
         if ((options as any).deleteButton) {
-            row.components[0]
-                .setCustomId(
+            row.components[0].setCustomId(
+                Utils.encodeDecodeBase64String(
                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                    this.client.utils.encodeDecodeBase64String(`${(options as any).deleteButton.reference}_deleteButton`)
-                );
+                    `${(options as any).deleteButton.reference}_deleteButton`
+                )
+            );
             if ((options as InteractionReplyOptions).components) {
-                (options as InteractionReplyOptions).components![0].components.unshift(row.components[0]);
+                (
+                    options as InteractionReplyOptions
+                ).components![0].components.unshift(row.components[0]);
             } else {
                 (options as InteractionReplyOptions).components = [row];
             }
         }
         if (this.isInteraction()) {
             (options as InteractionReplyOptions).fetchReply = true;
-            const msg = await (this.context as CommandInteraction)[type](options as any) as Message;
+            const msg = (await (this.context as CommandInteraction)[type](
+                options as any
+            )) as Message;
             const channel = this.context.channel;
             const res = await channel!.messages.fetch(msg.id).catch(() => null);
             return res ?? msg;
         }
         if ((options as InteractionReplyOptions).ephemeral) {
-            throw new Error("Cannot send ephemeral message in a non-interaction context");
+            throw new Error(
+                "Cannot send ephemeral message in a non-interaction context"
+            );
         }
         return this.context.channel!.send(options as any);
     }
@@ -90,7 +126,8 @@ export class CommandContext {
 
     public get options(): CommandInteractionOptionResolver | null {
         return this.context instanceof Interaction
-            ? (this.context as CommandInteraction).options as CommandInteractionOptionResolver
+            ? ((this.context as CommandInteraction)
+                  .options as CommandInteractionOptionResolver)
             : null;
     }
 
@@ -105,44 +142,59 @@ export class CommandContext {
     }
 
     public get mentions(): MessageMentions | null {
-        return this.context instanceof Message
-            ? this.context.mentions
-            : null;
+        return this.context instanceof Message ? this.context.mentions : null;
     }
 
     public isInteraction(): boolean {
-        return this.isCommand() ||
+        return (
+            this.isCommand() ||
             this.isContextMenu() ||
             this.isMessageComponent() ||
             this.isButton() ||
-            this.isSelectMenu();
+            this.isSelectMenu()
+        );
     }
 
     public isCommand(): boolean {
-        return InteractionTypes[(this.context as Interaction).type] === InteractionTypes.APPLICATION_COMMAND &&
-            typeof (this.context as any).targetId === "undefined";
+        return (
+            InteractionTypes[(this.context as Interaction).type] ===
+                InteractionTypes.APPLICATION_COMMAND &&
+            typeof (this.context as any).targetId === "undefined"
+        );
     }
 
     public isContextMenu(): boolean {
-        return InteractionTypes[(this.context as Interaction).type] === InteractionTypes.APPLICATION_COMMAND &&
-            typeof (this.context as any).targetId !== "undefined";
+        return (
+            InteractionTypes[(this.context as Interaction).type] ===
+                InteractionTypes.APPLICATION_COMMAND &&
+            typeof (this.context as any).targetId !== "undefined"
+        );
     }
 
     public isMessageComponent(): boolean {
-        return InteractionTypes[(this.context as Interaction).type] === InteractionTypes.MESSAGE_COMPONENT;
+        return (
+            InteractionTypes[(this.context as Interaction).type] ===
+            InteractionTypes.MESSAGE_COMPONENT
+        );
     }
 
     public isButton(): boolean {
         return (
-            InteractionTypes[(this.context as Interaction).type] === InteractionTypes.MESSAGE_COMPONENT &&
-            MessageComponentTypes[(this.context as ButtonInteraction).componentType] === MessageComponentTypes.BUTTON
+            InteractionTypes[(this.context as Interaction).type] ===
+                InteractionTypes.MESSAGE_COMPONENT &&
+            MessageComponentTypes[
+                (this.context as ButtonInteraction).componentType
+            ] === MessageComponentTypes.BUTTON
         );
     }
 
     public isSelectMenu(): boolean {
         return (
-            InteractionTypes[(this.context as Interaction).type] === InteractionTypes.MESSAGE_COMPONENT &&
-            MessageComponentTypes[(this.context as SelectMenuInteraction).componentType] === MessageComponentTypes.SELECT_MENU
+            InteractionTypes[(this.context as Interaction).type] ===
+                InteractionTypes.MESSAGE_COMPONENT &&
+            MessageComponentTypes[
+                (this.context as SelectMenuInteraction).componentType
+            ] === MessageComponentTypes.SELECT_MENU
         );
     }
 }

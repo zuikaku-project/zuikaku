@@ -1,4 +1,9 @@
-import { isMusicPlaying, isSameVoiceChannel, isUserInTheVoiceChannel, ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import {
+    isMusicPlaying,
+    isSameVoiceChannel,
+    isUserInTheVoiceChannel,
+    ZuikakuDecorator
+} from "@zuikaku/Handlers/Decorators";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -35,12 +40,17 @@ export default class RepeatCommand extends ZuikakuCommand {
     @isUserInTheVoiceChannel()
     @isSameVoiceChannel()
     public async execute(ctx: CommandContext): Promise<void> {
-        const fromGuildPlayer = (await this.client.database.entity.guilds.get(ctx.guild!.id))?.guildPlayer?.channelId === ctx.channel?.id;
+        const fromGuildPlayer =
+            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+                ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
         if (ctx.options?.getSubcommand(false) === "all") {
             await dispatcher.setQueueRepeat();
-            await ctx.send({ embeds: [createEmbed("info", "**🔁| Repeat mode: Queue**")] })
+            await ctx
+                .send({
+                    embeds: [createEmbed("info", "**🔁| Repeat mode: Queue**")]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -49,7 +59,10 @@ export default class RepeatCommand extends ZuikakuCommand {
                 .catch(() => null);
         } else if (ctx.options?.getSubcommand(false) === "track") {
             await dispatcher.setTrackRepeat();
-            await ctx.send({ embeds: [createEmbed("info", "**🔂| Repeat mode: Track**")] })
+            await ctx
+                .send({
+                    embeds: [createEmbed("info", "**🔂| Repeat mode: Track**")]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
@@ -59,7 +72,10 @@ export default class RepeatCommand extends ZuikakuCommand {
         } else {
             await dispatcher.setTrackRepeat(false);
             await dispatcher.setQueueRepeat(false);
-            await ctx.send({ embeds: [createEmbed("info", "**▶| Repeat mode: none**")] })
+            await ctx
+                .send({
+                    embeds: [createEmbed("info", "**▶| Repeat mode: none**")]
+                })
                 .then(x => {
                     if (fromGuildPlayer) {
                         setTimeout(() => x.delete().catch(() => null), 5000);

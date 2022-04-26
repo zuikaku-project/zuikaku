@@ -10,9 +10,9 @@ import { ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuDisconnect extends ZuikakuListener {
     public execute(name: string, _: ShoukakuPlayer[], moved: boolean): void {
-        this.client.logger.warn({
-            module: "LAVALINK",
-            message: `Node ${name} Disconnected, ${moved ? "Moved" : ""}`
-        });
+        this.client.logger.warn(
+            "shoukaku",
+            `Node ${name} Disconnected${moved ? ", Moved" : ""}`
+        );
     }
 }
