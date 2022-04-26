@@ -25,7 +25,7 @@ export default class ZuikakuErrorEvent extends ZuikakuListener {
                 embeds: [
                     createEmbed("info", error.message).setAuthor({
                         name: "OOF! An error has occured! Click her to join support server",
-                        url: "https://zuikaku-ship.maakoo.my.id/support"
+                        url: "https://zui.my.id/support"
                     })
                 ],
                 deleteButton: {

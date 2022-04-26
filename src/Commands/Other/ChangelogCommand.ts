@@ -17,7 +17,7 @@ export default class ChangelogCommand extends ZuikakuCommand {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const changelogButton = new MessageActionRow().addComponents(
             new MessageButton()
-                .setURL("https://zuikaku-ship.maakoo.my.id/changelog")
+                .setURL("https://zui.my.id/changelog")
                 .setLabel("Changelog")
                 .setStyle("LINK")
         );
