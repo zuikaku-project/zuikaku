@@ -14,20 +14,20 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3.0.2
-  
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3.1.1
-      with:
-        node-version: ${{ matrix.node-version }}
-        check-latest: true
-        
-    - name: Install dependencies
-      run: npm i
+      - name: Checkout repository
+        uses: actions/checkout@v3.0.2
 
-    - name: Run ESLint
-      run: npm run lint
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3.1.1
+        with:
+          node-version: ${{ matrix.node-version }}
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run ESLint
+        run: npm run lint
 
   compile:
     needs: lint
@@ -45,9 +45,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-        
+
       - name: Install dependencies
         run: npm i
-      
+
       - name: Run Compile
         run: npm run build && rm -rf dist

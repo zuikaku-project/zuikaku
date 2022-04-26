@@ -2,8 +2,13 @@ import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
-import { GuildMember, MessageActionRow, MessageAttachment, MessageButton } from "discord.js";
+import { createEmbed, Utils } from "@zuikaku/Utils";
+import {
+    GuildMember,
+    MessageActionRow,
+    MessageAttachment,
+    MessageButton
+} from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "spotify",
@@ -32,8 +37,9 @@ import { GuildMember, MessageActionRow, MessageAttachment, MessageButton } from 
 })
 export default class SpotifyCommand extends ZuikakuCommand {
     public async execute(context: CommandContext): Promise<void> {
-        if (context.isInteraction() && !context.deferred) await context.deferReply();
-        const member = this.client.utils.parseMember(
+        if (context.isInteraction() && !context.deferred)
+            await context.deferReply();
+        const member = Utils.parseMember(
             context,
             context.options?.getMember("user")
                 ? (context.options.getMember("user") as GuildMember).id
@@ -41,11 +47,19 @@ export default class SpotifyCommand extends ZuikakuCommand {
         );
         const getSpotifyActivity = this.getSpotifyPresence(member);
         if (!getSpotifyActivity) {
-            await context.send({
-                embeds: [
-                    createEmbed("error", "**<a:decline:879311910045097984> | Operation Canceled. Cannot find spotify presence**")
-                ]
-            }).then(x => setTimeout(() => x.delete().catch(() => null), 10000)).catch(() => null);
+            await context
+                .send({
+                    embeds: [
+                        createEmbed(
+                            "error",
+                            "**<a:decline:879311910045097984> | Operation Canceled. Cannot find spotify presence**"
+                        )
+                    ]
+                })
+                .then(x =>
+                    setTimeout(() => x.delete().catch(() => null), 10000)
+                )
+                .catch(() => null);
             return undefined;
         }
 
@@ -53,29 +67,38 @@ export default class SpotifyCommand extends ZuikakuCommand {
         const progress = Date.now() - getSpotifyActivity.start;
         const progressstart = progress < 0 ? 0 : progress;
         const progressed = progressstart > duration ? duration : progressstart;
-        const progressrun = this.client.utils.parseMs(progressed, { colonNotation: true }).colonNotation;
-        const endprogress = this.client.utils.parseMs(duration, { colonNotation: true }).colonNotation;
+        const progressrun = Utils.parseMs(progressed, {
+            colonNotation: true
+        }).colonNotation;
+        const endprogress = Utils.parseMs(duration, {
+            colonNotation: true
+        }).colonNotation;
         const nocanvasdata = createEmbed("info")
             .setAuthor({
                 name: "Spotify Song Information",
-                iconURL: this.client.user!.displayAvatarURL({ size: 4096, format: "png" })!,
+                iconURL: this.client.user!.displayAvatarURL({
+                    size: 4096,
+                    format: "png"
+                })!,
                 url: getSpotifyActivity.url
             })
             .addFields([
                 { name: "Title", value: getSpotifyActivity.songName },
                 { name: "Album", value: getSpotifyActivity.album },
                 { name: "Artists", value: getSpotifyActivity.author },
-                { name: "Duration", value: `[${progressrun}] - [${endprogress}]` }
+                {
+                    name: "Duration",
+                    value: `[${progressrun}] - [${endprogress}]`
+                }
             ])
             .setThumbnail(getSpotifyActivity.spotifyImage);
-        const row = new MessageActionRow()
-            .addComponents([
-                new MessageButton()
-                    .setLabel("Listen Now!")
-                    .setURL(getSpotifyActivity.url)
-                    .setStyle("LINK")
-                    .setEmoji("<:SpotifyGreen:857159714159984650>")
-            ]);
+        const row = new MessageActionRow().addComponents([
+            new MessageButton()
+                .setLabel("Listen Now!")
+                .setURL(getSpotifyActivity.url)
+                .setStyle("LINK")
+                .setEmoji("<:SpotifyGreen:857159714159984650>")
+        ]);
         if (context.options?.getBoolean("nocanvas")) {
             await context.send({
                 embeds: [nocanvasdata],
@@ -100,14 +123,16 @@ export default class SpotifyCommand extends ZuikakuCommand {
                 reference: context.author.id
             },
             components: [row],
-            files: [
-                new MessageAttachment(getAPIImage!, "spotify.png")
-            ]
+            files: [new MessageAttachment(getAPIImage!, "spotify.png")]
         });
     }
 
-    private getSpotifyPresence(guildMember: GuildMember): SpotifyActivity | undefined {
-        const activity = guildMember.presence?.activities.find(x => x.name === "Spotify");
+    private getSpotifyPresence(
+        guildMember: GuildMember
+    ): SpotifyActivity | undefined {
+        const activity = guildMember.presence?.activities.find(
+            x => x.name === "Spotify"
+        );
         if (!activity) return undefined;
         try {
             const SpotifyActivity = {
@@ -123,7 +148,10 @@ export default class SpotifyCommand extends ZuikakuCommand {
             SpotifyActivity.album = activity.assets!.largeText!;
             SpotifyActivity.author = activity.state!;
             SpotifyActivity.url = `https://open.spotify.com/track/${activity.syncId!}`;
-            SpotifyActivity.spotifyImage = activity.assets!.largeImageURL({ format: "png", size: 4096 })!;
+            SpotifyActivity.spotifyImage = activity.assets!.largeImageURL({
+                format: "png",
+                size: 4096
+            })!;
             SpotifyActivity.start = activity.timestamps!.start!.getTime();
             SpotifyActivity.end = activity.timestamps!.end!.getTime();
             return SpotifyActivity;

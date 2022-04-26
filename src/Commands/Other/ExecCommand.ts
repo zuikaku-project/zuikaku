@@ -25,15 +25,28 @@ export default class ExecCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(true);
         exec(ctx.options!.getString("bash")!, async (e, stdout, stderr) => {
-            if (e) return ctx.send({ content: `\`\`\`js\n${e.message}\n\`\`\`` });
-            if (!stderr && !stdout) return ctx.send({ content: "Success without results!" }, "followUp");
+            if (e)
+                return ctx.send({ content: `\`\`\`js\n${e.message}\n\`\`\`` });
+            if (!stderr && !stdout)
+                return ctx.send(
+                    { content: "Success without results!" },
+                    "followUp"
+                );
             if (stdout) {
                 const pages = this.pagination(stdout, 1950);
-                for (const page of pages) await ctx.send({ content: `\`\`\`bash\n${page}\n\`\`\`` }, "followUp");
+                for (const page of pages)
+                    await ctx.send(
+                        { content: `\`\`\`bash\n${page}\n\`\`\`` },
+                        "followUp"
+                    );
             }
             if (stderr) {
                 const pages = this.pagination(stderr, 1950);
-                for (const page of pages) await ctx.send({ content: `\`\`\`bash\n${page}\n\`\`\`` }, "followUp");
+                for (const page of pages)
+                    await ctx.send(
+                        { content: `\`\`\`bash\n${page}\n\`\`\`` },
+                        "followUp"
+                    );
             }
         });
     }

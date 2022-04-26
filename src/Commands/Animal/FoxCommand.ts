@@ -22,13 +22,17 @@ export default class FoxCommand extends ZuikakuCommand {
             .header({
                 "User-Agent": `Mozilla/5.0 (Server; NodeJS ${process.version}; rv:1.0) Magma/1.0 (KHTML, like Gecko) TrackResolver/1.0`,
                 Accept: "application/json"
-            }).json();
+            })
+            .json();
         const ath = new MessageAttachment(image as string, "fox.png");
         const e = createEmbed("info")
             .setAuthor({ name: `🦊| This is your fox ${ctx.author.username}` })
             .setImage("attachment://fox.png")
             .setTimestamp()
-            .setFooter({ text: `Commanded by ${ctx.author.tag}`, iconURL: ctx.author.displayAvatarURL({ dynamic: true })! });
+            .setFooter({
+                text: `Commanded by ${ctx.author.tag}`,
+                iconURL: ctx.author.displayAvatarURL({ dynamic: true })!
+            });
         await ctx.send({ embeds: [e], files: [ath] });
     }
 }

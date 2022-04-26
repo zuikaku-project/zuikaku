@@ -31,13 +31,22 @@ export default class PunchCommand extends ZuikakuCommand {
             .header({
                 "User-Agent": `Mozilla/5.0 (Server; NodeJS ${process.version}; rv:1.0) Magma/1.0 (KHTML, like Gecko) TrackResolver/1.0`,
                 Accept: "application/json"
-            }).json();
+            })
+            .json();
         const ath = new MessageAttachment(url as string, "punch.gif");
         const e = createEmbed("info")
-            .setTitle(`${member.user.username} Punched by ${ctx.author.username}`)
+            .setTitle(
+                `${member.user.username} Punched by ${ctx.author.username}`
+            )
             .setImage("attachment://punch.gif")
             .setTimestamp()
-            .setFooter({ text: `Commanded by ${ctx.author.tag}`, iconURL: ctx.author.displayAvatarURL({ dynamic: true, size: 4096 })! });
+            .setFooter({
+                text: `Commanded by ${ctx.author.tag}`,
+                iconURL: ctx.author.displayAvatarURL({
+                    dynamic: true,
+                    size: 4096
+                })!
+            });
         await ctx.send({ embeds: [e], files: [ath] });
     }
 }

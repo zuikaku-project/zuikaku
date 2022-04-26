@@ -18,16 +18,24 @@ import petitio from "petitio";
 export default class PandaCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const { image } = await petitio("https://some-random-api.ml/animal/panda")
+        const { image } = await petitio(
+            "https://some-random-api.ml/animal/panda"
+        )
             .header({
                 "User-Agent": `Mozilla/5.0 (Server; NodeJS ${process.version}; rv:1.0) Magma/1.0 (KHTML, like Gecko) TrackResolver/1.0`,
                 Accept: "application/json"
-            }).json();
+            })
+            .json();
         const ath = new MessageAttachment(image as string, "panda.png");
         const e = createEmbed("info")
-            .setAuthor({ name: `🐼| This is your panda ${ctx.author.username}` })
+            .setAuthor({
+                name: `🐼| This is your panda ${ctx.author.username}`
+            })
             .setImage("attachment://panda.png")
-            .setFooter({ text: `Commanded by ${ctx.author.tag}`, iconURL: ctx.author.displayAvatarURL({ dynamic: true })! })
+            .setFooter({
+                text: `Commanded by ${ctx.author.tag}`,
+                iconURL: ctx.author.displayAvatarURL({ dynamic: true })!
+            })
             .setTimestamp();
         await ctx.send({ embeds: [e], files: [ath] });
     }

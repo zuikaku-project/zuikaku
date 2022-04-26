@@ -28,7 +28,8 @@ import { MessageAttachment } from "discord.js";
                     {
                         name: "Dark",
                         value: "Dark"
-                    }, {
+                    },
+                    {
                         name: "Light",
                         value: "Light"
                     }
@@ -41,12 +42,22 @@ export default class SupremeCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         if (ctx.options!.getString("query")!.length > 15) {
-            await ctx.send({ embeds: [createEmbed("error", "maximum length of text is 15")] })
-                .then(x => setTimeout(() => x.delete().catch(() => null), 10000))
+            await ctx
+                .send({
+                    embeds: [
+                        createEmbed("error", "maximum length of text is 15")
+                    ]
+                })
+                .then(x =>
+                    setTimeout(() => x.delete().catch(() => null), 10000)
+                )
                 .catch(() => null);
             return undefined;
         }
-        const img = await this.client.apis.canvas.requestImageAPI("supreme", { query: ctx.options!.getString("query")!, dark: ctx.options?.getString("type") === "Dark" });
+        const img = await this.client.apis.canvas.requestImageAPI("supreme", {
+            query: ctx.options!.getString("query")!,
+            dark: ctx.options?.getString("type") === "Dark"
+        });
         const ath = new MessageAttachment(img!, "supreme.png");
         await ctx.send({ files: [ath] });
     }

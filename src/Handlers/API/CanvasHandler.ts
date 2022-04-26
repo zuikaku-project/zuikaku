@@ -1,6 +1,7 @@
 import { decodeBase64String } from "@zuikaku/types/core";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import petitio from "petitio";
+import { Utils } from "@zuikaku/Utils";
 
 export class CanvasHandler {
     public readonly endpoint = {
@@ -30,11 +31,19 @@ export class CanvasHandler {
         this.auth = this.client.config.api.auth;
     }
 
-    public async requestImageAPI(getEndpoint: keyof APIEndpoint, data: decodeBase64String): Promise<Buffer | undefined> {
+    public async requestImageAPI(
+        getEndpoint: keyof APIEndpoint,
+        data: decodeBase64String
+    ): Promise<Buffer | undefined> {
         try {
             const getAPIData = await petitio(this.baseURL)
                 .path(this.endpoint[getEndpoint])
-                .query("base64", this.client.utils.encodeDecodeBase64String(encodeURIComponent(JSON.stringify(data))))
+                .query(
+                    "base64",
+                    Utils.encodeDecodeBase64String(
+                        encodeURIComponent(JSON.stringify(data))
+                    )
+                )
                 .header("Authorization", this.auth)
                 .send();
             if (getAPIData.statusCode !== 200) {

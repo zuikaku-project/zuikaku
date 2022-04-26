@@ -2,7 +2,7 @@ import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
+import { createEmbed, Utils } from "@zuikaku/Utils";
 import { User } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
@@ -43,18 +43,30 @@ export default class AvatarCommand extends ZuikakuCommand {
     }
 
     private userAvatar(ctx: CommandContext, user: User | null): void {
-        const member = this.client.utils.parseMember(ctx, user ? user.id : "");
+        const member = Utils.parseMember(ctx, user ? user.id : "");
         const avatarEmbed = createEmbed("info")
             .setAuthor({
                 name: member.user.tag,
-                iconURL: member.user.displayAvatarURL({ format: "png", dynamic: true, size: 4096 }),
-                url: member.user.displayAvatarURL({ format: "png", dynamic: true, size: 4096 })
+                iconURL: member.user.displayAvatarURL({
+                    format: "png",
+                    dynamic: true,
+                    size: 4096
+                }),
+                url: member.user.displayAvatarURL({
+                    format: "png",
+                    dynamic: true,
+                    size: 4096
+                })
             })
-            .setImage(member.user.displayAvatarURL({ format: "png", dynamic: true, size: 4096 }));
+            .setImage(
+                member.user.displayAvatarURL({
+                    format: "png",
+                    dynamic: true,
+                    size: 4096
+                })
+            );
         void ctx.send({
-            embeds: [
-                avatarEmbed
-            ],
+            embeds: [avatarEmbed],
             deleteButton: {
                 reference: ctx.author.id
             }
@@ -65,14 +77,26 @@ export default class AvatarCommand extends ZuikakuCommand {
         const avatarEmbed = createEmbed("info")
             .setAuthor({
                 name: ctx.guild!.name,
-                iconURL: ctx.guild!.iconURL({ dynamic: true, size: 4096, format: "png" })!,
-                url: ctx.guild!.iconURL({ dynamic: true, size: 4096, format: "png" })!
+                iconURL: ctx.guild!.iconURL({
+                    dynamic: true,
+                    size: 4096,
+                    format: "png"
+                })!,
+                url: ctx.guild!.iconURL({
+                    dynamic: true,
+                    size: 4096,
+                    format: "png"
+                })!
             })
-            .setImage(ctx.guild!.iconURL({ format: "png", dynamic: true, size: 4096 })!);
+            .setImage(
+                ctx.guild!.iconURL({
+                    format: "png",
+                    dynamic: true,
+                    size: 4096
+                })!
+            );
         void ctx.send({
-            embeds: [
-                avatarEmbed
-            ],
+            embeds: [avatarEmbed],
             deleteButton: {
                 reference: ctx.author.id
             }

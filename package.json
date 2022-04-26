@@ -1,64 +1,70 @@
 {
-  "name": "zuikaku",
-  "version": "4.0.0",
-  "description": "The best Discord Bot that can serve you everytime, Fast, Secure, Always on, Best Audio, No Configuration",
-  "main": "./dist/ZuikakuBase.js",
-  "scripts": {
-    "build": "rimraf dist && npm run lint && tsc",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
-    "start": "node ./dist/ZuikakuBase.js",
-    "vps": "npm run build && npm start"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zuikaku-org/zuikaku.git"
-  },
-  "keywords": [],
-  "author": "noxzym",
-  "license": "agpl-3.0",
-  "bugs": {
-    "url": "https://github.com/zuikaku-org/zuikaku/issues"
-  },
-  "homepage": "https://github.com/zuikaku-org/zuikaku#readme",
-  "engines": {
-    "node": ">=16",
-    "npm": ">=7"
-  },
-  "_moduleAliases": {
-    "@zuikaku": "./dist"
-  },
-  "devDependencies": {
-    "@rahagia/eslint-config": "^8.1.1",
-    "@types/cors": "2.8.12",
-    "@types/express": "4.17.13",
-    "@types/js-yaml": "4.0.5",
-    "@types/node": "17.0.18",
-    "@typescript-eslint/eslint-plugin": "5.20.0",
-    "@typescript-eslint/parser": "5.20.0",
-    "eslint": "8.13.0",
-    "rimraf": "3.0.2",
-    "typescript": "^4.5.5"
-  },
-  "dependencies": {
-    "cheerio": "1.0.0-rc.10",
-    "colorette": "2.0.16",
-    "cors": "2.8.5",
-    "dayjs": "1.11.1",
-    "discord.js": "13.6.0",
-    "express": "^4.17.3",
-    "js-yaml": "4.1.0",
-    "module-alias": "2.2.2",
-    "mongodb": "3.7.3",
-    "petitio": "1.4.0",
-    "shoukaku": "2.1.6",
-    "tslib": "2.4.0",
-    "typeorm": "0.3.4"
-  },
-  "optionalDependencies": {
-    "bufferutil": "4.0.6",
-    "erlpack": "github:discord/erlpack",
-    "utf-8-validate": "5.0.9",
-    "zlib-sync": "0.1.7"
-  }
+    "name": "zuikaku",
+    "version": "4.0.0",
+    "description": "The best Discord Bot that can serve you everytime, Fast, Secure, Always on, Best Audio, No Configuration",
+    "main": "./dist/ZuikakuBase.js",
+    "scripts": {
+        "build": "rimraf dist && npm run lint && tsc",
+        "lint": "npm run pretty && eslint src --ext .ts",
+        "lint:fix": "npm run pretty:write && eslint src --ext .ts --fix",
+        "pretty": "prettier --config ./.prettierrc --check 'src/**/*.ts'",
+        "pretty:write": "prettier --config ./.prettierrc --write 'src/**/*.ts'",
+        "start": "node ./dist/ZuikakuBase.js",
+        "vps": "npm run build && npm start"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/zuikaku-org/zuikaku.git"
+    },
+    "keywords": [],
+    "author": "noxzym",
+    "license": "agpl-3.0",
+    "bugs": {
+        "url": "https://github.com/zuikaku-org/zuikaku/issues"
+    },
+    "homepage": "https://github.com/zuikaku-org/zuikaku#readme",
+    "engines": {
+        "node": ">=16",
+        "npm": ">=7"
+    },
+    "_moduleAliases": {
+        "@zuikaku": "./dist"
+    },
+    "devDependencies": {
+        "@rahagia/eslint-config": "^8.1.1",
+        "@types/cors": "2.8.12",
+        "@types/express": "4.17.13",
+        "@types/js-yaml": "4.0.5",
+        "@types/node": "17.0.18",
+        "@typescript-eslint/eslint-plugin": "5.20.0",
+        "@typescript-eslint/parser": "5.20.0",
+        "eslint": "8.13.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "prettier": "^2.6.2",
+        "rimraf": "3.0.2",
+        "typescript": "^4.5.5"
+    },
+    "dependencies": {
+        "cheerio": "1.0.0-rc.10",
+        "colorette": "2.0.16",
+        "cors": "2.8.5",
+        "dayjs": "1.11.1",
+        "discord-api-types": "^0.31.2",
+        "discord.js": "^13.6.0",
+        "eslint-config-prettier": "^8.5.0",
+        "express": "^4.17.3",
+        "js-yaml": "4.1.0",
+        "module-alias": "2.2.2",
+        "mongodb": "3.7.3",
+        "petitio": "1.4.0",
+        "shoukaku": "2.1.6",
+        "tslib": "2.4.0",
+        "typeorm": "0.3.4"
+    },
+    "optionalDependencies": {
+        "bufferutil": "4.0.6",
+        "erlpack": "github:discord/erlpack",
+        "utf-8-validate": "5.0.9",
+        "zlib-sync": "0.1.7"
+    }
 }

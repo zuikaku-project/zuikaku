@@ -3,7 +3,7 @@ import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { AnilistAnimeMangaInterface, ICommandComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
+import { createEmbed, Utils } from "@zuikaku/Utils";
 import { MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
@@ -31,11 +31,17 @@ import { MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
 export default class AnilistAnimeCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const { data: getAnime } = await this.client.apis.weebs.anilist.getAnime(ctx.options!.getString("title")!);
+        const { data: getAnime } =
+            await this.client.apis.weebs.anilist.getAnime(
+                ctx.options!.getString("title")!
+            );
         if (!getAnime.Page.media.length) {
             await ctx.send({
                 embeds: [
-                    createEmbed("info", "**<a:decline:879311910045097984> | Operation Canceled. 404 Not Found**")
+                    createEmbed(
+                        "info",
+                        "**<a:decline:879311910045097984> | Operation Canceled. 404 Not Found**"
+                    )
                 ]
             });
             return undefined;
@@ -47,12 +53,19 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
         await this.sendMessage(ctx, getAnime.Page.media[0]);
     }
 
-    private async sendMessage(ctx: CommandContext, final: AnilistAnimeMangaInterface["data"]["Page"]["media"][0]): Promise<void> {
-        let startDate = new Date(`${final.startDate.month}/${final.startDate.day}/${final.startDate.year}`) as Date | null;
+    private async sendMessage(
+        ctx: CommandContext,
+        final: AnilistAnimeMangaInterface["data"]["Page"]["media"][0]
+    ): Promise<void> {
+        let startDate = new Date(
+            `${final.startDate.month}/${final.startDate.day}/${final.startDate.year}`
+        ) as Date | null;
         if (startDate instanceof Date && isNaN(startDate.getTime())) {
             startDate = null;
         }
-        let endDate = new Date(`${final.endDate.month}/${final.endDate.day}/${final.endDate.year}`) as Date | null;
+        let endDate = new Date(
+            `${final.endDate.month}/${final.endDate.day}/${final.endDate.year}`
+        ) as Date | null;
         if (endDate instanceof Date && isNaN(endDate.getTime())) {
             endDate = null;
         }
@@ -60,7 +73,8 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
             .setColor("#19202d")
             .setAuthor({
                 name: "Anilist",
-                iconURL: "https://images-ext-1.discordapp.net/external/fmc-1fTgueco7kCb6o6Y5oReHjP8ygl1oNFrd7kSZdA/https/i.ibb.co/vYBvP34/anilist.png",
+                iconURL:
+                    "https://images-ext-1.discordapp.net/external/fmc-1fTgueco7kCb6o6Y5oReHjP8ygl1oNFrd7kSZdA/https/i.ibb.co/vYBvP34/anilist.png",
                 url: "https://anilist.co/"
             })
             .setTitle(`${final.title.romaji} (${final.format})`)
@@ -75,7 +89,16 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
             .addFields([
                 {
                     name: "Genre",
-                    value: final.genres.length ? final.genres.map(x => `[${x}](https://anilist.co/search/anime/${encodeURIComponent(x)})`).join(", ") : "ㅤ",
+                    value: final.genres.length
+                        ? final.genres
+                              .map(
+                                  x =>
+                                      `[${x}](https://anilist.co/search/anime/${encodeURIComponent(
+                                          x
+                                      )})`
+                              )
+                              .join(", ")
+                        : "ㅤ",
                     inline: true
                 },
                 {
@@ -90,15 +113,18 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
                 },
                 {
                     name: "Aired",
-                    value: startDate && endDate
-                        ? `<t:${(startDate.getTime() / 1000).toFixed(0)}:D> ` +
-                        "to" +
-                        ` <t:${(endDate.getTime() / 1000).toFixed(0)}:D>`
-                        : startDate
+                    value:
+                        startDate && endDate
+                            ? `<t:${(startDate.getTime() / 1000).toFixed(
+                                  0
+                              )}:D> ` +
+                              "to" +
+                              ` <t:${(endDate.getTime() / 1000).toFixed(0)}:D>`
+                            : startDate
                             ? `<t:${(startDate.getTime() / 1000).toFixed(0)}:D>`
                             : endDate
-                                ? `<t:${(endDate.getTime() / 1000).toFixed(0)}:D>`
-                                : "unknown",
+                            ? `<t:${(endDate.getTime() / 1000).toFixed(0)}:D>`
+                            : "unknown",
                     inline: true
                 },
                 {
@@ -117,7 +143,8 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
             .setColor("#19202d")
             .setAuthor({
                 name: "Anilist",
-                iconURL: "https://images-ext-1.discordapp.net/external/fmc-1fTgueco7kCb6o6Y5oReHjP8ygl1oNFrd7kSZdA/https/i.ibb.co/vYBvP34/anilist.png",
+                iconURL:
+                    "https://images-ext-1.discordapp.net/external/fmc-1fTgueco7kCb6o6Y5oReHjP8ygl1oNFrd7kSZdA/https/i.ibb.co/vYBvP34/anilist.png",
                 url: "https://anilist.co/"
             })
             .setTitle(`${final.title.romaji} (${final.format})`)
@@ -126,33 +153,56 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
             .setThumbnail(final.coverImage.large)
             .setImage(final.bannerImage)
             .setFooter({ text: `#${final.id} ` });
-        const generatePagination = new this.client.utils.pagination(ctx, [firstEmbed, secondEmbed]);
-        await generatePagination.selectMenuPagination(["Overview", "Description"]);
+        const generatePagination = new this.client.utils.pagination(ctx, [
+            firstEmbed,
+            secondEmbed
+        ]);
+        await generatePagination.selectMenuPagination([
+            "Overview",
+            "Description"
+        ]);
     }
 
-    private async searchFlag(ctx: CommandContext, AnilistMedia: AnilistAnimeMangaInterface["data"]["Page"]["media"]): Promise<void> {
+    private async searchFlag(
+        ctx: CommandContext,
+        AnilistMedia: AnilistAnimeMangaInterface["data"]["Page"]["media"]
+    ): Promise<void> {
         const animeSlice = AnilistMedia.map((x, i) => ({
-            label: `${x.title.romaji.length > 90 ? `${x.title.romaji.substring(0, 90)}...` : x.title.romaji}`,
+            label: `${
+                x.title.romaji.length > 90
+                    ? `${x.title.romaji.substring(0, 90)}...`
+                    : x.title.romaji
+            }`,
             value: `${i++}`
         }));
-        const rowSelectMenu = new MessageActionRow()
-            .addComponents(
-                new MessageSelectMenu()
-                    .setCustomId(this.client.utils.encodeDecodeBase64String("Anilist-Anime"))
-                    .setPlaceholder("Select an anime")
-                    .setOptions(animeSlice)
-            );
-        const send = await ctx.send({ content: "ㅤ", components: [rowSelectMenu] });
-        const collector = send.createMessageComponentCollector<3>({ time: 30_000 });
+        const rowSelectMenu = new MessageActionRow().addComponents(
+            new MessageSelectMenu()
+                .setCustomId(Utils.encodeDecodeBase64String("Anilist-Anime"))
+                .setPlaceholder("Select an anime")
+                .setOptions(animeSlice)
+        );
+        const send = await ctx.send({
+            content: "ㅤ",
+            components: [rowSelectMenu]
+        });
+        const collector = send.createMessageComponentCollector<3>({
+            time: 30_000
+        });
         collector.on("collect", async int => {
             await int.deferUpdate();
             if (int.user.id === ctx.author.id) {
                 collector.stop("Finished");
-                await this.sendMessage(ctx, AnilistMedia[Number(int.values[0])]);
+                await this.sendMessage(
+                    ctx,
+                    AnilistMedia[Number(int.values[0])]
+                );
             } else {
                 await int.reply({
                     embeds: [
-                        createEmbed("info", `**Sorry, but this interaction only for ${ctx.author.toString()}**`)
+                        createEmbed(
+                            "info",
+                            `**Sorry, but this interaction only for ${ctx.author.toString()}**`
+                        )
                     ],
                     ephemeral: true
                 });
@@ -162,13 +212,18 @@ export default class AnilistAnimeCommand extends ZuikakuCommand {
             if (reason === "time") {
                 const rowSelectMenuEnd = rowSelectMenu;
                 (rowSelectMenuEnd.components[0] as MessageSelectMenu)
-                    .setPlaceholder("This interaction has been disabled due to no respond")
+                    .setPlaceholder(
+                        "This interaction has been disabled due to no respond"
+                    )
                     .setDisabled();
-                void ctx.send({
-                    content: "ㅤ",
-                    components: [rowSelectMenuEnd]
-                })
-                    .then(x => setTimeout(() => x.delete().catch(() => null), 5000))
+                void ctx
+                    .send({
+                        content: "ㅤ",
+                        components: [rowSelectMenuEnd]
+                    })
+                    .then(x =>
+                        setTimeout(() => x.delete().catch(() => null), 5000)
+                    )
                     .catch(() => null);
             }
         });

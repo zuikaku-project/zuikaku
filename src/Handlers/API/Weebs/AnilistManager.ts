@@ -1,8 +1,14 @@
-import { AnilistAnimeMangaInterface, AnilistUsersInterface, AnilistCharactersInterface } from "@zuikaku/types";
+import {
+    AnilistAnimeMangaInterface,
+    AnilistUsersInterface,
+    AnilistCharactersInterface
+} from "@zuikaku/types";
 import petitio from "petitio";
 
 export class AnilistManager {
-    public async getAnime(querySearch: string): Promise<AnilistAnimeMangaInterface> {
+    public async getAnime(
+        querySearch: string
+    ): Promise<AnilistAnimeMangaInterface> {
         const query = `
         query ($page: Int, $perPage: Int, $search: String, $type: MediaType) {
             Page(page: $page, perPage: $perPage) {
@@ -54,10 +60,16 @@ export class AnilistManager {
                 }
             }
         }`;
-        return this.fetchAnilist<AnilistAnimeMangaInterface>(querySearch, query, "ANIME");
+        return this.fetchAnilist<AnilistAnimeMangaInterface>(
+            querySearch,
+            query,
+            "ANIME"
+        );
     }
 
-    public async getManga(querySearch: string): Promise<AnilistAnimeMangaInterface> {
+    public async getManga(
+        querySearch: string
+    ): Promise<AnilistAnimeMangaInterface> {
         const query = `
         query ($page: Int, $perPage: Int, $search: String, $type: MediaType) {
             Page(page: $page, perPage: $perPage) {
@@ -109,7 +121,11 @@ export class AnilistManager {
                 }
             }
         }`;
-        return this.fetchAnilist<AnilistAnimeMangaInterface>(querySearch, query, "MANGA");
+        return this.fetchAnilist<AnilistAnimeMangaInterface>(
+            querySearch,
+            query,
+            "MANGA"
+        );
     }
 
     public async getUser(querySearch: string): Promise<AnilistUsersInterface> {
@@ -158,10 +174,16 @@ export class AnilistManager {
                 }
             }
         }`;
-        return this.fetchAnilist<AnilistUsersInterface>(querySearch, query, "USERS");
+        return this.fetchAnilist<AnilistUsersInterface>(
+            querySearch,
+            query,
+            "USERS"
+        );
     }
 
-    public async getCharacters(querySearch: string): Promise<AnilistCharactersInterface> {
+    public async getCharacters(
+        querySearch: string
+    ): Promise<AnilistCharactersInterface> {
         const query = `
         query ($page: Int, $perPage: Int, $search: String) {
             Page(page: $page, perPage: $perPage) {
@@ -199,13 +221,33 @@ export class AnilistManager {
                 }
             }
         }`;
-        return this.fetchAnilist<AnilistCharactersInterface>(querySearch, query, "CHARACTERS");
+        return this.fetchAnilist<AnilistCharactersInterface>(
+            querySearch,
+            query,
+            "CHARACTERS"
+        );
     }
 
-    private async fetchAnilist<AnilistAnimeMangaInterface>(querySearch: string, query: string, type: "ANIME" | "MANGA"): Promise<AnilistAnimeMangaInterface>;
-    private async fetchAnilist<AnilistUsersInterface>(querySearch: string, query: string, type: "USERS"): Promise<AnilistUsersInterface>;
-    private async fetchAnilist<AnilistCharactersInterface>(querySearch: string, query: string, type: "CHARACTERS"): Promise<AnilistCharactersInterface>;
-    private async fetchAnilist<T>(querySearch: string, query: string, type: "ANIME" | "CHARACTERS" | "MANGA" | "USERS"): Promise<T> {
+    private async fetchAnilist<AnilistAnimeMangaInterface>(
+        querySearch: string,
+        query: string,
+        type: "ANIME" | "MANGA"
+    ): Promise<AnilistAnimeMangaInterface>;
+    private async fetchAnilist<AnilistUsersInterface>(
+        querySearch: string,
+        query: string,
+        type: "USERS"
+    ): Promise<AnilistUsersInterface>;
+    private async fetchAnilist<AnilistCharactersInterface>(
+        querySearch: string,
+        query: string,
+        type: "CHARACTERS"
+    ): Promise<AnilistCharactersInterface>;
+    private async fetchAnilist<T>(
+        querySearch: string,
+        query: string,
+        type: "ANIME" | "CHARACTERS" | "MANGA" | "USERS"
+    ): Promise<T> {
         const variables = {
             search: querySearch,
             page: 1,
@@ -216,10 +258,13 @@ export class AnilistManager {
             "Content-Type": "application/json",
             Accept: "application/json"
         };
-        const requestGraphql = await petitio("https://graphql.anilist.co", "POST")
+        const requestGraphql = (await petitio(
+            "https://graphql.anilist.co",
+            "POST"
+        )
             .body(JSON.stringify({ query, variables }))
             .header(headers)
-            .json() as T;
+            .json()) as T;
         return requestGraphql;
     }
 }

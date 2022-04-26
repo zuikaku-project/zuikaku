@@ -22,7 +22,14 @@ export default class ChangelogCommand extends ZuikakuCommand {
                 .setStyle("LINK")
         );
         await ctx.send({
-            embeds: [createEmbed("info").setAuthor({ name: "See my cangelog by click this button", iconURL: this.client.user?.displayAvatarURL({ format: "png" }) })],
+            embeds: [
+                createEmbed("info").setAuthor({
+                    name: "See my cangelog by click this button",
+                    iconURL: this.client.user?.displayAvatarURL({
+                        format: "png"
+                    })
+                })
+            ],
             components: [changelogButton]
         });
     }

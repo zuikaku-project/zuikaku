@@ -9,9 +9,9 @@ nodes:
     - name: rahagia
       url: node-jp.rahagia.tech:3004
       auth: EnterpriseWangy
-    - name: fabio
-      url: node-au.panel.fab1o.xyz:2333
-      auth: EnterpriseWangy
+    # - name: fabio
+    #   url: node-au.panel.fab1o.xyz:2333
+    #   auth: EnterpriseWangy
 api:
     auth: EnterpriseWangyWangyHuhHahHuhHah
     url: http://node-jp.rahagia.tech:3008/

@@ -5,13 +5,23 @@ import { IListenerComponent } from "@zuikaku/types";
 import { resolve } from "node:path";
 
 export class ListenerHandler extends Collection<string, IListenerComponent> {
-    public constructor(public client: ZuikakuClient, public path: string) { super(); }
+    public constructor(public client: ZuikakuClient, public path: string) {
+        super();
+    }
+
     public async load(): Promise<void> {
         try {
             const listeners = this.client.utils.readdirRecursive(this.path);
-            this.client.logger.info({ module: "LISTENERLOADER", message: `Loading ${listeners.length} listeners...` });
+            this.client.logger.info(
+                "listener loader",
+                `Loading ${listeners.length} listeners...`
+            );
             for (const files of listeners) {
-                const event = await this.client.utils.import<IListenerComponent>(resolve(files), this.client);
+                const event =
+                    await this.client.utils.import<IListenerComponent>(
+                        resolve(files),
+                        this.client
+                    );
                 if (event === undefined) {
                     console.log(event, files);
                     return;
@@ -21,25 +31,27 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
                 Object.freeze(Object.assign(event.meta, { path }));
                 switch (event.meta.emitter) {
                     case "client":
-                        this.client.addListener(event.meta.event, (...args) => event.execute(...args));
+                        this.client.addListener(event.meta.event, (...args) =>
+                            event.execute(...args)
+                        );
                         break;
 
                     case "shoukaku":
-                        this.client.shoukaku.addListener(event.meta.event, (...args: any) => event.execute(...args));
+                        this.client.shoukaku.addListener(
+                            event.meta.event,
+                            (...args: any) => event.execute(...args)
+                        );
                         break;
                 }
             }
         } catch (err) {
-            this.client.logger.error({
-                module: "LISTENERLOADER",
-                message: "LISTENER_LOADER_ERR:",
-                error: err
-            });
+            this.client.logger.error(
+                "listener loader",
+                "Listener Loader Err: ",
+                err
+            );
         } finally {
-            this.client.logger.info({
-                module: "LISTENERLOADER",
-                message: "Done loading listeners."
-            });
+            this.client.logger.info("listener loader", `Done Loaded Listener`);
         }
     }
 
@@ -47,7 +59,10 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
         this.clear();
         const listeners = this.client.utils.readdirRecursive(this.path);
         for (const files of listeners) {
-            const event = await this.client.utils.import<IListenerComponent>(resolve(files), this.client);
+            const event = await this.client.utils.import<IListenerComponent>(
+                resolve(files),
+                this.client
+            );
             if (event === undefined) {
                 console.log(event, files);
                 return;

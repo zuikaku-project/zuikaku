@@ -22,6 +22,8 @@ import { ICommandComponent } from "@zuikaku/types";
 export default class SayCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        await ctx.send({ content: ctx.options!.getString("query")! }).catch(() => null);
+        await ctx
+            .send({ content: ctx.options!.getString("query")! })
+            .catch(() => null);
     }
 }

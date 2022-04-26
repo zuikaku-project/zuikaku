@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -30,12 +29,23 @@ export default class KissCommand extends ZuikakuCommand {
         const member = ctx.options?.getMember("member") as GuildMember;
         const { url } = await this.client.apis.weebs.weeby.gif("kiss");
         const parseExt = url.split(".")[url.split(".").length - 1];
-        const ath = new MessageAttachment(url as string, `kiss.${parseExt as string}`);
+        const ath = new MessageAttachment(
+            url as string,
+            `kiss.${parseExt as string}`
+        );
         const e = createEmbed("info")
-            .setTitle(`${member.user.username} Kissed by ${ctx.author.username}`)
+            .setTitle(
+                `${member.user.username} Kissed by ${ctx.author.username}`
+            )
             .setImage(`attachment://kiss.${parseExt as string}`)
             .setTimestamp()
-            .setFooter({ text: `Commanded by ${ctx.author.tag}`, iconURL: ctx.author.displayAvatarURL({ dynamic: true, size: 4096 })! });
+            .setFooter({
+                text: `Commanded by ${ctx.author.tag}`,
+                iconURL: ctx.author.displayAvatarURL({
+                    dynamic: true,
+                    size: 4096
+                })!
+            });
         await ctx.send({ files: [ath], embeds: [e] });
     }
 }

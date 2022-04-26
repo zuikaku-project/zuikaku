@@ -24,7 +24,9 @@ import { MessageAttachment } from "discord.js";
 export default class KleesayCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const img = await this.client.apis.canvas.requestImageAPI("kleesay", { query: ctx.options!.getString("query")! });
+        const img = await this.client.apis.canvas.requestImageAPI("kleesay", {
+            query: ctx.options!.getString("query")!
+        });
         const ath = new MessageAttachment(img!, "kleesay.png");
         await ctx.send({ files: [ath] });
     }

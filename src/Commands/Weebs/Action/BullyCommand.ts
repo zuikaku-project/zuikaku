@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -33,14 +32,26 @@ export default class BullyCommand extends ZuikakuCommand {
             .header({
                 "User-Agent": `Mozilla/5.0 (Server; NodeJS ${process.version}; rv:1.0) Magma/1.0 (KHTML, like Gecko) TrackResolver/1.0`,
                 Accept: "application/json"
-            }).json();
+            })
+            .json();
         const parseExt = url.split(".")[url.split(".").length - 1];
-        const ath = new MessageAttachment(url as string, `bully.${parseExt as string}`);
+        const ath = new MessageAttachment(
+            url as string,
+            `bully.${parseExt as string}`
+        );
         const e = createEmbed("info")
             .setImage(`attachment://bully.${parseExt as string}`)
             .setTimestamp()
-            .setFooter({ text: `Commanded by ${ctx.author.tag}`, iconURL: ctx.author.displayAvatarURL({ dynamic: true, size: 4096 })! })
-            .setTitle(`${member.user.username} Bullied by ${ctx.author.username}`);
+            .setFooter({
+                text: `Commanded by ${ctx.author.tag}`,
+                iconURL: ctx.author.displayAvatarURL({
+                    dynamic: true,
+                    size: 4096
+                })!
+            })
+            .setTitle(
+                `${member.user.username} Bullied by ${ctx.author.username}`
+            );
         await ctx.send({ embeds: [e], files: [ath] });
     }
 }

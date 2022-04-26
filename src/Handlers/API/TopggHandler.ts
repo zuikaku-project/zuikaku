@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/naming-convention*/
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import { Snowflake } from "discord.js";
 import petitio from "petitio";
@@ -9,17 +7,25 @@ export class TopggHandler {
     public baseURL!: string;
     public token!: string;
     public constructor(public client: ZuikakuClient) {
-        Object.defineProperty(this, "baseURL", { value: "https://top.gg/api", enumerable: true });
-        Object.defineProperty(this, "token", { value: this.client.config.dblapi, enumerable: true });
+        Object.defineProperty(this, "baseURL", {
+            value: "https://top.gg/api",
+            enumerable: true
+        });
+        Object.defineProperty(this, "token", {
+            value: this.client.config.dblapi,
+            enumerable: true
+        });
     }
 
-    public async postStats(
-        stats: {
-            serverCount: number;
-            shardId?: number;
-            shardCount?: number;
-        }
-    ): Promise<{ serverCount: number; shardId?: number; shardCount?: number }> {
+    public async postStats(stats: {
+        serverCount: number;
+        shardId?: number;
+        shardCount?: number;
+    }): Promise<{
+        serverCount: number;
+        shardId?: number;
+        shardCount?: number;
+    }> {
         await this._request({
             method: "POST",
             path: `/bots/${this.client.user!.id}/stats`,
@@ -64,7 +70,10 @@ export class TopggHandler {
         });
     }
 
-    public async hasVoted(value: { botId?: Snowflake; userId?: Snowflake }): Promise<boolean> {
+    public async hasVoted(value: {
+        botId?: Snowflake;
+        userId?: Snowflake;
+    }): Promise<boolean> {
         if (!value.botId || !value.userId) throw new Error("Missing ID");
         return this._request<DBLHasVoted>({
             method: "GET",
@@ -76,7 +85,10 @@ export class TopggHandler {
     }
 
     private async _request<T>(options: RequestOptions): Promise<T | undefined> {
-        const createPetitio = petitio(this.baseURL, options.method).header("Authorization", this.token);
+        const createPetitio = petitio(this.baseURL, options.method).header(
+            "Authorization",
+            this.token
+        );
         if (options.body && options.method === "GET") {
             createPetitio.query(options.body);
         }
@@ -94,7 +106,16 @@ export class TopggHandler {
 }
 
 interface RequestOptions {
-    method: "CONNECT" | "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT" | "TRACE";
+    method:
+        | "CONNECT"
+        | "DELETE"
+        | "GET"
+        | "HEAD"
+        | "OPTIONS"
+        | "PATCH"
+        | "POST"
+        | "PUT"
+        | "TRACE";
     path: string;
     body?: {
         server_count?: number[] | number;

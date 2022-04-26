@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/naming-convention */
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -27,12 +26,18 @@ import petitio from "petitio";
 export default class ColorCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const color = (/rgb\(\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\)$/).exec(ctx.options!.getString("color")!)
-            ? this.rgbToHex(ctx.options!.getString("color")!)
-            : ctx.options!.getString("color")!;
+        const color =
+            /rgb\(\s*(?<r>\d{1,3})\s*,\s*(?<g>\d{1,3})\s*,\s*(?<b>\d{1,3})\s*\)$/.exec(
+                ctx.options!.getString("color")!
+            )
+                ? this.rgbToHex(ctx.options!.getString("color")!)
+                : ctx.options!.getString("color")!;
         try {
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            const { hex, image, int, image_gradient, brightness, name, rgb } = await petitio(`https://api.alexflipnote.dev/colour/${color}`).json();
+            const { hex, image, int, image_gradient, brightness, name, rgb } =
+                await petitio(
+                    `https://api.alexflipnote.dev/colour/${color}`
+                ).json();
             const { body } = await petitio(image_gradient).send();
             const ath = new MessageAttachment(body, "color.png");
             const e = createEmbed()
@@ -40,12 +45,12 @@ export default class ColorCommand extends ZuikakuCommand {
                 .setTitle(`${name as string} • ${hex as string}`)
                 .setDescription(
                     "```asciidoc\n" +
-                    `• colorName  :: ${name as string}\n` +
-                    `• colorHex   :: ${hex as string}\n` +
-                    `• colorRGB   :: ${rgb as string}\n` +
-                    `• colorInt   :: ${int as number}\n` +
-                    `• Brightness :: ${brightness as string}\n` +
-                    "```"
+                        `• colorName  :: ${name as string}\n` +
+                        `• colorHex   :: ${hex as string}\n` +
+                        `• colorRGB   :: ${rgb as string}\n` +
+                        `• colorInt   :: ${int as number}\n` +
+                        `• Brightness :: ${brightness as string}\n` +
+                        "```"
                 )
                 .setImage("attachment://color.png")
                 .setThumbnail(image as string);
@@ -54,11 +59,19 @@ export default class ColorCommand extends ZuikakuCommand {
                 files: [ath]
             });
         } catch {
-            await ctx.send({
-                embeds: [
-                    createEmbed("error", "**<a:decline:879311910045097984> | Operation Canceled. Not a valid hex value**")
-                ]
-            }).then(x => setTimeout(() => x.delete().catch(() => null), 10000)).catch(() => null);
+            await ctx
+                .send({
+                    embeds: [
+                        createEmbed(
+                            "error",
+                            "**<a:decline:879311910045097984> | Operation Canceled. Not a valid hex value**"
+                        )
+                    ]
+                })
+                .then(x =>
+                    setTimeout(() => x.delete().catch(() => null), 10000)
+                )
+                .catch(() => null);
         }
     }
 
