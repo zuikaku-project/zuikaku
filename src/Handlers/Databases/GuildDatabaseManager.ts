@@ -42,7 +42,6 @@ export class GuildDatabaseManager {
             if (!this.cache.has(guildId)) {
                 this.cache.set(guildId, newGuildDatabase);
             }
-            // @ts-expect-error - This is a bug in the typescript compiler
             await this.collection.save(newGuildDatabase);
             database = newGuildDatabase;
         }
