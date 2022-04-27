@@ -28,6 +28,7 @@ export class GuildSettings {
         | {
               textId: string;
               voiceId: string;
+              playerMessageId?: string;
               current?: Track;
               tracks: Track[] | [];
               previous?: Track;

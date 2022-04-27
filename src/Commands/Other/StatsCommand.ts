@@ -1,11 +1,15 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
+import { IChangelog, ICommandComponent } from "@zuikaku/types";
 import { ShoukakuSocketState } from "@zuikaku/types/enum";
 import { createEmbed, Utils } from "@zuikaku/Utils";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error can't import package json if using rootDir
+import { version as BotVersion } from "../../package.json";
 import { EmbedField, version } from "discord.js";
 import os from "os";
+import { join } from "path";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "stats",
@@ -82,26 +86,53 @@ export default class StatsCommand extends ZuikakuCommand {
     }
 
     private displayBotStats(ctx: CommandContext): void {
-        const statsEmbed = createEmbed("info").setDescription(
-            "```\n" +
-                `• Discord.js : ${version}\n` +
-                `• Node.js : ${process.version}\n` +
-                `• Platform : ${os.platform()} ${os.arch()} Bit\n` +
-                `• Memory Usage : ${this.client.totalMemory("rss")!}\n` +
-                `• Guild : ${this.client.guilds.cache.size} Guild(s)\n` +
-                `• OS Uptime : ${
-                    Utils.parseMs(os.uptime() * 1000, {
-                        humanTime: true
-                    }).humanTime
-                }\n` +
-                `• Process Uptime : ${
-                    Utils.parseMs(process.uptime() * 1000, {
-                        humanTime: true
-                    }).humanTime
-                }\n` +
-                `• Processor : ${os.cpus().map(i => `${i.model}`)[0]}\n` +
-                "```"
-        );
+        const lastChangelog = Utils.parseYaml<IChangelog[]>(
+            join("Changelog.yaml")
+        ).slice(-1)[0];
+        const statsEmbed = createEmbed("info")
+            .setAuthor({
+                name: this.client.user!.username,
+                iconURL: this.client.user!.displayAvatarURL(),
+                url: "https://zui.my.id/"
+            })
+            .addFields([
+                {
+                    name: "Information",
+                    value:
+                        "```\n" +
+                        `• Version : ${BotVersion as string}\n` +
+                        `• Discord.js : ${version}\n` +
+                        `• Node.js : ${process.version}\n` +
+                        `• Platform : ${os.platform()} ${os.arch()} Bit\n` +
+                        `• Memory Usage : ${this.client.totalMemory(
+                            "rss"
+                        )!}\n` +
+                        `• Guild : ${this.client.guilds.cache.size} Guild(s)\n` +
+                        `• OS Uptime : ${
+                            Utils.parseMs(os.uptime() * 1000, {
+                                humanTime: true
+                            }).humanTime
+                        }\n` +
+                        `• Process Uptime : ${
+                            Utils.parseMs(process.uptime() * 1000, {
+                                humanTime: true
+                            }).humanTime
+                        }\n` +
+                        `• Processor : ${
+                            os.cpus().map(i => `${i.model}`)[0]
+                        }\n` +
+                        "```"
+                },
+                {
+                    name: "Last Update",
+                    value:
+                        `\`\`\`\n` +
+                        `${lastChangelog.title}\n${lastChangelog.content
+                            .map((x, i) => `${i + 1}. ${x}`)
+                            .join("\n")}\n` +
+                        `\`\`\``
+                }
+            ]);
         void ctx.send({ embeds: [statsEmbed] });
     }
 
@@ -111,76 +142,5 @@ export default class StatsCommand extends ZuikakuCommand {
         return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${
             sizes[i]
         }`;
-    }
-
-    private genembed(data: any[]): any {
-        const arr = [];
-        const arrcurrent = [];
-        let k = 3;
-        for (let i = 0; i < data.length; i += 3) {
-            arrcurrent.push(data.slice(i, k));
-            k += 3;
-        }
-        for (const current of arrcurrent.values()) {
-            const e = createEmbed("info").setAuthor({
-                name: "LavalinkNodes",
-                iconURL: this.client.user!.displayAvatarURL({
-                    size: 4096,
-                    format: "png"
-                })!
-            });
-            current.map(
-                (x: {
-                    core: number;
-                    memory: number;
-                    node: string;
-                    ping: string;
-                    players: number;
-                    playing: number;
-                    state: string;
-                    uptime: string;
-                }) =>
-                    e.addFields([
-                        {
-                            name: x.node,
-                            value:
-                                "```asciidoc\n" +
-                                `• Status    :: ${x.state}\n` +
-                                `• Cores     :: ${x.core}\n` +
-                                `• Uptime    :: ${x.uptime}\n` +
-                                `• Mem. Used :: ${(
-                                    x.memory /
-                                    Math.pow(
-                                        1024,
-                                        Math.floor(
-                                            Math.log(x.memory) / Math.log(1024)
-                                        )
-                                    )
-                                ).toFixed(2)} ${
-                                    [
-                                        "Bytes",
-                                        "KB",
-                                        "MB",
-                                        "GB",
-                                        "TB",
-                                        "PB",
-                                        "EB",
-                                        "ZB",
-                                        "YB"
-                                    ][
-                                        Math.floor(
-                                            Math.log(x.memory) / Math.log(1024)
-                                        )
-                                    ]
-                                }\n` +
-                                `• Player    :: ${x.players}\n` +
-                                `• Playing   :: ${x.playing}\n` +
-                                "\n```"
-                        }
-                    ])
-            );
-            arr.push(e);
-        }
-        return arr;
     }
 }

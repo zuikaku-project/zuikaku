@@ -108,6 +108,25 @@ export class PersistentQueue {
                     guildDatabase.persistenceQueue.tracks
                 );
             }
+            if (
+                guildDatabase.persistenceQueue.playerMessageId &&
+                guildDatabase.persistenceQueue.playerMessageId !==
+                    guildDatabase.guildPlayer?.messageId
+            ) {
+                const channelPersistence = this._client.channels.resolve(
+                    guildDatabase.persistenceQueue.textId
+                );
+                if (channelPersistence) {
+                    const messagePersistent = await (
+                        channelPersistence as TextBasedChannel
+                    ).messages
+                        .fetch(guildDatabase.persistenceQueue.playerMessageId)
+                        .catch(() => undefined);
+                    if (messagePersistent) {
+                        await messagePersistent.delete().catch(() => null);
+                    }
+                }
+            }
             await dispatcher.playTrack(guildDatabase.persistenceQueue.position);
             this._client.logger.info(
                 "persistent queue",

@@ -147,6 +147,8 @@
   title: Release Zuikaku@4.0.0
   content:
       - Refactor track resolve, music service, and more
+      - Restructure code and optimize it
+      - Increase feature for music service
       - Remove play to spotify (native). Server issue
       - Search lazy track by isrc if present
       - Update package

@@ -5,6 +5,7 @@ import { ZuikakuClient } from "./Structures/ZuikakuClient";
 import cors from "cors";
 import { Utils } from "./Utils";
 import { join } from "node:path";
+import { IChangelog } from "./types";
 
 const client = new ZuikakuClient();
 client.start();
@@ -104,9 +105,3 @@ process.on("uncaughtException", error => {
     );
     process.exit(1);
 });
-
-interface IChangelog {
-    date: Date;
-    title: string;
-    content: string[];
-}

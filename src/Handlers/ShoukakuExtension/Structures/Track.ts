@@ -1,7 +1,6 @@
 import { DataInput, Utils } from "@zuikaku/Utils";
 import { User } from "discord.js";
 import { ShoukakuTrack } from "shoukaku";
-import Util from "../Plugin/Util";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 
 export class Track {
@@ -111,7 +110,7 @@ export class Track {
                 sourceName: track.info.sourceName ?? firstTrack.info.sourceName
             });
         }
-        return Util.structuredClone(firstTrack);
+        return Utils.structuredClone(firstTrack);
     }
 
     public static async resolve(

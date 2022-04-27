@@ -48,6 +48,12 @@ export interface IConfig {
     devGuild: Snowflake[];
 }
 
+export interface IChangelog {
+    date: Date;
+    title: string;
+    content: string[];
+}
+
 export interface decodeBase64String {
     url?: string;
     amount?: string;

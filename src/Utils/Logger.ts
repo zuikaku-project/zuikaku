@@ -32,13 +32,24 @@ export class Logger {
         messages: any[],
         type: "debug" | "error" | "info" | "warn" = "info"
     ): void {
-        const color = (
-            (type === "debug" ? whiteBright : type === "error")
-                ? redBright
-                : type === "warn"
-        )
-            ? yellowBright
-            : blueBright;
+        let color;
+        switch (type) {
+            case "debug":
+                color = whiteBright;
+                break;
+            case "error":
+                color = redBright;
+                break;
+            case "info":
+                color = blueBright;
+                break;
+            case "warn":
+                color = yellowBright;
+                break;
+            default:
+                color = blueBright;
+                break;
+        }
         console[type](
             color(
                 `${bold(

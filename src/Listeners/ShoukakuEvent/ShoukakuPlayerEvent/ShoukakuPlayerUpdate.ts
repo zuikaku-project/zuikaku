@@ -1,6 +1,7 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
+import { Utils } from "@zuikaku/Utils";
 import { PlayerUpdate, ShoukakuPlayer } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({
@@ -20,22 +21,20 @@ export default class ShoukakuPlayerUpdate extends ZuikakuListener {
             await this.client.database.entity.guilds.set(
                 dispatcher.player.connection.guildId,
                 "persistenceQueue",
-                JSON.parse(
-                    JSON.stringify({
-                        guildId: payload.guildId,
-                        textId: dispatcher.textId,
-                        voiceId: dispatcher.voiceId,
-                        tracks: dispatcher.queue.tracks.filter(
-                            x => x.track.length
-                        ),
-                        current: dispatcher.queue.current,
-                        previous: dispatcher.queue.previous,
-                        queueRepeat: dispatcher.queueRepeat,
-                        trackRepeat: dispatcher.trackRepeat,
-                        volume: dispatcher.volume,
-                        position: payload.state.position ?? 0
-                    })
-                )
+                Utils.structuredClone({
+                    guildId: payload.guildId,
+                    textId: dispatcher.textId,
+                    voiceId: dispatcher.voiceId,
+                    playerMessageId:
+                        dispatcher.queueMessage.lastPlayerMessage?.id,
+                    tracks: dispatcher.queue.tracks.filter(x => x.track.length),
+                    current: dispatcher.queue.current,
+                    previous: dispatcher.queue.previous,
+                    queueRepeat: dispatcher.queueRepeat,
+                    trackRepeat: dispatcher.trackRepeat,
+                    volume: dispatcher.volume,
+                    position: payload.state.position ?? 0
+                })
             );
         }
     }

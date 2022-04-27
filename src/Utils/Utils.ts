@@ -4,6 +4,7 @@ import { GuildMember, Util } from "discord.js";
 import yaml from "js-yaml";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { deserialize, serialize } from "node:v8";
 import Pagination from "./Pagination";
 
 export class Utils {
@@ -36,6 +37,14 @@ export class Utils {
         return results;
     }
 
+    public static structuredClone<T>(obj: T): T {
+        return deserialize(serialize(obj)) as T;
+    }
+
+    public static parseYaml<T>(src: string): T {
+        return yaml.load(readFileSync(join(src), "utf8")) as T;
+    }
+
     public static encodeDecodeBase64String(
         anyString: string,
         decode = false
@@ -54,6 +63,64 @@ export class Utils {
             .split(" ")
             .map(x => x.charAt(0).toUpperCase() + x.substring(1))
             .join(" ");
+    }
+
+    public static chunk<T>(arr: T[], len: number): T[][];
+    public static chunk(arr: string, len: number): string[];
+    public static chunk(...args: any[]): any[] {
+        const [arr, len] = args as [any, number];
+        const rest: typeof arr[] = [];
+        for (let i = 0; i < arr.length; i += len) {
+            rest.push(arr.slice(i, i + len));
+        }
+        return rest;
+    }
+
+    public static try<T>(fn: () => T): T | undefined {
+        try {
+            return fn();
+        } catch {
+            return undefined;
+        }
+    }
+
+    public static async tryPromise<T>(
+        fn: () => Promise<T>
+    ): Promise<T | undefined> {
+        try {
+            return await fn();
+        } catch {
+            return undefined;
+        }
+    }
+
+    public static mergeDefault<T extends Record<string, unknown>>(
+        def: T,
+        prov: T
+    ): T {
+        const merged = { ...def, ...prov };
+        const defKeys = Object.keys(def);
+        for (const mergedKey of Object.keys(merged)) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+            if (!defKeys.includes(mergedKey)) delete (merged as any)[mergedKey];
+        }
+        return merged;
+    }
+
+    public static parseMember(
+        ctx: CommandContext,
+        parse?: string | null
+    ): GuildMember {
+        const content = parse?.trim().split(" ")[0];
+        if (!content?.length) return ctx.member!;
+        return (
+            ctx.guild?.members.cache.get(Utils.getUserId(content)) ??
+            ctx
+                .guild!.members.cache.filter(
+                    x => x.nickname === parse || x.user.username === parse
+                )
+                .first()!
+        );
     }
 
     public static numberformat(num: number): string {
@@ -75,6 +142,36 @@ export class Utils {
             }
         }
         return (num / si[i].value).toFixed(1).replace(rx, "$1") + si[i].symbol;
+    }
+
+    public static parseMsg(ctx: CommandContext, parse?: string): string {
+        const content = parse?.trim().split(" ")[0];
+        if (!content)
+            return ctx.author.displayAvatarURL({ format: "png", size: 4096 });
+        try {
+            if (content.includes(ctx.client.options.http!.cdn!)) return content;
+            if (Util.parseEmoji(content)?.id) {
+                return `${ctx.client.options.http!
+                    .cdn!}/emojis/${Util.parseEmoji(content)!.id!}.${
+                    Util.parseEmoji(content)?.animated ? "gif" : "png?size=4096"
+                }`;
+            }
+            const guildMember =
+                ctx.guild?.members.cache.get(Utils.getUserId(content)) ??
+                ctx.guild?.members.cache
+                    .filter(
+                        x => x.nickname === parse || x.user.username === parse
+                    )
+                    .first();
+            if (guildMember !== undefined)
+                return guildMember.user.displayAvatarURL({
+                    format: "png",
+                    size: 4096
+                });
+            return ctx.author.displayAvatarURL({ format: "png", size: 4096 });
+        } catch {
+            return ctx.author.displayAvatarURL({ format: "png", size: 4096 });
+        }
     }
 
     public static parseMs(
@@ -272,72 +369,5 @@ export class Utils {
             bar = progressText + emptyProgressText;
         }
         return bar;
-    }
-
-    public static chunk<T>(arr: T[], len: number): T[][];
-    public static chunk(arr: string, len: number): string[];
-    public static chunk(...args: any[]): any[] {
-        const [arr, len] = args as [any, number];
-        const rest: typeof arr[] = [];
-        for (let i = 0; i < arr.length; i += len) {
-            rest.push(arr.slice(i, i + len));
-        }
-        return rest;
-    }
-
-    public static parseMember(
-        ctx: CommandContext,
-        parse?: string | null
-    ): GuildMember {
-        const content = parse?.trim().split(" ")[0];
-        if (!content?.length) return ctx.member!;
-        return (
-            ctx.guild?.members.cache.get(
-                // eslint-disable-next-line prefer-named-capture-group
-                content.replace(/(:?@|!)|(<|>)/g, "")
-            ) ??
-            ctx
-                .guild!.members.cache.filter(
-                    x => x.nickname === parse || x.user.username === parse
-                )
-                .first()!
-        );
-    }
-
-    public static parseMsg(ctx: CommandContext, parse?: string): string {
-        const content = parse?.trim().split(" ")[0];
-        if (!content)
-            return ctx.author.displayAvatarURL({ format: "png", size: 4096 });
-        try {
-            if (content.includes(ctx.client.options.http!.cdn!)) return content;
-            if (Util.parseEmoji(content)?.id) {
-                return `${ctx.client.options.http!
-                    .cdn!}/emojis/${Util.parseEmoji(content)!.id!}.${
-                    Util.parseEmoji(content)?.animated ? "gif" : "png?size=4096"
-                }`;
-            }
-            const guildMember =
-                ctx.guild?.members.cache.get(
-                    // eslint-disable-next-line prefer-named-capture-group
-                    content.replace(/(:?@|!)|(<|>)/g, "")
-                ) ??
-                ctx.guild?.members.cache
-                    .filter(
-                        x => x.nickname === parse || x.user.username === parse
-                    )
-                    .first();
-            if (guildMember !== undefined)
-                return guildMember.user.displayAvatarURL({
-                    format: "png",
-                    size: 4096
-                });
-            return ctx.author.displayAvatarURL({ format: "png", size: 4096 });
-        } catch {
-            return ctx.author.displayAvatarURL({ format: "png", size: 4096 });
-        }
-    }
-
-    public static parseYaml<T>(src: string): T {
-        return yaml.load(readFileSync(join(src), "utf8")) as T;
     }
 }
