@@ -6,7 +6,7 @@ devGuild:
     - "770540956163899423"
 api:
     auth: EnterpriseWangyWangyHuhHahHuhHah
-    url: http://node-jp.rahagia.tech:3006/
+    url: http://node-jp.cyteliz.net:3006/
 apiKey:
     dbl: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc0MDExMjM1MzQ4MzU1NDg1OCIsImJvdCI6dHJ1ZSwiaWF0IjoxNjA1NDk5OTc3fQ.0S6h9gpQg77c0mLRqLC4vc4zgduENIBrPlXzkRtDF24
     boats: 2bo3CkMT7P6CNxx7IBQrO5haxlOsSPazT8ExCCKAvUVxzuW8bKlsJqw3JH6yDd40B39zmNIGS4uV4SgVY3w54fIaiRiA0mJkMzlNlkCFCKvxoL4mtI1ABWvRfmpnUDrj8RutB2rjA7Uv9rVp9k9wt4G9VCr
@@ -20,7 +20,7 @@ apiKey:
         instagram: 14643228375%3AwtGbRlhe4qGtU8%3A9
 nodes:
     - name: rahagia
-      url: node-jp.rahagia.tech:2006
+      url: node-jp.cyteliz.net:2006
       auth: EnterpriseWangy
     # - name: fabio
     #   url: node-au.panel.fab1o.xyz:2333
