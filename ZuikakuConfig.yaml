@@ -20,7 +20,7 @@ apiKey:
         instagram: 14643228375%3AwtGbRlhe4qGtU8%3A9
 nodes:
     - name: rahagia
-      url: node-jp.rahagia.tech:3004
+      url: node-jp.rahagia.tech:2006
       auth: EnterpriseWangy
     # - name: fabio
     #   url: node-au.panel.fab1o.xyz:2333
