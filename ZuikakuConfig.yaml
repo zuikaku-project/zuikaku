@@ -1,7 +1,7 @@
 token:
     production: NzkxMjcxMjIzMDc3MTA5ODIw.X-MuwA.XTpdWsnWaAt3Qm7qGqkQr7zL3cM
     development: OTExMTQ3Mjg5NzMxNTQzMDky.YZdKCg.HyKyzRHUHtREREVpG5Pj0QJzRgk
-devMode: true
+devMode: false
 devGuild:
     - "770540956163899423"
 api:
