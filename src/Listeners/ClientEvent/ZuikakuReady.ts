@@ -24,13 +24,12 @@ export default class ZuikakuReady extends ZuikakuListener {
                     ) ?? error.message;
                 this.client.logger.error(
                     "database",
-                    "Error Caught: ",
+                    "Error Caught:",
                     errorMessage
                 );
                 this.client.logger.error(
                     "database",
-                    "Couldn't connect to database. Exiting proces...",
-                    errorMessage
+                    "Couldn't connect to database. Exiting proces..."
                 );
                 process.exit(1);
             })
@@ -46,7 +45,8 @@ export default class ZuikakuReady extends ZuikakuListener {
                     `${databaseEntity.length} Database has been initiated`
                 );
             });
-        await this.client.commands.load();
+        await this.client.command.load();
+        this.client.router.load();
         await this.client.shoukaku.persistentQueue.assign();
         this.client.logger.info(
             "zuikaku",

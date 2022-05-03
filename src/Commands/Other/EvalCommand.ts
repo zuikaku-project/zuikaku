@@ -119,7 +119,7 @@ export default class EvalCommand extends ZuikakuCommand {
 
     private replace(text: string): string {
         const regex = new RegExp(
-            `${this.client.token}|${this.client.config.dblapi}|${this.client.config.boatsapi}|${this.client.config.alexapi}|${this.client.config.ytapi}|${this.client.config.spcid}|${this.client.config.spcs}|${this.client.config.sessionid}`,
+            `${this.client.token}|${this.client.config.apiKey.dbl}|${this.client.config.apiKey.boats}|${this.client.config.apiKey.alex}|${this.client.config.apiKey.youtube}|${this.client.config.apiKey.spotify.clientId}|${this.client.config.apiKey.spotify.clientSecret}|${this.client.config.apiKey.cookie.instagram}`,
             "gi"
         );
         return text.replace(regex, " [REDACTED] ");

@@ -145,7 +145,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                     interaction.options.getString("command");
                 await interaction.respond(
                     getCommandFromName
-                        ? this.client.commands
+                        ? this.client.command
                               .filter(command =>
                                   [
                                       command.meta.name,
@@ -159,7 +159,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                                       .description!} `,
                                   value: command.meta.name
                               }))
-                        : this.client.commands
+                        : this.client.command
                               .filter(
                                   command => command.meta.slash !== undefined
                               )
@@ -244,7 +244,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         }
 
         if (interaction.isContextMenu()) {
-            const command = this.client.commands.find(
+            const command = this.client.command.find(
                 x => x.meta.contextChat === interaction.commandName
             );
             if (command) {
@@ -282,7 +282,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         }
 
         if (interaction.isCommand()) {
-            const commandArray = this.client.commands.filter(
+            const commandArray = this.client.command.filter(
                 x => x.meta.slash !== undefined
             );
             const command =

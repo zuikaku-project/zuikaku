@@ -1,5 +1,5 @@
 {
-    "extends": ["@rahagia/eslint-config/typescript", "prettier"],
+    "extends": ["@cyteliz/eslint-config/typescript", "prettier"],
     "plugins": ["prettier"],
     "parserOptions": {
         "project": "./tsconfig.json"

@@ -4,10 +4,8 @@ import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { IChangelog, ICommandComponent } from "@zuikaku/types";
 import { ShoukakuSocketState } from "@zuikaku/types/enum";
 import { createEmbed, Utils } from "@zuikaku/Utils";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error can't import package json if using rootDir
-import { version as BotVersion } from "../../package.json";
 import { EmbedField, version } from "discord.js";
+import { readFileSync } from "fs";
 import os from "os";
 import { join } from "path";
 
@@ -100,7 +98,10 @@ export default class StatsCommand extends ZuikakuCommand {
                     name: "Information",
                     value:
                         "```\n" +
-                        `• Version : ${BotVersion as string}\n` +
+                        `• Version : ${
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                            this.getPackageJson().version as unknown as string
+                        }\n` +
                         `• Discord.js : ${version}\n` +
                         `• Node.js : ${process.version}\n` +
                         `• Platform : ${os.platform()} ${os.arch()} Bit\n` +
@@ -142,5 +143,11 @@ export default class StatsCommand extends ZuikakuCommand {
         return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${
             sizes[i]
         }`;
+    }
+
+    private getPackageJson(): any {
+        return JSON.parse(
+            readFileSync(join(`${process.cwd()}/package.json`), "utf-8")
+        );
     }
 }

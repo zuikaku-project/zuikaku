@@ -1,20 +1,18 @@
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { ISpotifyLyrics, LoadTrackResponse } from "@zuikaku/types";
-import petitio from "petitio";
 import {
-    Constants,
-    JoinOptions,
-    LavalinkSource,
-    Libraries,
-    Shoukaku
-} from "shoukaku";
+    ISpotifyLyrics,
+    LoadTrackResponse,
+    LavalinkSource
+} from "@zuikaku/types";
+import petitio from "petitio";
+import { Constants, JoinOptions, Libraries, Shoukaku } from "shoukaku";
 import { Dispatcher, EmbedPlayer, Lyrics, PersistentQueue, TrackList } from ".";
 import { PluginManager } from "./Plugin";
 
 export class ShoukakuHandler extends Shoukaku {
     public plugin = new PluginManager(this, {
-        clientId: this.client.config.spcid,
-        clientSecret: this.client.config.spcs,
+        clientId: this.client.config.apiKey.spotify.clientId,
+        clientSecret: this.client.config.apiKey.spotify.clientSecret,
         usePluginMetadata: true,
         playlistLoadlimit: 2
     });
@@ -58,10 +56,9 @@ export class ShoukakuHandler extends Shoukaku {
         identifier: string,
         options?: LavalinkSource
     ): Promise<TrackList> {
-        const searchTypes: Record<LavalinkSource, string> = {
+        const searchTypes: Record<string, string> = {
             soundcloud: "scsearch:",
-            youtube: "ytsearch:",
-            youtubemusic: "ytmsearch:"
+            youtube: "ytsearch:"
         };
         const parseQueryUrl = identifier
             .slice(

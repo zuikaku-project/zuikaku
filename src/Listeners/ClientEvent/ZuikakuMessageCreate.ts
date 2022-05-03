@@ -22,7 +22,7 @@ export default class ZuikakuMessageCreate extends ZuikakuListener {
         if (
             message.author.bot ||
             message.channel.type === "DM" ||
-            !this.client.commands.isReady
+            !this.client.command.isReady
         )
             return;
         const embedPlayer = this.client.shoukaku.embedPlayers.get(
@@ -32,17 +32,17 @@ export default class ZuikakuMessageCreate extends ZuikakuListener {
             if (message.author.id !== this.client.user?.id) {
                 await message.delete().catch(() => null);
             }
-            const command = this.client.commands.find(
+            const command = this.client.command.find(
                 x => x.meta.name === "play"
             )!;
-            if (!this.client.commands.cooldowns.has(command.meta.name)) {
-                this.client.commands.cooldowns.set(
+            if (!this.client.command.cooldowns.has(command.meta.name)) {
+                this.client.command.cooldowns.set(
                     command.meta.name,
                     new Collection()
                 );
             }
             const now = Date.now();
-            const timestamps = this.client.commands.cooldowns.get(
+            const timestamps = this.client.command.cooldowns.get(
                 command.meta.name
             );
             const cooldownAmount = (command.meta.cooldown ?? 3) * 1000;

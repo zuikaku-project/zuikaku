@@ -25,7 +25,7 @@ import { MessageActionRow, MessageButton } from "discord.js";
 export default class HelpCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const findCommand = this.client.commands.find(
+        const findCommand = this.client.command.find(
             x => x.meta.name === ctx.options!.getString("command")!
         );
         const helpEmbed = createEmbed("info");
@@ -89,7 +89,7 @@ export default class HelpCommand extends ZuikakuCommand {
             });
         } else {
             const othersCommand: string[] = [];
-            Object.values(this.client.commands.categories)
+            Object.values(this.client.command.categories)
                 .map(x => x!.filter(Boolean))
                 .sort((a, b) =>
                     a[0].meta.category!.localeCompare(

@@ -157,7 +157,10 @@ export default class InstagramCommand extends ZuikakuCommand {
             results = await petitio(
                 `https://www.instagram.com/${username}/?__a=1`
             )
-                .header("Cookie", `sessionid=${this.client.config.sessionid}`)
+                .header(
+                    "Cookie",
+                    `sessionid=${this.client.config.apiKey.cookie.instagram}`
+                )
                 .json();
         } catch {
             results = await petitio(

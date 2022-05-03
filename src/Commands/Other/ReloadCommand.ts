@@ -38,7 +38,7 @@ export default class ReloadCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply(true);
         try {
-            await this.client.commands.reloadAll(
+            await this.client.command.reloadAll(
                 ctx.options?.getString("slash") ?? undefined
             );
             await ctx.send({

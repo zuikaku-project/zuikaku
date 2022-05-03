@@ -12,7 +12,7 @@ export class TopggHandler {
             enumerable: true
         });
         Object.defineProperty(this, "token", {
-            value: this.client.config.dblapi,
+            value: this.client.config.apiKey.dbl,
             enumerable: true
         });
     }

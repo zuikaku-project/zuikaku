@@ -13,7 +13,7 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
         try {
             const listeners = this.client.utils.readdirRecursive(this.path);
             this.client.logger.info(
-                "listener loader",
+                "listener handler",
                 `Loading ${listeners.length} listeners...`
             );
             for (const files of listeners) {
@@ -46,12 +46,12 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
             }
         } catch (err) {
             this.client.logger.error(
-                "listener loader",
-                "Listener Loader Err: ",
+                "listener handler",
+                "Listener Handler Err: ",
                 err
             );
         } finally {
-            this.client.logger.info("listener loader", `Done Loaded Listener`);
+            this.client.logger.info("listener handler", `Done Loaded Listener`);
         }
     }
 

@@ -93,8 +93,8 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
         let disabledCount = 0;
         try {
             this.client.logger.info(
-                "command manager",
-                `Founde ${commands.length} command(s). Registering...`
+                "command handler",
+                `Found ${commands.length} command(s). Registering...`
             );
             const allCmd = [
                 ...(await this.client.application!.commands.fetch()).values()
@@ -106,7 +106,10 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
                         this.client
                     );
                 if (command === undefined) {
-                    console.log(command, files);
+                    this.client.logger.error(
+                        "router handler",
+                        `File ${files} is not valid router file`
+                    );
                     disabledCount++;
                     return;
                 }
@@ -310,24 +313,26 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
                     ) ?? err.message;
             }
             this.client.logger.error(
-                "command manager",
+                "command handler",
                 `COMMAND_LOADER_ERR: `,
                 errorMessage
             );
         } finally {
-            this.categories = this.reduce((a, b) => {
+            this.categories = this.reduce<
+                Record<string, ICommandComponent[] | undefined>
+            >((a, b) => {
                 a[b.meta.category!] = a[b.meta.category!] ?? [];
                 a[b.meta.category!]?.push(b);
                 return a;
-            }, {} as Record<string, ICommandComponent[] | undefined>);
+            }, {});
             this.isReady = true;
             this.client.logger.info(
-                "command manager",
+                "command handler",
                 `Done Registering ${commands.length} command(s).`
             );
             if (disabledCount !== 0) {
                 this.client.logger.info(
-                    "command manager",
+                    "command handler",
                     `Found ${disabledCount}/${commands.length} commands(s) is disable.`
                 );
             }

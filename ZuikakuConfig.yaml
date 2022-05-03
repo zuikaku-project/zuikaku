@@ -1,10 +1,23 @@
-dblapi: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc0MDExMjM1MzQ4MzU1NDg1OCIsImJvdCI6dHJ1ZSwiaWF0IjoxNjA1NDk5OTc3fQ.0S6h9gpQg77c0mLRqLC4vc4zgduENIBrPlXzkRtDF24
-boatsapi: 2bo3CkMT7P6CNxx7IBQrO5haxlOsSPazT8ExCCKAvUVxzuW8bKlsJqw3JH6yDd40B39zmNIGS4uV4SgVY3w54fIaiRiA0mJkMzlNlkCFCKvxoL4mtI1ABWvRfmpnUDrj8RutB2rjA7Uv9rVp9k9wt4G9VCr
-alexapi: 93jQYsGpTm_Jz44_fxV2VlsL9t6Uk36zfHq3buCb
-ytapi: AIzaSyAeoZxsotVd1HdcqG8KXAIzS_O8FxQbel0
-spcid: c74bc6e28b154643b5b1f1f51c21fdfb
-spcs: ec94116a9a2c4212936afc33f55b697b
-sessionid: 14643228375%3AwtGbRlhe4qGtU8%3A9
+token:
+    production: NzkxMjcxMjIzMDc3MTA5ODIw.X-MuwA.XTpdWsnWaAt3Qm7qGqkQr7zL3cM
+    development: OTExMTQ3Mjg5NzMxNTQzMDky.YZdKCg.HyKyzRHUHtREREVpG5Pj0QJzRgk
+devMode: true
+devGuild:
+    - "770540956163899423"
+api:
+    auth: EnterpriseWangyWangyHuhHahHuhHah
+    url: http://node-jp.rahagia.tech:3006/
+apiKey:
+    dbl: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc0MDExMjM1MzQ4MzU1NDg1OCIsImJvdCI6dHJ1ZSwiaWF0IjoxNjA1NDk5OTc3fQ.0S6h9gpQg77c0mLRqLC4vc4zgduENIBrPlXzkRtDF24
+    boats: 2bo3CkMT7P6CNxx7IBQrO5haxlOsSPazT8ExCCKAvUVxzuW8bKlsJqw3JH6yDd40B39zmNIGS4uV4SgVY3w54fIaiRiA0mJkMzlNlkCFCKvxoL4mtI1ABWvRfmpnUDrj8RutB2rjA7Uv9rVp9k9wt4G9VCr
+    alex: 93jQYsGpTm_Jz44_fxV2VlsL9t6Uk36zfHq3buCb
+    youtube: AIzaSyAeoZxsotVd1HdcqG8KXAIzS_O8FxQbel0
+    weeby: MjQzNzI4NTczNjI0NjE0OTEy.6GgFtV7pb9l28ybcDDUv1yz4noWpEefZnYGPpf7Jr4k
+    spotify:
+        clientId: c74bc6e28b154643b5b1f1f51c21fdfb
+        clientSecret: ec94116a9a2c4212936afc33f55b697b
+    cookie:
+        instagram: 14643228375%3AwtGbRlhe4qGtU8%3A9
 nodes:
     - name: rahagia
       url: node-jp.rahagia.tech:3004
@@ -12,9 +25,5 @@ nodes:
     # - name: fabio
     #   url: node-au.panel.fab1o.xyz:2333
     #   auth: EnterpriseWangy
-api:
-    auth: EnterpriseWangyWangyHuhHahHuhHah
-    url: http://node-jp.rahagia.tech:3008/
-devMode: false
-devGuild:
-    - "770540956163899423"
+server:
+    port: 3002

@@ -5,21 +5,74 @@ import {
     GuildDatabaseManager,
     JikanManager,
     ListenerHandler,
+    RouterHandler,
     ShoukakuHandler,
     TopggHandler,
     UserDatabaseManager,
     WeebyManager
 } from "@zuikaku/Handlers";
+import { IConfig, ISnipe } from "@zuikaku/types";
 import { Logger, Utils } from "@zuikaku/Utils";
 import { Client, Intents, Options, Sweepers } from "discord.js";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 import process from "node:process";
 import { DataSource } from "typeorm";
 
-const config = Utils.parseYaml(join(__dirname, "../../ZuikakuConfig.yaml"));
-
 export class ZuikakuClient extends Client {
-    public constructor() {
+    public readonly snipe = new Map<string, ISnipe[]>();
+    public readonly logger = new Logger();
+    public readonly utils = new Utils();
+    public readonly apis = {
+        canvas: new CanvasHandler(this),
+        dbl: new TopggHandler(this),
+        weebs: {
+            anilist: new AnilistManager(),
+            jikan: new JikanManager(),
+            weeby: new WeebyManager()
+        }
+    };
+
+    public readonly shoukaku = new ShoukakuHandler(this);
+    public readonly database = {
+        dataSource: new DataSource({
+            database: "database",
+            type: "mongodb",
+            url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${
+                this.config.devMode ? "development" : "database"
+            }`,
+            useUnifiedTopology: true,
+            ssl: true,
+            sslValidate: true,
+            useNewUrlParser: true,
+            entities: [
+                `${resolve(
+                    __dirname,
+                    "../Handlers/Databases/Entities"
+                )}/**/*.js`
+            ]
+        }),
+        entity: {
+            guilds: new GuildDatabaseManager(),
+            users: new UserDatabaseManager()
+        }
+    };
+
+    public readonly listener = new ListenerHandler(
+        this,
+        resolve(__dirname, "../Listeners")
+    );
+
+    public readonly command = new CommandHandler(
+        this,
+        resolve(__dirname, "../Commands")
+    );
+
+    public readonly router = new RouterHandler(
+        this,
+        resolve(__dirname, "../Routers")
+    );
+
+    public constructor(public readonly config: IConfig) {
         super({
             ownerId: ["243728573624614912"],
             allowedMentions: { parse: [] },
@@ -54,76 +107,15 @@ export class ZuikakuClient extends Client {
                 ]
             }
         });
-        Object.defineProperty(this, "config", {
-            value: config
-        });
-        Object.defineProperty(this, "snipe", {
-            value: new Map()
-        });
-        Object.defineProperty(this, "logger", {
-            value: new Logger()
-        });
-        Object.defineProperty(this, "utils", {
-            value: new Utils()
-        });
-        Object.defineProperty(this, "apis", {
-            value: {
-                canvas: new CanvasHandler(this),
-                dbl: new TopggHandler(this),
-                weebs: {
-                    anilist: new AnilistManager(),
-                    jikan: new JikanManager(),
-                    weeby: new WeebyManager()
-                }
-            }
-        });
-        Object.defineProperty(this, "shoukaku", {
-            value: new ShoukakuHandler(this)
-        });
-        Object.defineProperty(this, "database", {
-            value: {
-                dataSource: new DataSource({
-                    database: "database",
-                    type: "mongodb",
-                    url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${
-                        this.config.devMode ? "development" : "database"
-                    }`,
-                    useUnifiedTopology: true,
-                    ssl: true,
-                    sslValidate: true,
-                    useNewUrlParser: true,
-                    entities: [
-                        `${resolve(
-                            __dirname,
-                            "../Handlers/Databases/Entities"
-                        )}/**/*.js`
-                    ]
-                }),
-                entity: {
-                    guilds: new GuildDatabaseManager(),
-                    users: new UserDatabaseManager()
-                }
-            }
-        });
-        Object.defineProperty(this, "listeners", {
-            value: new ListenerHandler(this, resolve(__dirname, "../Listeners"))
-        });
-        Object.defineProperty(this, "commands", {
-            value: new CommandHandler(this, resolve(__dirname, "../Commands"))
-        });
     }
 
     public start(): this {
-        void this.listeners.load();
-        if (this.config.devMode) {
-            void this.login(
-                "OTExMTQ3Mjg5NzMxNTQzMDky.YZdKCg.HyKyzRHUHtREREVpG5Pj0QJzRgk"
-            );
-        } else {
-            void this.login(
-                "NzkxMjcxMjIzMDc3MTA5ODIw.X-MuwA.XTpdWsnWaAt3Qm7qGqkQr7zL3cM"
-            );
-        }
+        void this.listener.load();
+        void this.login(
+            this.config.devMode
+                ? this.config.token.development
+                : this.config.token.production
+        );
         return this;
     }
 

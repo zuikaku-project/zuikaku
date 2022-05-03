@@ -13,6 +13,8 @@ export default class ZuikakuMessageDelete extends ZuikakuListener {
         if (message.author.bot || message.channel.type === "DM") return;
         const snipes = this.client.snipe.get(message.channel.id) ?? [];
         snipes.unshift({
+            date: (new Date().getTime() / 1000).toFixed(0),
+            author: message.author,
             content: message.reference
                 ? `([**\`Replied to ${
                       (
@@ -37,11 +39,9 @@ export default class ZuikakuMessageDelete extends ZuikakuListener {
                       ).url
                   }))\n${message.content}`
                 : message.content,
-            author: message.author,
             attachments: message.attachments.map(
                 ({ name, url }) => `[${name ?? ""}](<${url}>)`
-            ),
-            date: (new Date().getTime() / 1000).toFixed(0)
+            )
         });
         snipes.splice(10);
         this.client.snipe.set(message.channel.id, snipes);

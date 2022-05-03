@@ -1,18 +1,5 @@
 /* eslint-disable max-lines */
-import {
-    AnilistManager,
-    CanvasHandler,
-    CommandHandler,
-    GuildDatabaseManager,
-    JikanManager,
-    ListenerHandler,
-    ShoukakuHandler,
-    TopggHandler,
-    UserDatabaseManager,
-    WeebyManager
-} from "@zuikaku/Handlers";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { Logger, Utils } from "@zuikaku/Utils";
 import {
     ApplicationCommandOptionData,
     ApplicationCommandOptionType,
@@ -20,16 +7,36 @@ import {
     Snowflake,
     User
 } from "discord.js";
-import { DataSource } from "typeorm";
+import { Request, Response } from "express";
 import { UnresolvedPluginTrack } from "./plugin";
 
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
 
 export interface IConfig {
-    alexapi: string;
-    boatsapi: string;
-    dblapi: string;
+    token: {
+        production: string;
+        development: string;
+    };
     devMode: boolean;
+    devGuild: string[];
+    api: {
+        auth: string;
+        url: string;
+    };
+    apiKey: {
+        dbl: string;
+        boats: string;
+        alex: string;
+        youtube: string;
+        weeby: string;
+        spotify: {
+            clientId: string;
+            clientSecret: string;
+        };
+        cookie: {
+            instagram: string;
+        };
+    };
     nodes: {
         auth: string;
         group?: string;
@@ -37,15 +44,9 @@ export interface IConfig {
         name: string;
         secure?: boolean;
     }[];
-    api: {
-        url: string;
-        auth: string;
+    server: {
+        port: number;
     };
-    sessionid: string;
-    spcid: string;
-    spcs: string;
-    ytapi: string;
-    devGuild: Snowflake[];
 }
 
 export interface IChangelog {
@@ -193,10 +194,10 @@ export interface INPMRegistryAPI {
 }
 
 export interface ISnipe {
+    date: string;
     author: User;
     content: string;
-    date: string;
-    image: string;
+    attachments: string[];
 }
 
 export interface IListenerComponent {
@@ -225,6 +226,20 @@ export interface ICommandComponent {
         userPermissions?: PermissionResolvable;
     };
     execute: (ctx: CommandContext, ...args: any) => Promise<void>;
+}
+
+export interface IRouterComponent {
+    meta: {
+        name: string;
+        method: "delete" | "get" | "patch" | "post" | "put";
+        path: string;
+        callback?: ((
+            request: Request,
+            response: Response,
+            next: () => void
+        ) => any)[];
+    };
+    execute: (req: Request, res: Response) => void;
 }
 
 export interface IPluginComponent {
@@ -256,38 +271,7 @@ export interface QueueOptions {
 
 declare module "discord.js" {
     export interface Client {
-        ownerId: Snowflake[];
-        config: IConfig;
-        snipe: Map<
-            Snowflake,
-            {
-                content: string;
-                author: User;
-                attachments: string[];
-                date: string;
-            }[]
-        >;
-        logger: Logger;
-        utils: Utils;
-        apis: {
-            dbl: TopggHandler;
-            canvas: CanvasHandler;
-            weebs: {
-                anilist: AnilistManager;
-                jikan: JikanManager;
-                weeby: WeebyManager;
-            };
-        };
-        shoukaku: ShoukakuHandler;
-        database: {
-            dataSource: DataSource;
-            entity: {
-                guilds: GuildDatabaseManager;
-                users: UserDatabaseManager;
-            };
-        };
-        readonly commands: CommandHandler;
-        readonly listeners: ListenerHandler;
+        readonly ownerId: Snowflake[];
     }
     export interface ClientOptions {
         ownerId: Snowflake[];

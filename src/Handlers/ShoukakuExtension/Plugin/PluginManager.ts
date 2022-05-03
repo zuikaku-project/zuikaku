@@ -2,15 +2,16 @@ import {
     AppleMusicMetaTagResponse,
     IPluginComponent,
     IPluginOptions,
-    LavalinkTrack,
-    IregExpExec
+    IregExpExec,
+    LavalinkSource,
+    LavalinkTrack
 } from "@zuikaku/types";
 import { Utils } from "@zuikaku/Utils";
 import { load } from "cheerio";
 import { Collection } from "discord.js";
 import { join, resolve } from "node:path";
 import petitio from "petitio";
-import { LavalinkSource, ShoukakuSocket } from "shoukaku";
+import { ShoukakuSocket } from "shoukaku";
 import { ShoukakuHandler, TrackList } from "..";
 
 export class PluginManager {
@@ -139,7 +140,7 @@ export class PluginManager {
         uri: string;
         length: number;
         artworkUrl: string;
-        sourceName: string;
+        sourceName: LavalinkSource;
     }): LavalinkTrack {
         return {
             track: "",
