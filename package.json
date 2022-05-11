@@ -48,7 +48,7 @@
         "cheerio": "1.0.0-rc.10",
         "colorette": "2.0.16",
         "cors": "2.8.5",
-        "dayjs": "1.11.1",
+        "dayjs": "1.11.2",
         "discord-api-types": "0.32.1",
         "discord.js": "13.6.0",
         "eslint-config-prettier": "8.5.0",
