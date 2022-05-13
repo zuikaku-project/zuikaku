@@ -52,7 +52,7 @@
         "arrowParens": "avoid"
     },
     "devDependencies": {
-        "@clytage-pkg/eslint-config": "^1.0.1",
+        "@clytage-pkg/eslint-config": "1.0.1",
         "@types/cors": "2.8.12",
         "@types/express": "4.17.13",
         "@types/js-yaml": "4.0.5",
