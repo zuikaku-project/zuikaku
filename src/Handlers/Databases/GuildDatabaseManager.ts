@@ -31,9 +31,7 @@ export class GuildDatabaseManager {
         }
         const database = await this.connection
             .model<IGuildSchema>("Guilds")
-            .findOne({
-                where: { guildId }
-            });
+            .findOne({ guildId });
         if (!database) {
             return undefined;
         }

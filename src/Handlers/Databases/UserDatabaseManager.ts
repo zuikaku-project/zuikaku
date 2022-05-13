@@ -24,18 +24,16 @@ export class UserDatabaseManager {
 
     public async get(
         userId: string
-    ): Promise<documentType<IUserSchema> | null> {
+    ): Promise<documentType<IUserSchema> | undefined> {
         const cache = this.cache.get(userId);
         if (cache) {
             return cache;
         }
         const database = await this.connection
             .model<IUserSchema>("Users")
-            .findOne({
-                where: { userId }
-            });
+            .findOne({ userId });
         if (!database) {
-            return null;
+            return undefined;
         }
         return database;
     }
