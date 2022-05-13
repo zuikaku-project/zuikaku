@@ -1,7 +1,8 @@
-import { Dispatcher, GuildSettings } from "@zuikaku/Handlers";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
+import { documentType, IGuildSchema } from "@zuikaku/types";
 import { createEmbed, Utils } from "@zuikaku/Utils";
 import { TextChannel, Message, Guild, MessageActionRow } from "discord.js";
+import { Dispatcher } from "./Dispatcher";
 
 const defaultImage =
     "https://cdn.discordapp.com/attachments/795512730940735508/857506653028614174/thumb-1920-744946.png";
@@ -20,8 +21,8 @@ export class EmbedPlayer {
         );
     }
 
-    public getGuildDatabase(): Promise<GuildSettings | undefined> {
-        return this.client.database.entity.guilds.get(this.guild.id);
+    public getGuildDatabase(): Promise<documentType<IGuildSchema> | undefined> {
+        return this.client.database.manager.guilds.get(this.guild.id);
     }
 
     public getDispatcher(): Dispatcher | undefined {
@@ -160,7 +161,7 @@ export class EmbedPlayer {
 
     public static async resolve(
         guild: Guild,
-        data: GuildSettings["guildPlayer"]
+        data: documentType<IGuildSchema>["guildPlayer"]
     ): Promise<{ channel?: TextChannel; message?: Message }> {
         if (!data) {
             return {
@@ -172,12 +173,12 @@ export class EmbedPlayer {
         const channel = guild.channels.resolve(data.channelId);
         if (!channel?.isText()) {
             if (dispatcher) {
-                await guild.client.database.entity.guilds.reset(
+                await guild.client.database.manager.guilds.reset(
                     guild.id,
                     "guildPlayer"
                 );
             } else {
-                await guild.client.database.entity.guilds.drop(guild.id);
+                await guild.client.database.manager.guilds.drop(guild.id);
             }
             return {
                 channel: undefined,
@@ -189,12 +190,12 @@ export class EmbedPlayer {
             .catch(() => undefined);
         if (!message) {
             if (dispatcher) {
-                await guild.client.database.entity.guilds.reset(
+                await guild.client.database.manager.guilds.reset(
                     guild.id,
                     "guildPlayer"
                 );
             } else {
-                await guild.client.database.entity.guilds.drop(guild.id);
+                await guild.client.database.manager.guilds.drop(guild.id);
             }
             return {
                 channel: undefined,

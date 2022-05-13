@@ -13,7 +13,14 @@ export class Logger {
     }
 
     public error(...messages: any[]): void {
-        this.log(messages, "error");
+        this.log(
+            messages.map(message =>
+                message instanceof String
+                    ? message.replace(new RegExp(`${__dirname}/`, "g"), "./")
+                    : message
+            ),
+            "error"
+        );
     }
 
     public info(...messages: any[]): void {

@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
 import { ShoukakuPlayer } from "shoukaku";
@@ -10,15 +10,15 @@ import { ShoukakuPlayer } from "shoukaku";
 })
 export default class ShoukakuPlayerDestroy extends ZuikakuListener {
     public async execute(_: string, player: ShoukakuPlayer): Promise<void> {
-        const getGuildDatabase = await this.client.database.entity.guilds.get(
+        const getGuildDatabase = await this.client.database.manager.guilds.get(
             player.connection.guildId
         );
-        if (getGuildDatabase?.guildPlayer) {
-            await this.client.database.entity.guilds
-                .reset(player.connection.guildId, "persistenceQueue")
+        if (getGuildDatabase?.guildPlayer?.channelId) {
+            await this.client.database.manager.guilds
+                .reset(player.connection.guildId, "persistentQueue")
                 .catch(() => null);
         } else {
-            await this.client.database.entity.guilds.drop(
+            await this.client.database.manager.guilds.drop(
                 player.connection.guildId
             );
         }

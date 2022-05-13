@@ -1,4 +1,7 @@
-import { isNoNodesAvailable, ZuikakuDecorator } from "@zuikaku/Handlers";
+import {
+    ZuikakuDecorator,
+    isNoNodesAvailable
+} from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";

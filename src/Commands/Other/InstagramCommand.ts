@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent, IInstagram } from "@zuikaku/types";
@@ -159,7 +159,7 @@ export default class InstagramCommand extends ZuikakuCommand {
             )
                 .header(
                     "Cookie",
-                    `sessionid=${this.client.config.apiKey.cookie.instagram}`
+                    `sessionid=${this.client.config.api.cookie.instagram}`
                 )
                 .json();
         } catch {

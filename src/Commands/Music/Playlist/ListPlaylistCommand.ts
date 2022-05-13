@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -16,11 +16,11 @@ import { Utils, createMusicEmbed } from "@zuikaku/Utils";
 export default class ListPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(
+        const getUserDatabase = await this.client.database.manager.users.get(
             ctx.author.id
         );
         if (!getUserDatabase) {
@@ -48,9 +48,9 @@ export default class ListPlaylistCommand extends ZuikakuCommand {
                 ).setDescription(
                     userPlaylist
                         .map(
-                            ({ playlistId, playlistName, playlistTracks }) =>
-                                `**${i++} • \`${playlistId}\` | ${playlistName} (${
-                                    playlistTracks.length
+                            ({ id, name, tracks }) =>
+                                `**${i++} • \`${id}\` | ${name} (${
+                                    tracks.length
                                 } track(s))**`
                         )
                         .join("\n")

@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuRouter } from "@zuikaku/Structures/ZuikakuRouter";
 import { IChangelog, IRouterComponent } from "@zuikaku/types";
 import { Utils } from "@zuikaku/Utils";

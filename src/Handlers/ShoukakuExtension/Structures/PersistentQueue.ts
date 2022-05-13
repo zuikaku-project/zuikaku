@@ -1,5 +1,5 @@
-import { GuildSettings } from "@zuikaku/Handlers/Databases";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
+import { documentType, IGuildSchema } from "@zuikaku/types";
 import { Guild, TextBasedChannel, User } from "discord.js";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 import { EmbedPlayer } from "./EmbedPlayer";
@@ -21,12 +21,12 @@ export class PersistentQueue {
 
     public getGuildDatabase(
         guildId: string
-    ): Promise<GuildSettings | undefined> {
-        return this._client.database.entity.guilds.get(guildId);
+    ): Promise<documentType<IGuildSchema> | undefined> {
+        return this._client.database.manager.guilds.get(guildId);
     }
 
     public async assign(): Promise<void> {
-        const allGuildDatabase = this._client.database.entity.guilds.cache.map(
+        const allGuildDatabase = this._client.database.manager.guilds.cache.map(
             ({ guildId }) => ({ guildId })
         );
         for (const { guildId } of allGuildDatabase) {
@@ -39,7 +39,7 @@ export class PersistentQueue {
 
     public async assignGuildDatabase(
         guild: Guild,
-        guildDatabase: GuildSettings | undefined
+        guildDatabase: documentType<IGuildSchema> | undefined
     ): Promise<void> {
         if (guildDatabase?.guildPlayer?.channelId) {
             const channelGuildPlayer = this._client.channels.resolve(
@@ -61,40 +61,39 @@ export class PersistentQueue {
                 }
             }
         }
-        if (guildDatabase?.persistenceQueue?.textId) {
+        if (guildDatabase?.persistentQueue?.textId) {
             const dispatcher = await this._shoukaku.handleJoin({
                 guildId: guild.id,
-                channelId: guildDatabase.persistenceQueue.voiceId,
+                channelId: guildDatabase.persistentQueue.voiceId,
                 shardId: guild.shardId,
                 deaf: true,
-                textId: guildDatabase.persistenceQueue.textId,
-                voiceId: guildDatabase.persistenceQueue.voiceId
+                textId: guildDatabase.persistentQueue.textId,
+                voiceId: guildDatabase.persistentQueue.voiceId
             });
-            if (guildDatabase.persistenceQueue.trackRepeat)
+            if (guildDatabase.persistentQueue.trackRepeat)
                 await dispatcher.setTrackRepeat();
-            if (guildDatabase.persistenceQueue.queueRepeat)
+            if (guildDatabase.persistentQueue.queueRepeat)
                 await dispatcher.setQueueRepeat();
-            if (guildDatabase.persistenceQueue.current) {
-                const currentPersistent =
-                    guildDatabase.persistenceQueue.current;
+            if (guildDatabase.persistentQueue.current) {
+                const currentPersistent = guildDatabase.persistentQueue.current;
                 // @ts-expect-error Not export User
                 const requester = new User(
                     this._client,
                     currentPersistent._requester
                 ) as User;
-                guildDatabase.persistenceQueue.current = new Track(
+                guildDatabase.persistentQueue.current = new Track(
                     currentPersistent
                 );
-                guildDatabase.persistenceQueue.current.setRequester(requester);
-                guildDatabase.persistenceQueue.current.setShoukaku(
+                guildDatabase.persistentQueue.current.setRequester(requester);
+                guildDatabase.persistentQueue.current.setShoukaku(
                     this._shoukaku
                 );
                 await dispatcher.queue.addTrack(
-                    guildDatabase.persistenceQueue.current
+                    guildDatabase.persistentQueue.current
                 );
             }
-            if (guildDatabase.persistenceQueue.tracks.length) {
-                guildDatabase.persistenceQueue.tracks.map(track => {
+            if (guildDatabase.persistentQueue.tracks.length) {
+                guildDatabase.persistentQueue.tracks.map(track => {
                     // @ts-expect-error Not export User
                     const requester = new User(
                         this._client,
@@ -105,29 +104,29 @@ export class PersistentQueue {
                     track.setShoukaku(this._shoukaku);
                 });
                 await dispatcher.queue.addTrack(
-                    guildDatabase.persistenceQueue.tracks
+                    guildDatabase.persistentQueue.tracks
                 );
             }
             if (
-                guildDatabase.persistenceQueue.playerMessageId &&
-                guildDatabase.persistenceQueue.playerMessageId !==
+                guildDatabase.persistentQueue.playerMessageId &&
+                guildDatabase.persistentQueue.playerMessageId !==
                     guildDatabase.guildPlayer?.messageId
             ) {
                 const channelPersistence = this._client.channels.resolve(
-                    guildDatabase.persistenceQueue.textId
+                    guildDatabase.persistentQueue.textId
                 );
                 if (channelPersistence) {
                     const messagePersistent = await (
                         channelPersistence as TextBasedChannel
                     ).messages
-                        .fetch(guildDatabase.persistenceQueue.playerMessageId)
+                        .fetch(guildDatabase.persistentQueue.playerMessageId)
                         .catch(() => undefined);
                     if (messagePersistent) {
                         await messagePersistent.delete().catch(() => null);
                     }
                 }
             }
-            await dispatcher.playTrack(guildDatabase.persistenceQueue.position);
+            await dispatcher.playTrack(guildDatabase.persistentQueue.position);
             this._client.logger.info(
                 "persistent queue",
                 `Persistent Queue has been assigned for guild ${guild.name}`

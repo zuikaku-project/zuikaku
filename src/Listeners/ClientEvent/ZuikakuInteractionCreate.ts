@@ -1,6 +1,7 @@
 /* eslint-disable max-depth */
 /* eslint-disable max-lines */
-import { Dispatcher, EmbedPlayer, ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
+import { Dispatcher, EmbedPlayer } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
@@ -181,7 +182,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                         interaction.options.getSubcommand(false) === "track")
                 ) {
                     const getUserData =
-                        this.client.database.entity.users.cache.get(
+                        this.client.database.manager.users.cache.get(
                             interaction.user.id
                         );
                     const getPlaylist =
@@ -189,51 +190,45 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                     if (getUserData) {
                         const getPlaylistFromId = getUserData.playlists.find(
                             playlist =>
-                                [
-                                    playlist.playlistId,
-                                    playlist.playlistName
-                                ].includes(
+                                [playlist.id, playlist.name].includes(
                                     getPlaylist?.split(" ")[0].trim() ?? ""
                                 )
                         );
                         const getPlaylistData = getPlaylistFromId
                             ? [
                                   {
-                                      name: `${
-                                          getPlaylistFromId.playlistName
-                                      } - ${
-                                          getPlaylistFromId.playlistTracks
-                                              .length
+                                      name: `${getPlaylistFromId.name} - ${
+                                          getPlaylistFromId.tracks.length
                                       } tracks (${
                                           Utils.parseMs(
                                               // eslint-disable-next-line no-eval
                                               eval(
-                                                  getPlaylistFromId.playlistTracks
-                                                      .map(x => x.trackLength)
+                                                  getPlaylistFromId.tracks
+                                                      .map(x => x.length)
                                                       .join("+")
                                               ) as number,
                                               { colonNotation: true }
                                           ).colonNotation
                                       })`,
-                                      value: getPlaylistFromId.playlistId
+                                      value: getPlaylistFromId.id
                                   }
                               ]
                             : getUserData.playlists
                                   .map(playlist => ({
-                                      name: `${playlist.playlistName} - ${
-                                          playlist.playlistTracks.length
+                                      name: `${playlist.name} - ${
+                                          playlist.tracks.length
                                       } tracks (${
                                           Utils.parseMs(
                                               // eslint-disable-next-line no-eval
                                               eval(
-                                                  playlist.playlistTracks
-                                                      .map(x => x.trackLength)
+                                                  playlist.tracks
+                                                      .map(x => x.length)
                                                       .join("+")
                                               ) as number,
                                               { colonNotation: true }
                                           ).colonNotation
                                       })`,
-                                      value: playlist.playlistId
+                                      value: playlist.id
                                   }))
                                   .sort((b, a) => b.name.localeCompare(a.name))
                                   .slice(0, 25);

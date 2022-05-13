@@ -1,22 +1,26 @@
 import {
+    CommandHandler,
+    ListenerHandler,
+    RouterHandler
+} from "@zuikaku/Handlers";
+import {
     AnilistManager,
     CanvasHandler,
-    CommandHandler,
-    GuildDatabaseManager,
     JikanManager,
-    ListenerHandler,
-    RouterHandler,
-    ShoukakuHandler,
     TopggHandler,
-    UserDatabaseManager,
     WeebyManager
-} from "@zuikaku/Handlers";
+} from "@zuikaku/Handlers/API";
+import {
+    GuildDatabaseManager,
+    UserDatabaseManager
+} from "@zuikaku/Handlers/Databases";
+import { ShoukakuHandler } from "@zuikaku/Handlers/ShoukakuExtension";
 import { IConfig, ISnipe } from "@zuikaku/types";
 import { Logger, Utils } from "@zuikaku/Utils";
 import { Client, Intents, Options, Sweepers } from "discord.js";
+import mongoose from "mongoose";
 import { resolve } from "node:path";
 import process from "node:process";
-import { DataSource } from "typeorm";
 
 export class ZuikakuClient extends Client {
     public readonly snipe = new Map<string, ISnipe[]>();
@@ -34,24 +38,8 @@ export class ZuikakuClient extends Client {
 
     public readonly shoukaku = new ShoukakuHandler(this);
     public readonly database = {
-        dataSource: new DataSource({
-            database: "database",
-            type: "mongodb",
-            url: `mongodb+srv://12345:qwerty111@database.ewzkt.mongodb.net/${
-                this.config.devMode ? "development" : "database"
-            }`,
-            useUnifiedTopology: true,
-            ssl: true,
-            sslValidate: true,
-            useNewUrlParser: true,
-            entities: [
-                `${resolve(
-                    __dirname,
-                    "../Handlers/Databases/Entities"
-                )}/**/*.js`
-            ]
-        }),
-        entity: {
+        mongoose,
+        manager: {
             guilds: new GuildDatabaseManager(),
             users: new UserDatabaseManager()
         }

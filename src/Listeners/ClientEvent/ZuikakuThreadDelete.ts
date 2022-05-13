@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
 import { TextChannel, ThreadChannel } from "discord.js";

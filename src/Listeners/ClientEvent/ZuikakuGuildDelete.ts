@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
 import { createEmbed } from "@zuikaku/Utils";
@@ -12,7 +12,7 @@ import { Guild, WebhookClient } from "discord.js";
 export default class ZuikakuGuildDelete extends ZuikakuListener {
     public async execute(guild: Guild): Promise<void> {
         if (!guild.available) return undefined;
-        await this.client.database.entity.guilds.drop(guild.id).then(() => {
+        await this.client.database.manager.guilds.drop(guild.id).then(() => {
             this.client.logger.info(
                 "database",
                 `Remove Database Guild ${guild.name}`

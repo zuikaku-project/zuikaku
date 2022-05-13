@@ -7,8 +7,8 @@
         "build": "rimraf dist && npm run lint && tsc",
         "lint": "npm run pretty && eslint src --ext .ts",
         "lint:fix": "npm run pretty:write && eslint src --ext .ts --fix",
-        "pretty": "prettier --config ./.prettierrc --check 'src/**/*.ts'",
-        "pretty:write": "prettier --config ./.prettierrc --write 'src/**/*.ts'",
+        "pretty": "prettier --check 'src/**/*.ts'",
+        "pretty:write": "prettier --write 'src/**/*.ts'",
         "start": "node ./dist/ZuikakuBase.js",
         "vps": "npm run build && npm start"
     },
@@ -30,8 +30,29 @@
     "_moduleAliases": {
         "@zuikaku": "./dist"
     },
+    "eslintConfig": {
+        "extends": [
+            "@clytage-pkg/eslint-config/typescript",
+            "prettier"
+        ],
+        "plugins": [
+            "prettier"
+        ],
+        "parserOptions": {
+            "project": "./tsconfig.json"
+        },
+        "rules": {
+            "class-methods-use-this": 0,
+            "@typescript-eslint/naming-convention": 0
+        }
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "trailingComma": "none",
+        "arrowParens": "avoid"
+    },
     "devDependencies": {
-        "@cyteliz/eslint-config": "1.0.0",
+        "@clytage-pkg/eslint-config": "^1.0.1",
         "@types/cors": "2.8.12",
         "@types/express": "4.17.13",
         "@types/js-yaml": "4.0.5",
@@ -56,6 +77,7 @@
         "js-yaml": "4.1.0",
         "module-alias": "2.2.2",
         "mongodb": "3.7.3",
+        "mongoose": "^6.3.3",
         "petitio": "1.4.0",
         "shoukaku": "2.1.6",
         "tslib": "2.4.0",

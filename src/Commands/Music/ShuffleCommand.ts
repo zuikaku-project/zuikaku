@@ -3,7 +3,7 @@ import {
     isSameVoiceChannel,
     isUserInTheVoiceChannel,
     ZuikakuDecorator
-} from "@zuikaku/Handlers/Decorators";
+} from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -24,7 +24,7 @@ export default class ShuffleCommand extends ZuikakuCommand {
     @isSameVoiceChannel()
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;

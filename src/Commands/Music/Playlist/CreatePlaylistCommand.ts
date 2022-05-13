@@ -1,7 +1,7 @@
-import { UserSettings, ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
+import { documentType, ICommandComponent, IUserSchema } from "@zuikaku/types";
 import { createEmbed, createMusicEmbed } from "@zuikaku/Utils";
 import { randomBytes } from "crypto";
 import { MessageActionRow, MessageButton } from "discord.js";
@@ -26,26 +26,25 @@ import { MessageActionRow, MessageButton } from "discord.js";
 export default class CreatePlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
         const getUserDatabase =
-            (await this.client.database.entity.users.get(ctx.author.id)) ??
-            (await this.client.database.entity.users.set(
+            (await this.client.database.manager.users.get(ctx.author.id)) ??
+            (await this.client.database.manager.users.set(
                 ctx.author.id,
                 "playlists",
                 []
             ));
         const getUserPlaylist = getUserDatabase.playlists.find(
-            ({ playlistName }) =>
-                playlistName === ctx.options!.getString("name")!
+            ({ name }) => name === ctx.options!.getString("name")!
         );
         const newUserPlaylist = {
-            playlistId: this.getRandomPlaylistId(getUserDatabase),
-            playlistName: ctx.options!.getString("name")!,
-            playlistDuration: "0",
-            playlistTracks: []
+            id: this.getRandomPlaylistId(getUserDatabase),
+            name: ctx.options!.getString("name")!,
+            duration: "0",
+            tracks: []
         };
         if (getUserPlaylist) {
             const asksButton = new MessageActionRow().addComponents(
@@ -77,7 +76,7 @@ export default class CreatePlaylistCommand extends ZuikakuCommand {
                 if (interaction.user.id === ctx.author.id) {
                     if (interaction.customId === "accept") {
                         getUserDatabase.playlists.push(newUserPlaylist);
-                        await this.client.database.entity.users.set(
+                        await this.client.database.manager.users.set(
                             ctx.author.id,
                             "playlists",
                             getUserDatabase.playlists
@@ -87,7 +86,7 @@ export default class CreatePlaylistCommand extends ZuikakuCommand {
                                 createMusicEmbed(
                                     ctx,
                                     "info",
-                                    `I have created your new playlist ${newUserPlaylist.playlistName} (${newUserPlaylist.playlistId})`
+                                    `I have created your new playlist ${newUserPlaylist.name} (${newUserPlaylist.id})`
                                 )
                             ],
                             components: []
@@ -137,7 +136,7 @@ export default class CreatePlaylistCommand extends ZuikakuCommand {
             });
         } else {
             getUserDatabase.playlists.push(newUserPlaylist);
-            await this.client.database.entity.users.set(
+            await this.client.database.manager.users.set(
                 ctx.author.id,
                 "playlists",
                 getUserDatabase.playlists
@@ -147,18 +146,20 @@ export default class CreatePlaylistCommand extends ZuikakuCommand {
                     createMusicEmbed(
                         ctx,
                         "info",
-                        `I have created your new playlist ${newUserPlaylist.playlistName} (${newUserPlaylist.playlistId})`
+                        `I have created your new playlist ${newUserPlaylist.name} (${newUserPlaylist.id})`
                     )
                 ]
             });
         }
     }
 
-    private getRandomPlaylistId(userDatabase: UserSettings): string {
+    private getRandomPlaylistId(
+        userDatabase: documentType<IUserSchema>
+    ): string {
         const getRandomHexFromBytes = randomBytes(3).toString("hex");
         if (
             userDatabase.playlists
-                .map(({ playlistId }) => playlistId)
+                .map(({ id }) => id)
                 .includes(getRandomHexFromBytes)
         )
             return this.getRandomPlaylistId(userDatabase);

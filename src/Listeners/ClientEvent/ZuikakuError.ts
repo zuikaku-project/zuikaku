@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
@@ -17,9 +17,6 @@ export default class ZuikakuErrorEvent extends ZuikakuListener {
         error: Error,
         command?: ICommandComponent
     ): Promise<void> {
-        const errorMessage =
-            error.stack?.replace(new RegExp(`${__dirname}/`, "g"), "./") ??
-            error.message;
         await ctx
             .send({
                 embeds: [
@@ -38,12 +35,12 @@ export default class ZuikakuErrorEvent extends ZuikakuListener {
                 command ? `| ${command.meta.name} command` : ""
             } `
         );
-        if (errorMessage.length > 4050) {
+        if ((error.stack ?? error.message).length > 4050) {
             const { key } = await petitio(
                 "https://hastebin.orchitiadi.repl.co/documents",
                 "POST"
             )
-                .body(errorMessage)
+                .body(error.stack ?? error.message)
                 .json();
             embedLog.setDescription(
                 `**StackTrack**\nhttps://hastebin.orchitiadi.repl.co/${
@@ -52,7 +49,9 @@ export default class ZuikakuErrorEvent extends ZuikakuListener {
             );
         } else {
             embedLog.setDescription(
-                `**StackTrack**\n\`\`\`bash\n${errorMessage}\n\`\`\``
+                `**StackTrack**\n\`\`\`bash\n${
+                    error.stack ?? error.message
+                }\n\`\`\``
             );
         }
         const webhook = new WebhookClient({

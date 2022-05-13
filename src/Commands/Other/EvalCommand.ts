@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/restrict-template-expressions */
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -119,7 +119,7 @@ export default class EvalCommand extends ZuikakuCommand {
 
     private replace(text: string): string {
         const regex = new RegExp(
-            `${this.client.token}|${this.client.config.apiKey.dbl}|${this.client.config.apiKey.boats}|${this.client.config.apiKey.alex}|${this.client.config.apiKey.youtube}|${this.client.config.apiKey.spotify.clientId}|${this.client.config.apiKey.spotify.clientSecret}|${this.client.config.apiKey.cookie.instagram}`,
+            `${this.client.token}|${this.client.config.api.dbl}|${this.client.config.api.spotify.clientId}|${this.client.config.api.spotify.clientSecret}|${this.client.config.api.cookie.instagram}`,
             "gi"
         );
         return text.replace(regex, " [REDACTED] ");

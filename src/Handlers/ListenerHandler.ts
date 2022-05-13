@@ -2,6 +2,7 @@
 import Collection from "@discordjs/collection";
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import { IListenerComponent } from "@zuikaku/types";
+import mongoose from "mongoose";
 import { resolve } from "node:path";
 
 export class ListenerHandler extends Collection<string, IListenerComponent> {
@@ -38,6 +39,13 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
 
                     case "shoukaku":
                         this.client.shoukaku.addListener(
+                            event.meta.event,
+                            (...args: any) => event.execute(...args)
+                        );
+                        break;
+
+                    case "mongoose":
+                        mongoose.connection.addListener(
                             event.meta.event,
                             (...args: any) => event.execute(...args)
                         );

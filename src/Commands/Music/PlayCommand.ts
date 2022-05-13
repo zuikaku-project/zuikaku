@@ -6,7 +6,7 @@ import {
     isUserInTheVoiceChannel,
     isValidVoiceChannel,
     ZuikakuDecorator
-} from "@zuikaku/Handlers/Decorators";
+} from "@zuikaku/Handlers/Decorator";
 import { Dispatcher, TrackList } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
@@ -44,7 +44,7 @@ export default class PlayCommand extends ZuikakuCommand {
     @isQueueReachLimit()
     @isNoNodesAvailable()
     public async execute(ctx: CommandContext): Promise<void> {
-        const getGuildDatabase = await this.client.database.entity.guilds.get(
+        const getGuildDatabase = await this.client.database.manager.guilds.get(
             ctx.guild!.id
         );
         const fromGuildPlayer =

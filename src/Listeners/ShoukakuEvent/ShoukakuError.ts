@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
 
@@ -9,13 +9,10 @@ import { IListenerComponent } from "@zuikaku/types";
 })
 export default class ShoukakuError extends ZuikakuListener {
     public execute(name: string, error: Error): void {
-        const errorMessage =
-            error.stack?.replace(new RegExp(`${__dirname}/`, "g"), "./") ??
-            error.message;
         this.client.logger.error(
             "shoukaku",
             `Node ${name} Error Caught: `,
-            errorMessage
+            error.stack ?? error.message
         );
     }
 }

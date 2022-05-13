@@ -6,7 +6,7 @@ import {
     isUserInTheVoiceChannel,
     isValidVoiceChannel,
     ZuikakuDecorator
-} from "@zuikaku/Handlers/Decorators";
+} from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -40,7 +40,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
     @isNoNodesAvailable()
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const getGuildDatabase = await this.client.database.entity.guilds.get(
+        const getGuildDatabase = await this.client.database.manager.guilds.get(
             ctx.guild!.id
         );
         const fromGuildPlayer =
@@ -67,7 +67,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 .catch(() => null);
             return undefined;
         }
-        const getUserDatabase = await this.client.database.entity.users.get(
+        const getUserDatabase = await this.client.database.manager.users.get(
             ctx.author.id
         );
         if (!getUserDatabase) {
@@ -85,8 +85,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
             return undefined;
         }
         const getUserPlaylist = getUserDatabase.playlists.find(
-            ({ playlistId }) =>
-                playlistId === ctx.options!.getString("playlist")!
+            ({ id }) => id === ctx.options!.getString("playlist")!
         );
         if (!getUserPlaylist) {
             await ctx
@@ -102,7 +101,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 .catch(() => null);
             return undefined;
         }
-        if (getUserPlaylist.playlistTracks.length) {
+        if (getUserPlaylist.tracks.length) {
             const guildQueue = await this.client.shoukaku.handleJoin({
                 guildId: ctx.guild!.id,
                 channelId: ctx.member!.voice.channel!.id,
@@ -110,16 +109,16 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 textId: ctx.channel!.id,
                 voiceId: ctx.member!.voice.channel!.id
             });
-            const buildUnresolved = getUserPlaylist.playlistTracks.map(
+            const buildUnresolved = getUserPlaylist.tracks.map(
                 playlistTrack => {
-                    const isrc = playlistTrack.trackIsrc ?? "";
-                    const identifier = playlistTrack.trackId;
-                    const author = playlistTrack.trackAuthor;
-                    const title = playlistTrack.trackTitle;
-                    const uri = playlistTrack.trackURL;
-                    const length = playlistTrack.trackLength;
-                    const artworkUrl = playlistTrack.trackArtwork ?? "";
-                    const sourceName = playlistTrack.trackSource;
+                    const isrc = playlistTrack.ISRC ?? "";
+                    const identifier = playlistTrack.id;
+                    const author = playlistTrack.author;
+                    const title = playlistTrack.title;
+                    const uri = playlistTrack.url;
+                    const length = playlistTrack.length;
+                    const artworkUrl = playlistTrack.artwork ?? "";
+                    const sourceName = playlistTrack.source;
                     return this.client.shoukaku.plugin.buildUnresolved({
                         isrc,
                         identifier,
@@ -135,7 +134,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
             const buildResponse = this.client.shoukaku.plugin.buildResponse(
                 "PLAYLIST_LOADED",
                 buildUnresolved,
-                { name: getUserPlaylist.playlistName, selectedTrack: -1 }
+                { name: getUserPlaylist.name, selectedTrack: -1 }
             );
             await guildQueue.queue.addTrack(
                 buildResponse.tracks.map(track => {
@@ -157,7 +156,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                             `I enqueued ${
                                 buildResponse.tracks.length
                             } track(s) from ${Util.escapeMarkdown(
-                                getUserPlaylist.playlistName
+                                getUserPlaylist.name
                             )} (${
                                 Utils.parseMs(
                                     Number(
@@ -189,7 +188,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                         createMusicEmbed(
                             ctx,
                             "info",
-                            `I am sorry, but your playlist ${getUserPlaylist.playlistName}(${getUserPlaylist.playlistId}) don't have any tracks`
+                            `I am sorry, but your playlist ${getUserPlaylist.name}(${getUserPlaylist.id}) don't have any tracks`
                         )
                     ]
                 })

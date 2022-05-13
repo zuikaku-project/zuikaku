@@ -1,30 +1,39 @@
+import { documentType, IGuildSchema } from "@zuikaku/types";
 import { Collection } from "discord.js";
-import {
-    DataSource,
-    DeleteWriteOpResultObject,
-    MongoRepository
-} from "typeorm";
-import { GuildSettings } from "./Entities/GuildSettings";
+import { Connection } from "mongoose";
+import { GuildSchema } from "./Schema";
 
 export class GuildDatabaseManager {
-    public collection!: MongoRepository<GuildSettings>;
-    public cache: Collection<string, GuildSettings> = new Collection();
+    public connection!: Connection;
+    public readonly cache = new Collection<
+        string,
+        documentType<IGuildSchema>
+    >();
 
-    public _init(dataSource: DataSource): void {
-        this.collection = dataSource.getMongoRepository(GuildSettings);
-        void this.list().then(database =>
-            database.map(guildSettings =>
-                this.cache.set(guildSettings.guildId, guildSettings)
-            )
-        );
+    public async init(connection: Connection): Promise<void> {
+        this.connection = connection;
+        connection.model<IGuildSchema>("Guilds", GuildSchema);
+        await this.list();
     }
 
-    public async get(guildId: string): Promise<GuildSettings | undefined> {
+    public async list(): Promise<documentType<IGuildSchema>[]> {
+        const data = await this.connection.model<IGuildSchema>("Guilds").find();
+        data.forEach(Guild => this.cache.set(Guild.guildId, Guild));
+        return data;
+    }
+
+    public async get(
+        guildId: string
+    ): Promise<documentType<IGuildSchema> | undefined> {
         const cache = this.cache.get(guildId);
         if (cache) {
             return cache;
         }
-        const database = await this.collection.findOne({ where: { guildId } });
+        const database = await this.connection
+            .model<IGuildSchema>("Guilds")
+            .findOne({
+                where: { guildId }
+            });
         if (!database) {
             return undefined;
         }
@@ -33,45 +42,54 @@ export class GuildDatabaseManager {
 
     public async set(
         guildId: string,
-        key: keyof GuildSettings,
+        key: keyof IGuildSchema,
         value: any
-    ): Promise<GuildSettings> {
-        let database = this.cache.get(guildId) ?? (await this.get(guildId));
+    ): Promise<documentType<IGuildSchema>> {
+        const database = this.cache.get(guildId) ?? (await this.get(guildId));
         if (!database) {
-            const newGuildDatabase = this.collection.create({ guildId });
-            if (!this.cache.has(guildId)) {
-                this.cache.set(guildId, newGuildDatabase);
-            }
-            await this.collection.save(newGuildDatabase);
-            database = newGuildDatabase;
+            const newGuildDatabase = await this.connection
+                .model<IGuildSchema>("Guilds")
+                .create({
+                    guildId,
+                    [key]: value
+                });
+            this.cache.set(guildId, newGuildDatabase);
+            return newGuildDatabase;
         }
-        database[key] = value;
-        await this.collection.save(database);
-        if (this.cache.has(guildId)) this.cache.set(guildId, database);
-        return database;
+        const findAndUpdateDatabase = await this.connection
+            .model<IGuildSchema>("Guilds")
+            .findOneAndUpdate(
+                { guildId },
+                { [key]: value },
+                { returnDocument: "after" }
+            );
+        this.cache.set(guildId, findAndUpdateDatabase!);
+        return findAndUpdateDatabase!;
     }
 
-    public async drop(guildId: string): Promise<DeleteWriteOpResultObject> {
+    public async drop(
+        guildId: string
+    ): Promise<documentType<IGuildSchema> | null> {
         this.cache.delete(guildId);
-        return this.collection.deleteOne({ guildId });
-    }
-
-    public async list(): Promise<GuildSettings[]> {
-        return this.collection.find({});
+        return this.connection
+            .model<IGuildSchema>("Guilds")
+            .findOneAndDelete({ guildId });
     }
 
     public async reset(
         guildId: string,
-        key: keyof GuildSettings
-    ): Promise<GuildSettings> {
+        key: keyof IGuildSchema
+    ): Promise<documentType<IGuildSchema>> {
         let value = {};
         value =
-            key === "persistenceQueue"
+            key === "persistentQueue"
                 ? {
-                      textChannelId: null,
-                      voiceChannelId: null,
+                      textId: null,
+                      voiceId: null,
+                      playerMessageId: null,
                       current: null,
                       tracks: [],
+                      previous: null,
                       queueRepeat: false,
                       trackRepeat: false,
                       volume: 0,

@@ -65,13 +65,16 @@ export class RouterHandler extends Collection<string, IRouterComponent> {
             );
         } finally {
             this.client.logger.info("router handler", `Done Loaded Router`);
-            this.app.listen(process.env.SERVER_PORT ?? 3002, () =>
-                this.client.logger.info(
-                    "router handler",
-                    `Server is listening on port ${
-                        process.env.SERVER_PORT ?? 3002
-                    }`
-                )
+            this.app.listen(
+                process.env.SERVER_PORT ?? this.client.config.api.port,
+                () =>
+                    this.client.logger.info(
+                        "router handler",
+                        `Server is listening on port ${
+                            process.env.SERVER_PORT ??
+                            this.client.config.api.port
+                        }`
+                    )
             );
         }
     }

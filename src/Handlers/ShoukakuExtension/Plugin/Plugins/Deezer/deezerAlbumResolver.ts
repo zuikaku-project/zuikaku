@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { TrackList } from "@zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "@zuikaku/Structures/ZuikakuPlugin";
 import { DeezerAlbum, IPluginComponent, LavalinkTrack } from "@zuikaku/types";

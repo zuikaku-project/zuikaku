@@ -11,8 +11,8 @@ import { PluginManager } from "./Plugin";
 
 export class ShoukakuHandler extends Shoukaku {
     public plugin = new PluginManager(this, {
-        clientId: this.client.config.apiKey.spotify.clientId,
-        clientSecret: this.client.config.apiKey.spotify.clientSecret,
+        clientId: this.client.config.api.spotify.clientId,
+        clientSecret: this.client.config.api.spotify.clientSecret,
         usePluginMetadata: true,
         playlistLoadlimit: 2
     });

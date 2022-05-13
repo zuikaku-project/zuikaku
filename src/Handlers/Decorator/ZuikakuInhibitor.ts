@@ -21,7 +21,7 @@ export function ZuikakuInhibitor<
         ): Promise<any> {
             const message = await func(ctx, ...args);
             const getGuildDatabase =
-                await ctx.client.database.entity.guilds.get(ctx.guild!.id);
+                await ctx.client.database.manager.guilds.get(ctx.guild!.id);
             if (typeof message === "string") {
                 if (message.length) {
                     if (ctx.isInteraction() && !ctx.deferred) {

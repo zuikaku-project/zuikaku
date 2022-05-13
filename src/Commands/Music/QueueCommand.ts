@@ -1,5 +1,5 @@
-import { Dispatcher } from "@zuikaku/Handlers";
-import { isMusicPlaying, ZuikakuDecorator } from "@zuikaku/Handlers/Decorators";
+import { isMusicPlaying, ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
+import { Dispatcher } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -19,7 +19,7 @@ export default class QueueCommand extends ZuikakuCommand {
     @isMusicPlaying()
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);

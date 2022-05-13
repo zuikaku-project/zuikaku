@@ -1,0 +1,48 @@
+# Discord Bot Token (https://discord.com/developers/applications)
+token:
+    production: Production Token # Token for production environment required
+    development: Development Token # Token for development environment required
+
+# Enabling development mode (will use development token)
+devMode: false # required
+
+# for deploy development commands
+devGuild: 
+    - Development Guild # required
+
+api:
+    # Port for the API to listen on (default: 3030)
+    port: 3030 # required
+
+    # Canvas API (https://github.com/Zuikaku-Org/zuikaku-canvas-api/)
+    canvas:
+        url: Canvas API URI # required
+        auth: Canvas API Auth # required
+
+    # Top.gg API Key
+    dbl: DBL Token # required
+
+    # Weeby API Key
+    weeby: Weeby Token # required
+
+    # Spotify API (https://developer.spotify.com/)
+    spotify:
+        clientId: Spotify ClientId # required
+        clientSecret: Spotify ClientSecret # required
+
+    # Website Cookie
+    cookie:
+        instagram: Instagram Cookie # required
+
+# Lavalink Nodes (https://github.com/Zuikaku-Org/lavalink/) required
+nodes:
+    - name: Node Name # required
+      url: Node URI # required
+      auth: Node Auth # required
+
+# Mongo Database (https://mongodb.com)
+mongodb:
+    url: Database URL # required
+    dbName:
+        production: Database for production # required
+        development: Database for Development # required

@@ -1,7 +1,7 @@
-import { UserSettings, ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
+import { documentType, ICommandComponent, IUserSchema } from "@zuikaku/types";
 import { createEmbed, createMusicEmbed, Utils } from "@zuikaku/Utils";
 import { randomBytes } from "crypto";
 import { MessageActionRow, MessageSelectMenu } from "discord.js";
@@ -34,11 +34,11 @@ import { ShoukakuTrackList } from "shoukaku";
 export default class AddPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(
+        const getUserDatabase = await this.client.database.manager.users.get(
             ctx.author.id
         );
         if (!getUserDatabase) {
@@ -56,8 +56,7 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
             return undefined;
         }
         const getUserPlaylist = getUserDatabase.playlists.find(
-            ({ playlistId }) =>
-                playlistId === ctx.options!.getString("playlist")!
+            ({ id }) => id === ctx.options!.getString("playlist")!
         );
         if (!getUserPlaylist) {
             await ctx.send({
@@ -92,30 +91,28 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
             return undefined;
         }
         const getLazyTracks = getTracks.tracks.map(({ info, isrc }) => ({
-            trackId: this.getRandomTrackId(getUserPlaylist),
-            trackAuthor: info.author!,
-            trackTitle: info.title!,
-            trackURL: info.uri!,
-            trackLength: info.length!,
-            trackArtwork: info.artworkUrl ?? "",
-            trackSource: info.sourceName!,
-            trackIsrc: isrc ?? ""
+            id: this.getRandomTrackId(getUserPlaylist),
+            author: info.author!,
+            title: info.title!,
+            url: info.uri!,
+            length: info.length!,
+            artwork: info.artworkUrl ?? "",
+            source: info.sourceName!,
+            ISRC: isrc ?? ""
         }));
         if (getTracks.type === "PLAYLIST") {
-            getUserPlaylist.playlistTracks.push(...getLazyTracks);
+            getUserPlaylist.tracks.push(...getLazyTracks);
         } else {
-            getUserPlaylist.playlistTracks.push(getLazyTracks[0]);
+            getUserPlaylist.tracks.push(getLazyTracks[0]);
         }
-        getUserPlaylist.playlistDuration = Utils.parseMs(
+        getUserPlaylist.duration = Utils.parseMs(
             // eslint-disable-next-line no-eval
             eval(
-                getUserPlaylist.playlistTracks
-                    .map(({ trackLength }) => trackLength)
-                    .join("+")
+                getUserPlaylist.tracks.map(({ length }) => length).join("+")
             ) as unknown as number,
             { colonNotation: true }
         ).colonNotation;
-        await this.client.database.entity.users.set(
+        await this.client.database.manager.users.set(
             ctx.author.id,
             "playlists",
             getUserDatabase.playlists
@@ -129,35 +126,29 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
                         getTracks.type === "PLAYLIST"
                             ? getLazyTracks.length
                             : "1"
-                    } track(s) to playlist ${getUserPlaylist.playlistName}`
+                    } track(s) to playlist ${getUserPlaylist.name}`
                 )
             ]
         });
     }
 
     private getRandomTrackId(
-        playlistTracks: UserSettings["playlists"][0]
+        tracks: documentType<IUserSchema>["playlists"][0]
     ): string {
         const getRandomHexFromBytes = randomBytes(3).toString("hex");
-        if (
-            playlistTracks.playlistTracks
-                .map(({ trackId }) => trackId)
-                .includes(getRandomHexFromBytes)
-        )
-            return this.getRandomTrackId(playlistTracks);
+        if (tracks.tracks.map(({ id }) => id).includes(getRandomHexFromBytes))
+            return this.getRandomTrackId(tracks);
         return getRandomHexFromBytes;
     }
 
     private async generateSelectMenus(
         ctx: CommandContext,
         getTracks: ShoukakuTrackList
-    ): Promise<
-        { trackAuthor: string; trackTitle: string; trackLength: number }[]
-    > {
+    ): Promise<{ trackAuthor: string; trackTitle: string; length: number }[]> {
         const finalSelectMenuTrack: {
             trackAuthor: string;
             trackTitle: string;
-            trackLength: number;
+            length: number;
         }[] = [];
         const slicedTracks = getTracks.tracks.slice(0, 10);
         const selectMenuOptions = slicedTracks.map((track, i) => ({
@@ -194,7 +185,7 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
                         .map(({ info }) => ({
                             trackAuthor: info.author!,
                             trackTitle: info.title!,
-                            trackLength: info.length!
+                            length: info.length!
                         }));
                     finalSelectMenuTrack.push(...resolveSelectMenuValue);
                     // eslint-disable-next-line no-eval

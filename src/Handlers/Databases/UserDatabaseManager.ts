@@ -1,71 +1,85 @@
+import { documentType, IUserSchema } from "@zuikaku/types";
 import { Collection } from "discord.js";
-import {
-    DataSource,
-    DeleteWriteOpResultObject,
-    MongoRepository
-} from "typeorm";
-import { UserSettings } from "./Entities/UserSettings";
+import { Connection } from "mongoose";
+import { UserSchema } from "./Schema";
 
 export class UserDatabaseManager {
-    public collection!: MongoRepository<UserSettings>;
-    public cache: Collection<string, UserSettings> = new Collection();
+    public connection!: Connection;
+    public readonly cache = new Collection<
+        string,
+        documentType<IUserSchema> | undefined
+    >();
 
-    public _init(dataSource: DataSource): void {
-        this.collection = dataSource.getMongoRepository(UserSettings);
-        void this.list().then(database =>
-            database.map(userSettings =>
-                this.cache.set(userSettings.userId, userSettings)
-            )
-        );
+    public async init(connection: Connection): Promise<void> {
+        this.connection = connection;
+        connection.model<IUserSchema>("Users", UserSchema);
+        await this.list();
     }
 
-    public async get(userId: string): Promise<UserSettings | undefined> {
+    public async list(): Promise<documentType<IUserSchema>[]> {
+        const data = await this.connection.model<IUserSchema>("Users").find();
+        data.forEach(Guild => this.cache.set(Guild.userId, Guild));
+        return data;
+    }
+
+    public async get(
+        userId: string
+    ): Promise<documentType<IUserSchema> | null> {
         const cache = this.cache.get(userId);
         if (cache) {
             return cache;
         }
-        const database = await this.collection.findOne({ where: { userId } });
+        const database = await this.connection
+            .model<IUserSchema>("Users")
+            .findOne({
+                where: { userId }
+            });
         if (!database) {
-            return undefined;
+            return null;
         }
         return database;
     }
 
     public async set(
         userId: string,
-        key: keyof UserSettings,
+        key: keyof IUserSchema,
         value: any
-    ): Promise<UserSettings> {
-        let database = this.cache.get(userId) ?? (await this.get(userId));
+    ): Promise<documentType<IUserSchema>> {
+        const database = this.cache.get(userId) ?? (await this.get(userId));
         if (!database) {
-            const newUserDatabase = this.collection.create({ userId });
-            if (!this.cache.has(userId)) {
-                this.cache.set(userId, newUserDatabase);
-            }
-            await this.collection.save(newUserDatabase);
-            database = newUserDatabase;
+            const newUserDatabase = await this.connection
+                .model<IUserSchema>("Users")
+                .create({
+                    userId,
+                    [key]: value
+                });
+            this.cache.set(userId, newUserDatabase);
+            return newUserDatabase;
         }
-        database[key] = value;
-        await this.collection.save(database);
-        if (this.cache.has(userId)) {
-            this.cache.set(userId, database);
-        }
-        return database;
+        const findAndUpdateDatabase = await this.connection
+            .model<IUserSchema>("Users")
+            .findOneAndUpdate(
+                { userId },
+                { [key]: value },
+                { returnDocument: "after" }
+            );
+        this.cache.set(userId, findAndUpdateDatabase!);
+        return findAndUpdateDatabase!;
     }
 
-    public async drop(userId: string): Promise<DeleteWriteOpResultObject> {
+    public async drop(
+        userId: string
+    ): Promise<documentType<IUserSchema> | null> {
         this.cache.delete(userId);
-        return this.collection.deleteOne({ userId });
-    }
-
-    public async list(): Promise<UserSettings[]> {
-        return this.collection.find({});
+        return this.connection
+            .model<IUserSchema>("Users")
+            .findOneAndDelete({ userId });
     }
 
     public async reset(
         userId: string,
-        key: keyof UserSettings
-    ): Promise<UserSettings> {
+        key: keyof IUserSchema
+    ): Promise<documentType<IUserSchema>> {
         let value = {};
         if (key === "playlists") value = [];
         return this.set(userId, key, value);

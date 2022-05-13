@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -41,7 +41,7 @@ import { MessageActionRow, MessageButton } from "discord.js";
                     },
                     {
                         name: "trackid",
-                        description: "trackId",
+                        description: "id",
                         type: "STRING",
                         required: true
                     }
@@ -53,11 +53,11 @@ import { MessageActionRow, MessageButton } from "discord.js";
 export default class DropPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(
+        const getUserDatabase = await this.client.database.manager.users.get(
             ctx.author.id
         );
         if (!getUserDatabase) {
@@ -84,8 +84,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
         );
         if (ctx.options?.getSubcommand(false) === "playlist") {
             const getUserPlaylist = getUserDatabase.playlists.find(
-                ({ playlistId }) =>
-                    playlistId === ctx.options!.getString("playlist")!
+                ({ id }) => id === ctx.options!.getString("playlist")!
             );
             if (!getUserPlaylist) {
                 await ctx.send({
@@ -104,7 +103,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                     createMusicEmbed(
                         ctx,
                         "info",
-                        `I will drop playlist ${getUserPlaylist.playlistName}, continue?`
+                        `I will drop playlist ${getUserPlaylist.name}, continue?`
                     )
                 ],
                 components: [asksButton]
@@ -119,17 +118,16 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                     if (interaction.customId === "accept") {
                         getUserDatabase.playlists =
                             getUserDatabase.playlists.filter(
-                                ({ playlistId }) =>
-                                    playlistId !== getUserPlaylist.playlistId
+                                ({ id }) => id !== getUserPlaylist.id
                             );
                         if (getUserDatabase.playlists.length) {
-                            await this.client.database.entity.users.set(
+                            await this.client.database.manager.users.set(
                                 ctx.author.id,
                                 "playlists",
                                 getUserDatabase.playlists
                             );
                         } else {
-                            await this.client.database.entity.users.drop(
+                            await this.client.database.manager.users.drop(
                                 ctx.author.id
                             );
                         }
@@ -139,7 +137,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                                     createMusicEmbed(
                                         ctx,
                                         "info",
-                                        `I have dropped your playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`
+                                        `I have dropped your playlist ${getUserPlaylist.name} (${getUserPlaylist.id})`
                                     )
                                 ],
                                 components: []
@@ -189,8 +187,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
             });
         } else {
             const getUserPlaylist = getUserDatabase.playlists.find(
-                ({ playlistId }) =>
-                    playlistId === ctx.options!.getString("playlist")!
+                ({ id }) => id === ctx.options!.getString("playlist")!
             );
             if (!getUserPlaylist) {
                 await ctx.send({
@@ -204,8 +201,8 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                 });
                 return undefined;
             }
-            const getPlaylistTrack = getUserPlaylist.playlistTracks.find(
-                ({ trackId }) => trackId === ctx.options!.getString("trackid")!
+            const getPlaylistTrack = getUserPlaylist.tracks.find(
+                ({ id }) => id === ctx.options!.getString("trackid")!
             );
             if (!getPlaylistTrack) {
                 await ctx.send({
@@ -213,7 +210,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                         createMusicEmbed(
                             ctx,
                             "info",
-                            `I am sorry, but your playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId}) don't have any tracks matches that trackId`
+                            `I am sorry, but your playlist ${getUserPlaylist.name} (${getUserPlaylist.id}) don't have any tracks matches that id`
                         )
                     ]
                 });
@@ -224,7 +221,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                     createMusicEmbed(
                         ctx,
                         "info",
-                        `I will drop track ${getPlaylistTrack.trackTitle} (${getPlaylistTrack.trackId}) from playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId}), continue?`
+                        `I will drop track ${getPlaylistTrack.title} (${getPlaylistTrack.id}) from playlist ${getUserPlaylist.name} (${getUserPlaylist.id}), continue?`
                     )
                 ],
                 components: [asksButton]
@@ -237,21 +234,19 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
             buttonCollector.on("collect", async interaction => {
                 if (interaction.user.id === ctx.author.id) {
                     if (interaction.customId === "accept") {
-                        getUserPlaylist.playlistTracks =
-                            getUserPlaylist.playlistTracks.filter(
-                                ({ trackId }) =>
-                                    trackId !== getPlaylistTrack.trackId
-                            );
-                        getUserPlaylist.playlistDuration = Utils.parseMs(
+                        getUserPlaylist.tracks = getUserPlaylist.tracks.filter(
+                            ({ id }) => id !== getPlaylistTrack.id
+                        );
+                        getUserPlaylist.duration = Utils.parseMs(
                             // eslint-disable-next-line no-eval
                             eval(
-                                getUserPlaylist.playlistTracks
-                                    .map(({ trackLength }) => trackLength)
+                                getUserPlaylist.tracks
+                                    .map(({ length }) => length)
                                     .join("+")
                             ) as unknown as number,
                             { colonNotation: true }
                         ).colonNotation;
-                        await this.client.database.entity.users.set(
+                        await this.client.database.manager.users.set(
                             ctx.author.id,
                             "playlists",
                             getUserDatabase.playlists
@@ -262,7 +257,7 @@ export default class DropPlaylistCommand extends ZuikakuCommand {
                                     createMusicEmbed(
                                         ctx,
                                         "info",
-                                        `I have dropped track${getPlaylistTrack.trackTitle} (${getPlaylistTrack.trackId}) from playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`
+                                        `I have dropped track${getPlaylistTrack.title} (${getPlaylistTrack.id}) from playlist ${getUserPlaylist.name} (${getUserPlaylist.id})`
                                     )
                                 ],
                                 components: []

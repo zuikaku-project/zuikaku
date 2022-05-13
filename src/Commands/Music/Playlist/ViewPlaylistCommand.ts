@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -25,11 +25,11 @@ import { Utils, createMusicEmbed } from "@zuikaku/Utils";
 export default class ViewPlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(
+        const getUserDatabase = await this.client.database.manager.users.get(
             ctx.author.id
         );
         if (!getUserDatabase) {
@@ -47,8 +47,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
             return undefined;
         }
         const getUserPlaylist = getUserDatabase.playlists.find(
-            ({ playlistId }) =>
-                playlistId === ctx.options!.getString("playlist")!
+            ({ id }) => id === ctx.options!.getString("playlist")!
         );
         if (!getUserPlaylist) {
             await ctx.send({
@@ -62,12 +61,12 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
             });
             return undefined;
         }
-        if (getUserPlaylist.playlistTracks.length) {
+        if (getUserPlaylist.tracks.length) {
             let i = 1;
-            const playlistTracksArray = getUserPlaylist.playlistTracks.map(
-                ({ trackId, trackTitle, trackLength }) =>
-                    `**${i++} • \`${trackId}\` | ${trackTitle} (${
-                        Utils.parseMs(trackLength, {
+            const playlistTracksArray = getUserPlaylist.tracks.map(
+                ({ id, title, length }) =>
+                    `**${i++} • \`${id}\` | ${title} (${
+                        Utils.parseMs(length, {
                             colonNotation: true
                         }).colonNotation
                     })**`
@@ -77,7 +76,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                 createMusicEmbed(
                     ctx,
                     "info",
-                    `Playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`
+                    `Playlist ${getUserPlaylist.name} (${getUserPlaylist.id})`
                 ).setDescription(tracks.join("\n"))
             );
             await new this.client.utils.pagination(
@@ -90,7 +89,7 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
                     createMusicEmbed(
                         ctx,
                         "info",
-                        `I am sorry, but your playlist ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId}) don't have any tracks`
+                        `I am sorry, but your playlist ${getUserPlaylist.name} (${getUserPlaylist.id}) don't have any tracks`
                     )
                 ]
             });

@@ -20,14 +20,13 @@ export interface IConfig {
     devMode: boolean;
     devGuild: string[];
     api: {
-        auth: string;
-        url: string;
-    };
-    apiKey: {
+        port: number;
+        canvas: {
+            auth: string;
+            url: string;
+            secure?: boolean;
+        };
         dbl: string;
-        boats: string;
-        alex: string;
-        youtube: string;
         weeby: string;
         spotify: {
             clientId: string;
@@ -44,8 +43,12 @@ export interface IConfig {
         name: string;
         secure?: boolean;
     }[];
-    server: {
-        port: number;
+    mongodb: {
+        url: string;
+        dbName: {
+            production: string;
+            development: string;
+        };
     };
 }
 

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
-import { EmbedPlayer, ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
+import { EmbedPlayer } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -76,7 +77,7 @@ export default class SetupCommand extends ZuikakuCommand {
                 await EmbedPlayer.resolve(
                     ctx.guild!,
                     (
-                        await this.client.database.entity.guilds.get(
+                        await this.client.database.manager.guilds.get(
                             ctx.guild!.id
                         )
                     )?.guildPlayer
@@ -94,7 +95,7 @@ export default class SetupCommand extends ZuikakuCommand {
                 return undefined;
             }
             const msg = await this.sendEmbedPlayer(channel);
-            await this.client.database.entity.guilds.set(
+            await this.client.database.manager.guilds.set(
                 ctx.guild!.id,
                 "guildPlayer",
                 {
@@ -138,12 +139,12 @@ export default class SetupCommand extends ZuikakuCommand {
         if (embedPlayer?.channel) {
             await embedPlayer.message?.delete().catch(() => null);
             if (dispatcher) {
-                await this.client.database.entity.guilds.reset(
+                await this.client.database.manager.guilds.reset(
                     ctx.guild!.id,
                     "guildPlayer"
                 );
             } else {
-                await this.client.database.entity.guilds.drop(ctx.guild!.id);
+                await this.client.database.manager.guilds.drop(ctx.guild!.id);
             }
             this.client.shoukaku.embedPlayers.delete(ctx.guild!.id);
             await ctx.send({

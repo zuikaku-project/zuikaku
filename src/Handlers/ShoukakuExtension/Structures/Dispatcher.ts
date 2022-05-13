@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { documentType, IGuildSchema } from "@zuikaku/types";
 import { createEmbed, Utils } from "@zuikaku/Utils";
 import {
     Guild,
@@ -10,11 +11,10 @@ import {
     VoiceChannel
 } from "discord.js";
 import { JoinOptions, ShoukakuPlayer } from "shoukaku";
-import { GuildSettings } from "../../Databases";
-import { Filter } from "./Filter";
-import { Queue } from "./Queue";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 import { EmbedPlayer } from "./EmbedPlayer";
+import { Filter } from "./Filter";
+import { Queue } from "./Queue";
 
 export class Dispatcher {
     public readonly client = this.shoukaku.client;
@@ -72,8 +72,10 @@ export class Dispatcher {
         return this.shoukaku.client.guilds.cache.get(this.guildId);
     }
 
-    public get getGuildDatabase(): Promise<GuildSettings | undefined> {
-        return this.shoukaku.client.database.entity.guilds.get(this.guildId);
+    public get getGuildDatabase(): Promise<
+        documentType<IGuildSchema> | undefined
+    > {
+        return this.shoukaku.client.database.manager.guilds.get(this.guildId);
     }
 
     public get getEmbedPlayer(): EmbedPlayer | undefined {

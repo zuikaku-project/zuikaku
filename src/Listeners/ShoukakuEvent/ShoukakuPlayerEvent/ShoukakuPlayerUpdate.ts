@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
 import { Utils } from "@zuikaku/Utils";
@@ -18,9 +18,9 @@ export default class ShoukakuPlayerUpdate extends ZuikakuListener {
             player.connection.guildId
         );
         if (dispatcher) {
-            await this.client.database.entity.guilds.set(
+            await this.client.database.manager.guilds.set(
                 dispatcher.player.connection.guildId,
-                "persistenceQueue",
+                "persistentQueue",
                 Utils.structuredClone({
                     guildId: payload.guildId,
                     textId: dispatcher.textId,

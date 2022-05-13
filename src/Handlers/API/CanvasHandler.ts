@@ -27,8 +27,8 @@ export class CanvasHandler {
     private readonly auth: string;
 
     public constructor(public client: ZuikakuClient) {
-        this.baseURL = this.client.config.api.url;
-        this.auth = this.client.config.api.auth;
+        this.baseURL = this.client.config.api.canvas.url;
+        this.auth = this.client.config.api.canvas.auth;
     }
 
     public async requestImageAPI(
@@ -36,7 +36,11 @@ export class CanvasHandler {
         data: decodeBase64String
     ): Promise<Buffer | undefined> {
         try {
-            const getAPIData = await petitio(this.baseURL)
+            const getAPIData = await petitio(
+                `http${this.client.config.api.canvas.secure ? "s" : ""}://${
+                    this.baseURL
+                }`
+            )
                 .path(this.endpoint[getEndpoint])
                 .query(
                     "base64",

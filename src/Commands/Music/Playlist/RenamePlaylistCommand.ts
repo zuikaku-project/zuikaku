@@ -1,4 +1,4 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers";
+import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "@zuikaku/types";
@@ -31,11 +31,11 @@ import { MessageActionRow, MessageButton } from "discord.js";
 export default class RenamePlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
-            (await this.client.database.entity.guilds.get(ctx.guild!.id))
+            (await this.client.database.manager.guilds.get(ctx.guild!.id))
                 ?.guildPlayer?.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
-        const getUserDatabase = await this.client.database.entity.users.get(
+        const getUserDatabase = await this.client.database.manager.users.get(
             ctx.author.id
         );
         if (!getUserDatabase) {
@@ -61,8 +61,7 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
                 .setStyle("DANGER")
         );
         const getUserPlaylist = getUserDatabase.playlists.find(
-            ({ playlistId }) =>
-                playlistId === ctx.options!.getString("playlist")!
+            ({ id }) => id === ctx.options!.getString("playlist")!
         );
         if (!getUserPlaylist) {
             await ctx.send({
@@ -82,7 +81,7 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
                     ctx,
                     "info",
                     `I will rename playlist ${
-                        getUserPlaylist.playlistName
+                        getUserPlaylist.name
                     } to ${ctx.options!.getString("name")!}, continue?`
                 )
             ],
@@ -96,9 +95,8 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
         buttonCollector.on("collect", async interaction => {
             if (interaction.user.id === ctx.author.id) {
                 if (interaction.customId === "accept") {
-                    getUserPlaylist.playlistName =
-                        ctx.options!.getString("name")!;
-                    await this.client.database.entity.users.set(
+                    getUserPlaylist.name = ctx.options!.getString("name")!;
+                    await this.client.database.manager.users.set(
                         ctx.author.id,
                         "playlists",
                         getUserDatabase.playlists
@@ -109,7 +107,7 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
                                 createMusicEmbed(
                                     ctx,
                                     "info",
-                                    `I have renamed your playlist to ${getUserPlaylist.playlistName} (${getUserPlaylist.playlistId})`
+                                    `I have renamed your playlist to ${getUserPlaylist.name} (${getUserPlaylist.id})`
                                 )
                             ],
                             components: []

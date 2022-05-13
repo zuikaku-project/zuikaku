@@ -3,7 +3,7 @@ import process from "node:process";
 import { ZuikakuClient } from "./Structures/ZuikakuClient";
 import { Utils } from "./Utils";
 
-const client = new ZuikakuClient(Utils.parseYaml("ZuikakuConfig.yaml"));
+const client = new ZuikakuClient(Utils.parseYaml("config.yaml"));
 client.start();
 
 process.on("unhandledRejection", e => {
@@ -11,13 +11,10 @@ process.on("unhandledRejection", e => {
 });
 
 process.on("uncaughtException", error => {
-    const errorMessage =
-        error.stack?.replace(new RegExp(`${__dirname}/`, "g"), "./") ??
-        error.message;
     client.logger.error(
         "uncaught exception",
         "Uncaught Exception:",
-        errorMessage
+        error.stack ?? error.message
     );
     client.logger.warn(
         "uncaught exception",
