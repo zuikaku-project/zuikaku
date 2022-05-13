@@ -11,7 +11,7 @@ export function isMusicPlaying(): any {
 
 export function isUserInTheVoiceChannel(): any {
     return ZuikakuInhibitor(ctx => {
-        if (!ctx.member?.voice.channel?.id) {
+        if (!ctx.member.voice.channel?.id) {
             return "I am sorry but you are not in a voice channel.";
         }
     });
@@ -21,7 +21,7 @@ export function isSameVoiceChannel(): any {
     return ZuikakuInhibitor(ctx => {
         const queue = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (!ctx.guild?.me?.voice.channel?.id) return undefined;
-        if (ctx.member?.voice.channel?.id !== queue?.voiceId) {
+        if (ctx.member.voice.channel?.id !== queue?.voiceId) {
             return "I am sorry but you are not in the same voice channel as me.";
         }
     });
@@ -42,7 +42,7 @@ export function isSameTextChannel(): any {
 
 export function isValidVoiceChannel(): any {
     return ZuikakuInhibitor(ctx => {
-        if (!ctx.member?.voice.channel?.joinable) {
+        if (!ctx.member.voice.channel?.joinable) {
             return "I am sorry but I cannot join your voice channel. Please make sure I have the permission to join your voice channel.";
         }
         if (

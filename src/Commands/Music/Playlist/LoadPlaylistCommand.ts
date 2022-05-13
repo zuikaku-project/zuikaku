@@ -104,10 +104,10 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
         if (getUserPlaylist.tracks.length) {
             const guildQueue = await this.client.shoukaku.handleJoin({
                 guildId: ctx.guild!.id,
-                channelId: ctx.member!.voice.channel!.id,
+                channelId: ctx.member.voice.channel!.id,
                 shardId: ctx.guild!.shard.id,
                 textId: ctx.channel!.id,
-                voiceId: ctx.member!.voice.channel!.id
+                voiceId: ctx.member.voice.channel!.id
             });
             const buildUnresolved = getUserPlaylist.tracks.map(
                 playlistTrack => {

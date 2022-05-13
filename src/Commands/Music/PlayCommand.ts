@@ -90,10 +90,10 @@ export default class PlayCommand extends ZuikakuCommand {
 
         const guildQueue = await this.client.shoukaku.handleJoin({
             guildId: ctx.guild!.id,
-            channelId: ctx.member!.voice.channel!.id,
+            channelId: ctx.member.voice.channel!.id,
             shardId: ctx.guild!.shard.id,
             textId: ctx.channel!.id,
-            voiceId: ctx.member!.voice.channel!.id
+            voiceId: ctx.member.voice.channel!.id
         });
         const getTracks = await this.client.shoukaku.getTracks(search.trim());
         if (

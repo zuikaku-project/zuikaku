@@ -112,7 +112,7 @@ export class Utils {
         parse?: string | null
     ): GuildMember {
         const content = parse?.trim().split(" ")[0];
-        if (!content?.length) return ctx.member!;
+        if (!content?.length) return ctx.member;
         return (
             ctx.guild?.members.cache.get(Utils.getUserId(content)) ??
             ctx

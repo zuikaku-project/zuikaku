@@ -26,7 +26,7 @@ export default class LyricsCommand extends ZuikakuCommand {
     @isNoNodesAvailable(true)
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
-        const spotify = ctx.member?.presence?.activities.filter(
+        const spotify = ctx.member.presence?.activities.filter(
             x => x.name === "Spotify"
         )[0];
         const lyrics = ctx.options?.getString("title");
@@ -34,7 +34,7 @@ export default class LyricsCommand extends ZuikakuCommand {
         let title;
         if (lyrics) {
             title = lyrics;
-        } else if (ctx.member!.voice.channelId === dispatcher?.voiceId) {
+        } else if (ctx.member.voice.channelId === dispatcher?.voiceId) {
             title = `${dispatcher.queue.current!.info.title!} ${dispatcher.queue
                 .current!.info.author!}`;
         } else if (spotify) {
