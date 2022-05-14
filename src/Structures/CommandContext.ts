@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unnecessary-condition */
 import { MessageInteractionAction } from "@zuikaku/types/core";
 import { Utils } from "@zuikaku/Utils";
 import {
@@ -9,10 +7,10 @@ import {
     CommandInteraction,
     CommandInteractionOptionResolver,
     ContextMenuInteraction,
+    Guild,
     GuildMember,
     Interaction,
     InteractionReplyOptions,
-    Guild,
     InteractionType,
     Message,
     MessageActionRow,
@@ -159,11 +157,11 @@ export class CommandContext {
                 (options as InteractionReplyOptions).components = [row];
             }
         }
-        if (this.isCommand()) {
+        if (this.isInteraction()) {
             (options as InteractionReplyOptions).fetchReply = true;
-            const msg = (await (this.context as CommandInteraction)[type](
-                options as any
-            )) as Message;
+            const msg = (await (
+                this.context as CommandInteraction | ContextMenuInteraction
+            )[type](options as any)) as Message;
             const res = await this.channel!.messages.fetch(msg.id).catch(
                 () => null
             );

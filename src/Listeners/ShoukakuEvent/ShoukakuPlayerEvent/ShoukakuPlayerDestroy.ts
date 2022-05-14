@@ -18,9 +18,9 @@ export default class ShoukakuPlayerDestroy extends ZuikakuListener {
                 .reset(player.connection.guildId, "persistentQueue")
                 .catch(() => null);
         } else {
-            await this.client.database.manager.guilds.drop(
-                player.connection.guildId
-            );
+            await this.client.database.manager.guilds
+                .drop(player.connection.guildId)
+                .catch(() => null);
         }
         this.client.shoukaku.dispatcher.delete(player.connection.guildId);
     }

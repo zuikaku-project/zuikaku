@@ -1,12 +1,10 @@
-/* eslint-disable max-depth */
-/* eslint-disable max-lines */
+/* eslint-disable max-depth, max-lines */
 import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { Dispatcher, EmbedPlayer } from "@zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "@zuikaku/Structures/CommandContext";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
 import { createEmbed, Utils } from "@zuikaku/Utils";
-import { APIMessage } from "discord-api-types/v9";
 import {
     ButtonInteraction,
     GuildChannel,
@@ -65,11 +63,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                             ]
                         });
                         setTimeout(
-                            () =>
-                                // @ts-expect-error Argument of type 'APIMessage | Message<boolean>' is not assignable to parameter of type 'Message<boolean> | APIMessage'.
-                                this.isMessage(msg)
-                                    .delete()
-                                    .catch(() => null),
+                            () => (msg as Message).delete().catch(() => null),
                             5000
                         );
                         return;
@@ -90,11 +84,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                             ]
                         });
                         setTimeout(
-                            () =>
-                                // @ts-expect-error Argument of type 'APIMessage | Message<boolean>' is not assignable to parameter of type 'Message<boolean> | APIMessage'.
-                                this.isMessage(msg)
-                                    .delete()
-                                    .catch(() => null),
+                            () => (msg as Message).delete().catch(() => null),
                             5000
                         );
                         return;
@@ -330,12 +320,6 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         }
     }
 
-    private isMessage(message: APIMessage | Message): Message {
-        if (message instanceof Message) return message;
-        // @ts-expect-error-next-line
-        return new Message(this.client, message);
-    }
-
     private async runCommandCheck(
         context: CommandContext,
         command: ICommandComponent
@@ -414,57 +398,61 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         dispatcher: Dispatcher,
         embedPlayer?: EmbedPlayer
     ): Promise<void> {
+        await interaction.deferUpdate();
         if (embedPlayer?.channel?.id === interaction.channelId) {
-            if (getDecodeCommand === "STOP") {
-                dispatcher.destroyPlayer();
-            }
-            if (getDecodeCommand === "PLAY-PAUSE") {
-                await dispatcher.setPaused(!dispatcher.player.paused);
-            }
-            if (getDecodeCommand === "NEXT-TRACK") {
-                dispatcher.stopTrack();
-            }
-            if (getDecodeCommand === "REPEAT") {
-                if (dispatcher.trackRepeat) {
-                    await dispatcher.setQueueRepeat(false);
-                    await dispatcher.setTrackRepeat(false);
-                } else if (dispatcher.queueRepeat) {
-                    await dispatcher.setTrackRepeat();
-                } else {
-                    await dispatcher.setQueueRepeat();
-                }
-            }
-            if (getDecodeCommand === "SHUFFLE") {
-                dispatcher.queue.shuffleTrack();
+            switch (getDecodeCommand) {
+                case "STOP":
+                    dispatcher.destroyPlayer();
+                    break;
+                case "PLAY-PAUSE":
+                    await dispatcher.setPaused(!dispatcher.player.paused);
+                    break;
+                case "LAST-TRACK":
+                    break;
+                case "NEXT-TRACK":
+                    dispatcher.stopTrack();
+                    break;
+                case "REPEAT":
+                    if (dispatcher.trackRepeat) {
+                        await dispatcher.setQueueRepeat(false);
+                        await dispatcher.setTrackRepeat(false);
+                    } else if (dispatcher.queueRepeat) {
+                        await dispatcher.setTrackRepeat();
+                    } else {
+                        await dispatcher.setQueueRepeat();
+                    }
+                    break;
+                case "SHUFFLE":
+                    dispatcher.queue.shuffleTrack();
+                    break;
             }
         } else {
-            if (getDecodeCommand === "STOP") {
-                dispatcher.destroyPlayer();
-            }
-            if (getDecodeCommand === "PLAY-PAUSE") {
-                if (dispatcher.player.paused) {
-                    await dispatcher.setPaused(false);
-                } else {
-                    await dispatcher.setPaused();
-                }
-            }
-            if (getDecodeCommand === "LAST-TRACK") {
-                await dispatcher.playPrevious();
-            }
-            if (getDecodeCommand === "NEXT-TRACK") {
-                dispatcher.stopTrack();
-            }
-            if (getDecodeCommand === "REPEAT") {
-                if (dispatcher.queueRepeat) {
-                    await dispatcher.setTrackRepeat();
-                } else if (dispatcher.trackRepeat) {
-                    await dispatcher.setQueueRepeat(false);
-                    await dispatcher.setTrackRepeat(false);
-                } else {
-                    await dispatcher.setQueueRepeat();
-                }
+            switch (getDecodeCommand) {
+                case "STOP":
+                    dispatcher.destroyPlayer();
+                    break;
+                case "PLAY-PAUSE":
+                    await dispatcher.setPaused(!dispatcher.player.paused);
+                    break;
+                case "LAST-TRACK":
+                    await dispatcher.playPrevious();
+                    break;
+                case "NEXT-TRACK":
+                    dispatcher.stopTrack();
+                    break;
+                case "REPEAT":
+                    if (dispatcher.trackRepeat) {
+                        await dispatcher.setQueueRepeat(false);
+                        await dispatcher.setTrackRepeat(false);
+                    } else if (dispatcher.queueRepeat) {
+                        await dispatcher.setTrackRepeat();
+                    } else {
+                        await dispatcher.setQueueRepeat();
+                    }
+                    break;
+                case "SHUFFLE":
+                    break;
             }
         }
-        await interaction.deferUpdate();
     }
 }
