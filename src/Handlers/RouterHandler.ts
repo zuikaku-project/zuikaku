@@ -1,5 +1,6 @@
 import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
 import { IRouterComponent } from "@zuikaku/types";
+import { Utils } from "@zuikaku/Utils";
 import cors from "cors";
 import { Collection } from "discord.js";
 import express from "express";
@@ -19,13 +20,13 @@ export class RouterHandler extends Collection<string, IRouterComponent> {
         this.app.set("json spaces", 2);
         this.app.use(cors());
         try {
-            const routerFiles = this.client.utils.readdirRecursive(this.path);
+            const routerFiles = Utils.readdirRecursive(this.path);
             this.client.logger.info(
                 "router handler",
                 `Loading ${routerFiles.length} router(s)...`
             );
             routerFiles.forEach(async routeFile => {
-                const router = await this.client.utils.import<IRouterComponent>(
+                const router = await Utils.import<IRouterComponent>(
                     resolve(routeFile),
                     this.client
                 );

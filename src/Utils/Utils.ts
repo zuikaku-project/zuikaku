@@ -10,7 +10,7 @@ import Pagination from "./Pagination";
 export class Utils {
     public readonly pagination = Pagination;
 
-    public async import<T>(
+    public static async import<T>(
         path: string,
         ...args: any[]
     ): Promise<T | undefined> {
@@ -18,7 +18,7 @@ export class Utils {
         return file ? new file(...args) : undefined;
     }
 
-    public readdirRecursive(directory: string): string[] {
+    public static readdirRecursive(directory: string): string[] {
         const results: string[] = [];
         function read(path: string): void {
             const files = readdirSync(path);

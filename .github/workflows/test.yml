@@ -1,53 +1,57 @@
 name: Lint & Compile Test
 
 on:
-  push:
-    branches: ["**"]
-  pull_request:
-    branches: ["**"]
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - "**"
 
 jobs:
-  lint:
-    name: ESLint
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3.0.2
+    lint:
+        name: ESLint
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version:
+                    - ">=16.x <17.x"
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3.1.1
-        with:
-          node-version: ${{ matrix.node-version }}
-          check-latest: true
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@56337c425554a6be30cdef71bf441f15be286854 # tag=v3.1.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  check-latest: true
 
-      - name: Install dependencies
-        run: npm i
+            - name: Install dependencies
+              run: npm i
 
-      - name: Run ESLint
-        run: npm run lint
+            - name: Run ESLint
+              run: npm run lint
 
-  compile:
-    needs: lint
-    name: Compile
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3.0.2
+    compile:
+        needs: lint
+        name: Compile
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version:
+                    - ">=16.x <17.x"
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3.1.1
-        with:
-          node-version: ${{ matrix.node-version }}
-          check-latest: true
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@56337c425554a6be30cdef71bf441f15be286854 # tag=v3.1.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  check-latest: true
 
-      - name: Install dependencies
-        run: npm i
+            - name: Install dependencies
+              run: npm i
 
-      - name: Run Compile
-        run: npm run build && rm -rf dist
+            - name: Run Compile
+              run: npm run build && rm -rf dist

@@ -97,15 +97,14 @@ export class PluginManager {
     }
 
     public async _loadPluginResolver(): Promise<void> {
-        const getPluginFile = this.shoukaku.client.utils.readdirRecursive(
+        const getPluginFile = Utils.readdirRecursive(
             join(__dirname, "./Plugins")
         );
         for (const pluginFile of getPluginFile) {
-            const plugin =
-                await this.shoukaku.client.utils.import<IPluginComponent>(
-                    resolve(pluginFile),
-                    this
-                );
+            const plugin = await Utils.import<IPluginComponent>(
+                resolve(pluginFile),
+                this
+            );
             if (plugin === undefined) {
                 console.log(plugin, pluginFile);
                 continue;

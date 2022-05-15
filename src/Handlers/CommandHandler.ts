@@ -89,7 +89,7 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
     }
 
     public async load(): Promise<void> {
-        const commands = this.client.utils.readdirRecursive(this.path);
+        const commands = Utils.readdirRecursive(this.path);
         let disabledCount = 0;
         try {
             this.client.logger.info(
@@ -100,11 +100,10 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
                 ...(await this.client.application!.commands.fetch()).values()
             ];
             for (const files of commands) {
-                const command =
-                    await this.client.utils.import<ICommandComponent>(
-                        resolve(files),
-                        this.client
-                    );
+                const command = await Utils.import<ICommandComponent>(
+                    resolve(files),
+                    this.client
+                );
                 if (command === undefined) {
                     this.client.logger.error(
                         "router handler",
@@ -396,13 +395,12 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
             this.subCommandsMyAnimeList.options = [];
             this.subCommandsMusic.options = [];
             this.subCommandsPlaylist.options = [];
-            const commands = this.client.utils.readdirRecursive(this.path);
+            const commands = Utils.readdirRecursive(this.path);
             for (const files of commands) {
-                const command =
-                    await this.client.utils.import<ICommandComponent>(
-                        resolve(files),
-                        this.client
-                    );
+                const command = await Utils.import<ICommandComponent>(
+                    resolve(files),
+                    this.client
+                );
                 if (command === undefined) {
                     console.log(command, files);
                     return;
