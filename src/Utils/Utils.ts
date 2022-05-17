@@ -45,6 +45,10 @@ export class Utils {
         return yaml.load(readFileSync(join(src), "utf8")) as T;
     }
 
+    public static async delay(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     public static encodeDecodeBase64String(
         anyString: string,
         decode = false

@@ -32,7 +32,7 @@ export default class RenamePlaylistCommand extends ZuikakuCommand {
     public async execute(ctx: CommandContext): Promise<void> {
         const fromGuildPlayer =
             (await this.client.database.manager.guilds.get(ctx.guild!.id))
-                ?.guildPlayer?.channelId === ctx.channel?.id;
+                ?.guildPlayer.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
         const getUserDatabase = await this.client.database.manager.users.get(

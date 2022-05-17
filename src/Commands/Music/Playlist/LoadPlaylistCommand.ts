@@ -44,9 +44,9 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
             ctx.guild!.id
         );
         const fromGuildPlayer =
-            getGuildDatabase?.guildPlayer?.channelId === ctx.channel?.id;
+            getGuildDatabase?.guildPlayer.channelId === ctx.channel?.id;
         if (
-            getGuildDatabase?.guildPlayer?.channelId &&
+            getGuildDatabase?.guildPlayer.channelId &&
             getGuildDatabase.guildPlayer.channelId !== ctx.channel?.id
         ) {
             await ctx

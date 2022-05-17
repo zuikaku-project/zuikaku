@@ -1,6 +1,7 @@
 import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "@zuikaku/types";
+import { Utils } from "@zuikaku/Utils";
 import mongoose from "mongoose";
 
 @ZuikakuDecorator<IListenerComponent>({
@@ -20,6 +21,18 @@ export default class ZuikakuReady extends ZuikakuListener {
                 ? this.client.config.mongodb.dbName.development
                 : this.client.config.mongodb.dbName.production
         });
+        await Utils.delay(5000);
+        const databaseManager = Object.values(this.client.database.manager);
+        await Promise.all(
+            databaseManager.map(async manager => {
+                await manager.init(mongoose.connection);
+            })
+        );
+        this.client.logger.info(
+            "mongo.db",
+            `${databaseManager.length} Database Manager has been initiated`
+        );
+        await this.client.shoukaku.persistentQueue.assign();
         await this.client.command.load();
         this.client.router.load();
         this.client.logger.info(

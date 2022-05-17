@@ -48,11 +48,11 @@ export default class PlayCommand extends ZuikakuCommand {
             ctx.guild!.id
         );
         const fromGuildPlayer =
-            getGuildDatabase?.guildPlayer?.channelId === ctx.channel?.id;
+            getGuildDatabase?.guildPlayer.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
         if (
-            getGuildDatabase?.guildPlayer?.channelId &&
+            getGuildDatabase?.guildPlayer.channelId &&
             getGuildDatabase.guildPlayer.channelId !== ctx.channel!.id
         ) {
             await ctx.send({

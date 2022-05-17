@@ -23,7 +23,7 @@ export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
                     .delete()
                     .catch(() => null);
             }
-            if (getGuildDatabase?.guildPlayer?.channelId) {
+            if (getGuildDatabase?.guildPlayer.channelId) {
                 await dispatcher.getEmbedPlayer?.update();
             } else {
                 const playerButton = new MessageActionRow().addComponents(

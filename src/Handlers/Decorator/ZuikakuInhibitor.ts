@@ -27,7 +27,7 @@ export function ZuikakuInhibitor<
                     if (ctx.isInteraction() && !ctx.deferred) {
                         await ctx.deferReply(
                             ctx.channel?.id ===
-                                getGuildDatabase?.guildPlayer?.channelId
+                                getGuildDatabase?.guildPlayer.channelId
                         );
                     }
                     const msg = await ctx.send({
@@ -35,7 +35,7 @@ export function ZuikakuInhibitor<
                     });
                     if (
                         ctx.channel?.id ===
-                        getGuildDatabase?.guildPlayer?.channelId
+                        getGuildDatabase?.guildPlayer.channelId
                     ) {
                         setTimeout(() => msg.delete().catch(() => null), 5000);
                     }

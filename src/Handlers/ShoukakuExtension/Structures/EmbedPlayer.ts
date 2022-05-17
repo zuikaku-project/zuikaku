@@ -161,7 +161,7 @@ export class EmbedPlayer {
 
     public static async resolve(
         guild: Guild,
-        data: documentType<IGuildSchema>["guildPlayer"]
+        data: documentType<IGuildSchema>["guildPlayer"] | undefined
     ): Promise<{ channel?: TextChannel; message?: Message }> {
         if (!data) {
             return {

@@ -193,7 +193,7 @@ export class Dispatcher {
         }
         this.player.connection.disconnect();
         void this.getGuildDatabase.then(guildSettings => {
-            if (guildSettings?.guildPlayer?.channelId)
+            if (guildSettings?.guildPlayer.channelId)
                 setTimeout(() => this.getEmbedPlayer?.update(), 500);
         });
         return this;
@@ -204,7 +204,7 @@ export class Dispatcher {
             this.getText
                 ?.send({ embeds: [createEmbed("info", `**${message}**`)] })
                 .then(async x => {
-                    if ((await this.getGuildDatabase)?.guildPlayer?.channelId) {
+                    if ((await this.getGuildDatabase)?.guildPlayer.channelId) {
                         setTimeout(() => x.delete().catch(() => null), 5000);
                     }
                 })
@@ -223,7 +223,7 @@ export class Dispatcher {
             this.queueRepeat = false;
         }
         const getGuildDatabase = await this.getGuildDatabase;
-        if (getGuildDatabase?.guildPlayer?.channelId)
+        if (getGuildDatabase?.guildPlayer.channelId)
             setTimeout(() => this.getEmbedPlayer?.update(), 500);
         if (this.queueMessage.lastPlayerMessage) {
             const row = this.queueMessage.lastPlayerMessage.components[0];
@@ -261,7 +261,7 @@ export class Dispatcher {
             this.queueRepeat = false;
         }
         const getGuildDatabase = await this.getGuildDatabase;
-        if (getGuildDatabase?.guildPlayer?.channelId)
+        if (getGuildDatabase?.guildPlayer.channelId)
             setTimeout(() => this.getEmbedPlayer?.update(), 500);
         if (this.queueMessage.lastPlayerMessage) {
             const row = this.queueMessage.lastPlayerMessage.components[0];

@@ -13,7 +13,7 @@ export default class ShoukakuPlayerDestroy extends ZuikakuListener {
         const getGuildDatabase = await this.client.database.manager.guilds.get(
             player.connection.guildId
         );
-        if (getGuildDatabase?.guildPlayer?.channelId) {
+        if (getGuildDatabase?.guildPlayer.channelId) {
             await this.client.database.manager.guilds
                 .reset(player.connection.guildId, "persistentQueue")
                 .catch(() => null);

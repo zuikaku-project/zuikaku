@@ -58,7 +58,7 @@ export class Queue {
     ): Promise<ShoukakuTrack[]> {
         const spliced = this.tracks.splice(track, range ? range : 1);
         const getGuildDatabase = await this.dispatcher.getGuildDatabase;
-        if (getGuildDatabase?.guildPlayer?.channelId)
+        if (getGuildDatabase?.guildPlayer.channelId)
             setTimeout(() => this.dispatcher.getEmbedPlayer?.update(), 500);
         if (
             this.dispatcher.queueMessage.lastPlayerMessage &&
@@ -90,7 +90,7 @@ export class Queue {
             [this.tracks[i], this.tracks[j]] = [this.tracks[j], this.tracks[i]];
         }
         void this.dispatcher.getGuildDatabase.then(guildSettings => {
-            if (guildSettings?.guildPlayer?.channelId)
+            if (guildSettings?.guildPlayer.channelId)
                 setTimeout(() => this.dispatcher.getEmbedPlayer?.update(), 500);
         });
     }

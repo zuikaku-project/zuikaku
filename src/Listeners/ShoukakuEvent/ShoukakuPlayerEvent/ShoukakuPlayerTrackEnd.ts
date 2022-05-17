@@ -33,7 +33,7 @@ export default class ShoukakuPlayerTrackEnd extends ZuikakuListener {
             dispatcher.queue.current = null;
             if (dispatcher.queue.tracks.length === 0) {
                 const getGuildDatabase = await dispatcher.getGuildDatabase;
-                if (getGuildDatabase?.guildPlayer?.channelId) {
+                if (getGuildDatabase?.guildPlayer.channelId) {
                     setTimeout(() => dispatcher.getEmbedPlayer?.update(), 500);
                 }
                 dispatcher.setTimeout(

@@ -6,26 +6,22 @@ export type documentType<T> = Document<unknown, any, T> &
 
 export interface IGuildSchema {
     guildId: string;
-    guildPlayer:
-        | {
-              channelId: string;
-              messageId: string;
-          }
-        | undefined;
-    persistentQueue:
-        | {
-              textId: string;
-              voiceId: string;
-              playerMessageId?: string;
-              current?: Track;
-              tracks: Track[] | [];
-              previous?: Track;
-              queueRepeat: boolean;
-              trackRepeat: boolean;
-              volume: number;
-              position: number;
-          }
-        | undefined;
+    guildPlayer: {
+        channelId: string;
+        messageId: string;
+    };
+    persistentQueue: {
+        textId: string;
+        voiceId: string;
+        playerMessageId?: string;
+        current?: Track;
+        tracks: Track[] | [];
+        previous?: Track;
+        queueRepeat: boolean;
+        trackRepeat: boolean;
+        volume: number;
+        position: number;
+    };
 }
 
 export interface IUserSchema {

@@ -41,7 +41,7 @@ export class PersistentQueue {
         guild: Guild,
         guildDatabase: documentType<IGuildSchema> | undefined
     ): Promise<void> {
-        if (guildDatabase?.guildPlayer?.channelId) {
+        if (guildDatabase?.guildPlayer.channelId) {
             const channelGuildPlayer = this._client.channels.resolve(
                 guildDatabase.guildPlayer.channelId
             );
@@ -61,7 +61,7 @@ export class PersistentQueue {
                 }
             }
         }
-        if (guildDatabase?.persistentQueue?.textId) {
+        if (guildDatabase?.persistentQueue.textId) {
             const dispatcher = await this._shoukaku.handleJoin({
                 guildId: guild.id,
                 channelId: guildDatabase.persistentQueue.voiceId,
@@ -108,9 +108,8 @@ export class PersistentQueue {
                 );
             }
             if (
-                guildDatabase.persistentQueue.playerMessageId &&
                 guildDatabase.persistentQueue.playerMessageId !==
-                    guildDatabase.guildPlayer?.messageId
+                guildDatabase.guildPlayer.messageId
             ) {
                 const channelPersistence = this._client.channels.resolve(
                     guildDatabase.persistentQueue.textId
@@ -119,7 +118,7 @@ export class PersistentQueue {
                     const messagePersistent = await (
                         channelPersistence as TextBasedChannel
                     ).messages
-                        .fetch(guildDatabase.persistentQueue.playerMessageId)
+                        .fetch(guildDatabase.persistentQueue.playerMessageId!)
                         .catch(() => undefined);
                     if (messagePersistent) {
                         await messagePersistent.delete().catch(() => null);
