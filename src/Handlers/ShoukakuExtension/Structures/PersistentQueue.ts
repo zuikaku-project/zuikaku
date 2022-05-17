@@ -62,6 +62,24 @@ export class PersistentQueue {
             }
         }
         if (guildDatabase?.persistentQueue.textId) {
+            if (
+                guildDatabase.persistentQueue.playerMessageId !==
+                guildDatabase.guildPlayer.messageId
+            ) {
+                const channelPersistence = this._client.channels.resolve(
+                    guildDatabase.persistentQueue.textId
+                );
+                if (channelPersistence) {
+                    const messagePersistent = await (
+                        channelPersistence as TextBasedChannel
+                    ).messages
+                        .fetch(guildDatabase.persistentQueue.playerMessageId!)
+                        .catch(() => undefined);
+                    if (messagePersistent) {
+                        await messagePersistent.delete().catch(() => null);
+                    }
+                }
+            }
             const dispatcher = await this._shoukaku.handleJoin({
                 guildId: guild.id,
                 channelId: guildDatabase.persistentQueue.voiceId,
@@ -106,24 +124,6 @@ export class PersistentQueue {
                 await dispatcher.queue.addTrack(
                     guildDatabase.persistentQueue.tracks
                 );
-            }
-            if (
-                guildDatabase.persistentQueue.playerMessageId !==
-                guildDatabase.guildPlayer.messageId
-            ) {
-                const channelPersistence = this._client.channels.resolve(
-                    guildDatabase.persistentQueue.textId
-                );
-                if (channelPersistence) {
-                    const messagePersistent = await (
-                        channelPersistence as TextBasedChannel
-                    ).messages
-                        .fetch(guildDatabase.persistentQueue.playerMessageId!)
-                        .catch(() => undefined);
-                    if (messagePersistent) {
-                        await messagePersistent.delete().catch(() => null);
-                    }
-                }
             }
             await dispatcher.playTrack(guildDatabase.persistentQueue.position);
             this._client.logger.info(
