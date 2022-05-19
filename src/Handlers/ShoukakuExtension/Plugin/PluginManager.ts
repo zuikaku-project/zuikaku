@@ -5,8 +5,8 @@ import {
     IregExpExec,
     LavalinkSource,
     LavalinkTrack
-} from "@zuikaku/types";
-import { Utils } from "@zuikaku/Utils";
+} from "#zuikaku/types";
+import { Utils } from "#zuikaku/Utils";
 import { load } from "cheerio";
 import { Collection } from "discord.js";
 import { join, resolve } from "node:path";
@@ -98,7 +98,7 @@ export class PluginManager {
 
     public async _loadPluginResolver(): Promise<void> {
         const getPluginFile = Utils.readdirRecursive(
-            join(__dirname, "./Plugins")
+            join(Utils.importURLToString(import.meta.url), "./Plugins")
         );
         for (const pluginFile of getPluginFile) {
             const plugin = await Utils.import<IPluginComponent>(

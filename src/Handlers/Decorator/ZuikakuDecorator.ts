@@ -1,10 +1,10 @@
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
 import {
     ICommandComponent,
     IListenerComponent,
     IPluginComponent,
     IRouterComponent
-} from "@zuikaku/types/core";
+} from "#zuikaku/types/core";
 
 export function ZuikakuDecorator<
     P extends

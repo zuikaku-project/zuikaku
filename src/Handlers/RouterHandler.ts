@@ -1,6 +1,6 @@
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { IRouterComponent } from "@zuikaku/types";
-import { Utils } from "@zuikaku/Utils";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
+import { IRouterComponent } from "#zuikaku/types";
+import { Utils } from "#zuikaku/Utils";
 import cors from "cors";
 import { Collection } from "discord.js";
 import express from "express";

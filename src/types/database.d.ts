@@ -1,4 +1,4 @@
-import { Track } from "@zuikaku/Handlers/ShoukakuExtension";
+import { Track } from "#zuikaku/Handlers/ShoukakuExtension";
 import { Document, Types } from "mongoose";
 
 export type documentType<T> = Document<unknown, any, T> &

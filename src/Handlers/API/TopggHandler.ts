@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/naming-convention*/
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
 import { Snowflake } from "discord.js";
 import petitio from "petitio";
 

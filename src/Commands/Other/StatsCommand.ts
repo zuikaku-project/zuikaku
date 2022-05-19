@@ -1,9 +1,9 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { IChangelog, ICommandComponent } from "@zuikaku/types";
-import { ShoukakuSocketState } from "@zuikaku/types/enum";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { IChangelog, ICommandComponent } from "#zuikaku/types";
+import { ShoukakuSocketState } from "#zuikaku/types/enum";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import { EmbedField, version } from "discord.js";
 import { readFileSync } from "fs";
 import os from "os";

@@ -2,7 +2,7 @@ import {
     AnilistAnimeMangaInterface,
     AnilistUsersInterface,
     AnilistCharactersInterface
-} from "@zuikaku/types";
+} from "#zuikaku/types";
 import petitio from "petitio";
 
 export class AnilistManager {

@@ -1,5 +1,5 @@
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { documentType, IGuildSchema } from "@zuikaku/types";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
+import { documentType, IGuildSchema } from "#zuikaku/types";
 import { Guild, TextBasedChannel, User } from "discord.js";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 import { EmbedPlayer } from "./EmbedPlayer";

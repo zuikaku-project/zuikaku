@@ -3,13 +3,16 @@
     "version": "4.0.0",
     "description": "The best Discord Bot that can serve you everytime, Fast, Secure, Always on, Best Audio, No Configuration",
     "main": "./dist/ZuikakuBase.js",
+    "type": "module",
     "scripts": {
-        "build": "rimraf dist && npm run lint && tsc",
+        "build": "rimraf dist && npm run lint && npm run compile",
+        "compile": "swc src -d dist",
+        "compile:ts": "tsc --build tsconfig.json",
         "lint": "npm run pretty && eslint src --ext .ts",
         "lint:fix": "npm run pretty:write && eslint src --ext .ts --fix",
         "pretty": "prettier --check 'src/**/*.ts'",
         "pretty:write": "prettier --write 'src/**/*.ts'",
-        "start": "node ./dist/ZuikakuBase.js",
+        "start": "node --es-module-specifier-resolution=node -r tsconfig-paths/register .",
         "vps": "npm run build && npm start"
     },
     "repository": {
@@ -27,8 +30,8 @@
         "node": ">=16",
         "npm": ">=7"
     },
-    "_moduleAliases": {
-        "@zuikaku": "./dist"
+    "imports": {
+        "#zuikaku/*": "./dist/*"
     },
     "eslintConfig": {
         "extends": [
@@ -44,7 +47,10 @@
         "rules": {
             "class-methods-use-this": 0,
             "@typescript-eslint/naming-convention": 0
-        }
+        },
+        "ignorePatterns": [
+            "dist/*"
+        ]
     },
     "prettier": {
         "tabWidth": 4,
@@ -53,6 +59,8 @@
     },
     "devDependencies": {
         "@clytage-pkg/eslint-config": "1.0.1",
+        "@swc/cli": "^0.1.57",
+        "@swc/core": "^1.2.185",
         "@types/cors": "2.8.12",
         "@types/express": "4.17.13",
         "@types/js-yaml": "4.0.5",
@@ -60,9 +68,11 @@
         "@typescript-eslint/eslint-plugin": "5.23.0",
         "@typescript-eslint/parser": "5.23.0",
         "eslint": "8.15.0",
+        "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "4.0.0",
         "prettier": "2.6.2",
         "rimraf": "3.0.2",
+        "tsconfig-paths": "^4.0.0",
         "typescript": "4.6.4"
     },
     "dependencies": {
@@ -72,10 +82,8 @@
         "dayjs": "1.11.2",
         "discord-api-types": "0.32.1",
         "discord.js": "13.7.0",
-        "eslint-config-prettier": "8.5.0",
         "express": "4.18.1",
         "js-yaml": "4.1.0",
-        "module-alias": "2.2.2",
         "mongoose": "6.3.3",
         "petitio": "1.4.0",
         "shoukaku": "2.1.6",

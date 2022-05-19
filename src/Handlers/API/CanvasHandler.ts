@@ -1,7 +1,7 @@
-import { decodeBase64String } from "@zuikaku/types/core";
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
+import { decodeBase64String } from "#zuikaku/types/core";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
 import petitio from "petitio";
-import { Utils } from "@zuikaku/Utils";
+import { Utils } from "#zuikaku/Utils";
 
 export class CanvasHandler {
     public readonly endpoint = {

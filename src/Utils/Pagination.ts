@@ -1,4 +1,4 @@
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import {
     MessageActionRow,
     MessageButton,

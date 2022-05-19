@@ -1,13 +1,13 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import {
     isMusicPlaying,
     isSameVoiceChannel,
     isUserInTheVoiceChannel
-} from "@zuikaku/Handlers/Decorator/ZuikakuPlayerInhibitor";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
+} from "#zuikaku/Handlers/Decorator/ZuikakuPlayerInhibitor";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
+import { createEmbed } from "#zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "8d",

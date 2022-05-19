@@ -1,6 +1,6 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { ZuikakuRouter } from "@zuikaku/Structures/ZuikakuRouter";
-import { IRouterComponent } from "@zuikaku/types";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { ZuikakuRouter } from "#zuikaku/Structures/ZuikakuRouter";
+import { IRouterComponent } from "#zuikaku/types";
 import { Request, Response } from "express";
 
 @ZuikakuDecorator<IRouterComponent>({

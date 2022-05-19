@@ -1,12 +1,12 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { TrackList } from "@zuikaku/Handlers/ShoukakuExtension/Structures";
-import { ZuikakuPlugin } from "@zuikaku/Structures/ZuikakuPlugin";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { TrackList } from "#zuikaku/Handlers/ShoukakuExtension/Structures";
+import { ZuikakuPlugin } from "#zuikaku/Structures/ZuikakuPlugin";
 import {
     DeezerArtist,
     DeezerData,
     IPluginComponent,
     LavalinkTrack
-} from "@zuikaku/types";
+} from "#zuikaku/types";
 import petitio from "petitio";
 
 @ZuikakuDecorator<IPluginComponent>({

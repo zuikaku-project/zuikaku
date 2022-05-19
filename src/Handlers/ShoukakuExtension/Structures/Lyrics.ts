@@ -1,4 +1,4 @@
-import { ISpotifyLyrics } from "@zuikaku/types";
+import { ISpotifyLyrics } from "#zuikaku/types";
 
 export class Lyrics {
     public trackName = this.raw?.trackName;

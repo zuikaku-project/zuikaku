@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unnecessary-condition */
-import { MessageInteractionAction } from "@zuikaku/types/core";
-import { Utils } from "@zuikaku/Utils";
+import { MessageInteractionAction } from "#zuikaku/types/core";
+import { Utils } from "#zuikaku/Utils";
 import {
     ButtonInteraction,
     Collection,

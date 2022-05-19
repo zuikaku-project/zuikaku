@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions */
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "unban",

@@ -1,8 +1,8 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { IListenerComponent } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { IListenerComponent } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import {
     Collection,
     Message,

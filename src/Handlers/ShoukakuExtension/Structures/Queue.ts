@@ -1,4 +1,4 @@
-import { Utils } from "@zuikaku/Utils";
+import { Utils } from "#zuikaku/Utils";
 import { MessageButton } from "discord.js";
 import { ShoukakuTrack } from "shoukaku";
 import { Dispatcher } from "./Dispatcher";

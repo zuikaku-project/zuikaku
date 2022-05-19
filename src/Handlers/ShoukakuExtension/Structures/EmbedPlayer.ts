@@ -1,6 +1,6 @@
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { documentType, IGuildSchema } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
+import { documentType, IGuildSchema } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import { TextChannel, Message, Guild, MessageActionRow } from "discord.js";
 import { Dispatcher } from "./Dispatcher";
 

@@ -1,6 +1,6 @@
 /* eslint-disable func-names, @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-invalid-void-type */
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { createMusicEmbed } from "@zuikaku/Utils/GenerateEmbed";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { createMusicEmbed } from "#zuikaku/Utils/GenerateEmbed";
 
 export function ZuikakuInhibitor<
     T extends (

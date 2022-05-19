@@ -1,4 +1,3 @@
-import "module-alias/register";
 import process from "node:process";
 import { ZuikakuClient } from "./Structures/ZuikakuClient";
 import { Utils } from "./Utils";

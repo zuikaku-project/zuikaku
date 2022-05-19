@@ -1,6 +1,6 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { IListenerComponent } from "@zuikaku/types";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { IListenerComponent } from "#zuikaku/types";
 import { Message } from "discord.js";
 
 @ZuikakuDecorator<IListenerComponent>({

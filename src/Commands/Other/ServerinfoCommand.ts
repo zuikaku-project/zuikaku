@@ -1,9 +1,11 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
-import dayjs, { locale } from "dayjs";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
+import dayjs from "dayjs";
+
+const { locale } = dayjs;
 locale();
 
 @ZuikakuDecorator<ICommandComponent>({

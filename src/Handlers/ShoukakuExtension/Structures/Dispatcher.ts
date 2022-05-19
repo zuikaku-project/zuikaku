@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
-import { documentType, IGuildSchema } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { documentType, IGuildSchema } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import {
     Guild,
     Message,

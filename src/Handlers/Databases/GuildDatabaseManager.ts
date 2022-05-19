@@ -1,4 +1,4 @@
-import { documentType, IGuildSchema } from "@zuikaku/types";
+import { documentType, IGuildSchema } from "#zuikaku/types";
 import { Collection } from "discord.js";
 import { Connection } from "mongoose";
 import { GuildSchema } from "./Schema";

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { EmbedPlayer } from "@zuikaku/Handlers/ShoukakuExtension";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { EmbedPlayer } from "#zuikaku/Handlers/ShoukakuExtension";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import {
     Message,
     MessageActionRow,

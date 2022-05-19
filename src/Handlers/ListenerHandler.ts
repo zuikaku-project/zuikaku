@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import Collection from "@discordjs/collection";
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { IListenerComponent } from "@zuikaku/types";
-import { Utils } from "@zuikaku/Utils";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
+import { IListenerComponent } from "#zuikaku/types";
+import { Utils } from "#zuikaku/Utils";
 import mongoose from "mongoose";
 import { resolve } from "node:path";
 
@@ -60,24 +60,6 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
             );
         } finally {
             this.client.logger.info("listener handler", `Done Loaded Listener`);
-        }
-    }
-
-    public async reloadAll(): Promise<void> {
-        this.clear();
-        const listeners = Utils.readdirRecursive(this.path);
-        for (const files of listeners) {
-            const event = await Utils.import<IListenerComponent>(
-                resolve(files),
-                this.client
-            );
-            if (event === undefined) {
-                console.log(event, files);
-                return;
-            }
-            this.set(event.meta.name, event);
-            const path = files;
-            Object.freeze(Object.assign(event.meta, { path }));
         }
     }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
-import { ICommandComponent } from "@zuikaku/types/core";
-import { Utils } from "@zuikaku/Utils";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
+import { ICommandComponent } from "#zuikaku/types/core";
+import { Utils } from "#zuikaku/Utils";
 import { ApplicationCommandData, Collection, Snowflake } from "discord.js";
 import { resolve } from "node:path";
 
@@ -303,18 +303,10 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
                     .catch(() => null);
             }
         } catch (err) {
-            let errorMessage = err;
-            if (err instanceof Error) {
-                errorMessage =
-                    err.stack?.replace(
-                        new RegExp(`${__dirname}/`, "g"),
-                        "./"
-                    ) ?? err.message;
-            }
             this.client.logger.error(
                 "command handler",
                 `COMMAND_LOADER_ERR: `,
-                errorMessage
+                (err as Error).stack ?? (err as Error).message
             );
         } finally {
             this.categories = this.reduce<
@@ -338,133 +330,48 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
         }
     }
 
-    public async reloadAll(slash?: string): Promise<void> {
-        if (slash) {
-            const allCmd = [
-                ...(await this.client.application!.commands.fetch()).values()
-            ];
-            const slashLowercase = slash.toLowerCase();
-            const getSlashCommand = allCmd.find(x => x.name === slashLowercase);
-            if (getSlashCommand) {
-                const findSlashWithCommandName = this.find(
-                    ({ meta }) => meta.name === slashLowercase
+    public async reloadSlash(slash: string): Promise<void> {
+        const allCmd = [
+            ...(await this.client.application!.commands.fetch()).values()
+        ];
+        const slashLowercase = slash.toLowerCase();
+        const getSlashCommand = allCmd.find(x => x.name === slashLowercase);
+        if (getSlashCommand) {
+            const findSlashWithCommandName = this.find(
+                ({ meta }) => meta.name === slashLowercase
+            );
+            if (findSlashWithCommandName) {
+                await getSlashCommand.edit(
+                    findSlashWithCommandName.meta
+                        .slash as ApplicationCommandData
                 );
-                if (findSlashWithCommandName) {
-                    await getSlashCommand.edit(
-                        findSlashWithCommandName.meta
-                            .slash as ApplicationCommandData
-                    );
-                }
-                if (this.subCommandsAction.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsAction);
-                }
-                if (this.subCommandsAdmin.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsAdmin);
-                }
-                if (this.subCommandsAnilist.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsAnilist);
-                }
-                if (this.subCommandsAnimal.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsAnimal);
-                }
-                if (this.subCommandsFilter.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsFilter);
-                }
-                if (this.subCommandsImage.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsImage);
-                }
-                if (this.subCommandsMusic.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsMusic);
-                }
-                if (this.subCommandsMyAnimeList.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsMyAnimeList);
-                }
-                if (this.subCommandsPlaylist.name === slashLowercase) {
-                    await getSlashCommand.edit(this.subCommandsPlaylist);
-                }
             }
-        } else {
-            this.clear();
-            this.aliases.clear();
-            this.subCommandsAction.options = [];
-            this.subCommandsAdmin.options = [];
-            this.subCommandsAnilist.options = [];
-            this.subCommandsAnimal.options = [];
-            this.subCommandsFilter.options = [];
-            this.subCommandsImage.options = [];
-            this.subCommandsMyAnimeList.options = [];
-            this.subCommandsMusic.options = [];
-            this.subCommandsPlaylist.options = [];
-            const commands = Utils.readdirRecursive(this.path);
-            for (const files of commands) {
-                const command = await Utils.import<ICommandComponent>(
-                    resolve(files),
-                    this.client
-                );
-                if (command === undefined) {
-                    console.log(command, files);
-                    return;
-                }
-                const parseCategory = files.substring(
-                    0,
-                    files.lastIndexOf("/")
-                );
-                const category = parseCategory
-                    .substring(parseCategory.lastIndexOf("/") + 1)
-                    .toLowerCase();
-                const path = files;
-                Object.freeze(Object.assign(command.meta, { category, path }));
-                this.set(
-                    Utils.encodeDecodeBase64String(
-                        `${command.meta.category!}.${command.meta.name}`
-                    ),
-                    command
-                );
-                if (command.meta.slash) {
-                    if (!command.meta.slash.name) {
-                        Object.assign(command.meta.slash, {
-                            name: command.meta.name
-                        });
-                    }
-                    if (!command.meta.slash.description) {
-                        Object.assign(command.meta.slash, {
-                            description: command.meta.description
-                        });
-                    }
-                    if (command.meta.category === "action") {
-                        this.subCommandsAction.options.push(command.meta.slash);
-                    }
-                    if (command.meta.category === "admin") {
-                        this.subCommandsAdmin.options.push(command.meta.slash);
-                    }
-                    if (command.meta.category === "anilist") {
-                        this.subCommandsAnilist.options.push(
-                            command.meta.slash
-                        );
-                    }
-                    if (command.meta.category === "animal") {
-                        this.subCommandsAnimal.options.push(command.meta.slash);
-                    }
-                    if (command.meta.category === "image") {
-                        this.subCommandsImage.options.push(command.meta.slash);
-                    }
-                    if (command.meta.category === "myanimelist") {
-                        this.subCommandsMyAnimeList.options.push(
-                            command.meta.slash
-                        );
-                    }
-                    if (command.meta.category === "music-filter") {
-                        this.subCommandsFilter.options.push(command.meta.slash);
-                    }
-                    if (command.meta.category === "music") {
-                        this.subCommandsMusic.options.push(command.meta.slash);
-                    }
-                    if (command.meta.category === "playlist") {
-                        this.subCommandsPlaylist.options.push(
-                            command.meta.slash
-                        );
-                    }
-                }
+            if (this.subCommandsAction.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsAction);
+            }
+            if (this.subCommandsAdmin.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsAdmin);
+            }
+            if (this.subCommandsAnilist.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsAnilist);
+            }
+            if (this.subCommandsAnimal.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsAnimal);
+            }
+            if (this.subCommandsFilter.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsFilter);
+            }
+            if (this.subCommandsImage.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsImage);
+            }
+            if (this.subCommandsMusic.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsMusic);
+            }
+            if (this.subCommandsMyAnimeList.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsMyAnimeList);
+            }
+            if (this.subCommandsPlaylist.name === slashLowercase) {
+                await getSlashCommand.edit(this.subCommandsPlaylist);
             }
         }
     }

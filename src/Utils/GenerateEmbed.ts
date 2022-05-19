@@ -1,4 +1,4 @@
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { MessageEmbed } from "discord.js";
 
 type colortype = "error" | "info" | "success" | "warn";

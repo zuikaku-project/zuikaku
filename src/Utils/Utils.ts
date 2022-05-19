@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, max-lines */
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { GuildMember, Util } from "discord.js";
 import yaml from "js-yaml";
 import { readdirSync, readFileSync, statSync } from "node:fs";
+import { platform } from "node:os";
 import { join, resolve } from "node:path";
 import { deserialize, serialize } from "node:v8";
 import Pagination from "./Pagination";
@@ -29,8 +30,6 @@ export class Utils {
                 } else {
                     results.push(dir);
                 }
-                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-                delete require.cache[dir];
             }
         }
         read(directory);
@@ -47,6 +46,18 @@ export class Utils {
 
     public static async delay(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    public static importURLToString(url: string): string {
+        const pathArray = new URL(url).pathname.split(/\/|\\/g).filter(Boolean);
+        const path = pathArray.slice(0, -1).join("/");
+        return decodeURIComponent(
+            `${platform() === "win32" ? "" : "/"}${path}`
+        );
+    }
+
+    public static pathStringToURLString(path: string): string {
+        return new URL(`file://${path}`).toString();
     }
 
     public static encodeDecodeBase64String(

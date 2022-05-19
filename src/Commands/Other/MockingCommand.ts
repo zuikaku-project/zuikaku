@@ -1,8 +1,8 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
+import { createEmbed } from "#zuikaku/Utils";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "mock",

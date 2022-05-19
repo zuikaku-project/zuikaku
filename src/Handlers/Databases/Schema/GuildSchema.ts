@@ -1,5 +1,7 @@
-import { IGuildSchema } from "@zuikaku/types";
-import { Schema } from "mongoose";
+import { IGuildSchema } from "#zuikaku/types";
+import mongoose from "mongoose";
+
+const { Schema } = mongoose;
 
 export const GuildSchema = new Schema<IGuildSchema>({
     guildId: String,

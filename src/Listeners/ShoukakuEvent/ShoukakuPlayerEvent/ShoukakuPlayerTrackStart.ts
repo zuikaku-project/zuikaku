@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { IListenerComponent } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { IListenerComponent } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import { MessageActionRow, MessageButton } from "discord.js";
 import { ShoukakuPlayer } from "shoukaku";
 

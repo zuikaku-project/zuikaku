@@ -1,7 +1,7 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { IListenerComponent } from "@zuikaku/types";
-import { Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { IListenerComponent } from "#zuikaku/types";
+import { Utils } from "#zuikaku/Utils";
 import { PlayerUpdate, ShoukakuPlayer } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({

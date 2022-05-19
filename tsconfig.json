@@ -1,21 +1,23 @@
 {
     "compilerOptions": {
         "target": "ES2021",
-        "module": "commonjs",
+        "module": "ESNext",
         "moduleResolution": "node",
-        "lib": ["ES2021", "ESNext.Array"],
+        "lib": ["ES2021"],
         "strict": true,
-        "alwaysStrict": true,
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "skipLibCheck": true,
+        "noEmitHelpers": true,
+        "importHelpers": true,
         "rootDir": "./src",
         "outDir": "./dist",
         "baseUrl": "./src",
-        "typeRoots": ["node_modules/@types", "src/types/index.d.ts"],
+        "typeRoots": ["node_modules/@types", "src/types"],
         "paths": {
-            "@zuikaku/*": ["*"]
+            "#zuikaku/*": ["*"]
         }
     },
     "include": ["src/**/*.ts"],

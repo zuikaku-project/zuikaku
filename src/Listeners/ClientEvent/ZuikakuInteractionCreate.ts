@@ -1,10 +1,10 @@
 /* eslint-disable max-depth, max-lines */
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { Dispatcher, EmbedPlayer } from "@zuikaku/Handlers/ShoukakuExtension";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
-import { createEmbed, Utils } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { Dispatcher, EmbedPlayer } from "#zuikaku/Handlers/ShoukakuExtension";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { ICommandComponent, IListenerComponent } from "#zuikaku/types";
+import { createEmbed, Utils } from "#zuikaku/Utils";
 import {
     ButtonInteraction,
     GuildChannel,

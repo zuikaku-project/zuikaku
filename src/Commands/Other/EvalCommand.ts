@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/restrict-template-expressions */
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
 import petitio from "petitio";
-import util from "util";
+import { inspect } from "util";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "eval",
@@ -47,26 +47,24 @@ export default class EvalCommand extends ZuikakuCommand {
                     false
             );
         try {
-            if (
-                ctx.options?.getBoolean("async") ||
-                ctx.options?.getMessage("message")?.content.includes("--async")
-            ) {
-                this.toEval = `(async () => { ${
-                    ctx.options.getString("code") ??
-                    ctx.options.getMessage("message")!.content
-                } })()`;
-            } else {
-                this.toEval = `${
-                    ctx.options?.getString("code") ??
-                    ctx.options?.getMessage("message")?.content ??
-                    ""
-                }`;
-            }
-            const outputcode = util.inspect(
+            const code =
+                ctx.options?.getString("code") ??
+                ctx.options?.getMessage("message")!.content;
+
+            const isAsync = code?.includes("--async");
+            const isSilent = code?.includes("--silent");
+
+            const toExecute =
+                isAsync || isSilent
+                    ? code?.replace(/--async|--silent/g, "")
+                    : code;
+
+            const outputcode = inspect(
                 // eslint-disable-next-line no-eval
                 await eval(
-                    // eslint-disable-next-line
-                    this.toEval.replace(/`​`​`​|--async|--silent/g, "").trim()
+                    (isAsync
+                        ? `(async () => { ${toExecute} })()`
+                        : toExecute) ?? ""
                 ),
                 { depth: 0 }
             );
@@ -77,7 +75,6 @@ export default class EvalCommand extends ZuikakuCommand {
                 )
                     .body(outputcode)
                     .json();
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 await ctx.send({
                     content: `**Output**\nhttps://hastebin.orchitiadi.repl.co/${key}.js`,
                     deleteButton: { reference: ctx.author.id }

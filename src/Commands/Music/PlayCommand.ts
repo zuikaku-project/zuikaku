@@ -6,12 +6,12 @@ import {
     isUserInTheVoiceChannel,
     isValidVoiceChannel,
     ZuikakuDecorator
-} from "@zuikaku/Handlers/Decorator";
-import { Dispatcher, TrackList } from "@zuikaku/Handlers/ShoukakuExtension";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
-import { ICommandComponent } from "@zuikaku/types";
-import { createEmbed, createMusicEmbed, Utils } from "@zuikaku/Utils";
+} from "#zuikaku/Handlers/Decorator";
+import { Dispatcher, TrackList } from "#zuikaku/Handlers/ShoukakuExtension";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
+import { ICommandComponent } from "#zuikaku/types";
+import { createEmbed, createMusicEmbed, Utils } from "#zuikaku/Utils";
 import { MessageActionRow, MessageSelectMenu, Util } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({

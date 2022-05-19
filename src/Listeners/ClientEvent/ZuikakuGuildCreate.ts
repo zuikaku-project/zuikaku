@@ -1,7 +1,7 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { IListenerComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { IListenerComponent } from "#zuikaku/types";
+import { createEmbed } from "#zuikaku/Utils";
 import { Guild, WebhookClient } from "discord.js";
 
 @ZuikakuDecorator<IListenerComponent>({

@@ -1,8 +1,8 @@
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuListener } from "@zuikaku/Structures/ZuikakuListener";
-import { ICommandComponent, IListenerComponent } from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
+import { ICommandComponent, IListenerComponent } from "#zuikaku/types";
+import { createEmbed } from "#zuikaku/Utils";
 import { WebhookClient } from "discord.js";
 import petitio from "petitio";
 

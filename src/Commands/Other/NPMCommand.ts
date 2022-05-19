@@ -1,16 +1,18 @@
 /* eslint-disable no-nested-ternary */
-import { ZuikakuDecorator } from "@zuikaku/Handlers/Decorator";
-import { CommandContext } from "@zuikaku/Structures/CommandContext";
-import { ZuikakuCommand } from "@zuikaku/Structures/ZuikakuCommand";
+import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { CommandContext } from "#zuikaku/Structures/CommandContext";
+import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
 import {
     ICommandComponent,
     INPMRegistryAPI,
     INPMSearchAPI
-} from "@zuikaku/types";
-import { createEmbed } from "@zuikaku/Utils";
-import { locale } from "dayjs";
+} from "#zuikaku/types";
+import { createEmbed } from "#zuikaku/Utils";
+import dayjs from "dayjs";
 import { MessageActionRow, MessageSelectMenu } from "discord.js";
 import petitio from "petitio";
+
+const { locale } = dayjs;
 locale();
 
 @ZuikakuDecorator<ICommandComponent>({

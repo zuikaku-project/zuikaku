@@ -2,21 +2,21 @@ import {
     CommandHandler,
     ListenerHandler,
     RouterHandler
-} from "@zuikaku/Handlers";
+} from "#zuikaku/Handlers";
 import {
     AnilistManager,
     CanvasHandler,
     JikanManager,
     TopggHandler,
     WeebyManager
-} from "@zuikaku/Handlers/API";
+} from "#zuikaku/Handlers/API";
 import {
     GuildDatabaseManager,
     UserDatabaseManager
-} from "@zuikaku/Handlers/Databases";
-import { ShoukakuHandler } from "@zuikaku/Handlers/ShoukakuExtension";
-import { IConfig, ISnipe } from "@zuikaku/types";
-import { Logger, Utils } from "@zuikaku/Utils";
+} from "#zuikaku/Handlers/Databases";
+import { ShoukakuHandler } from "#zuikaku/Handlers/ShoukakuExtension";
+import { IConfig, ISnipe } from "#zuikaku/types";
+import { Logger, Utils } from "#zuikaku/Utils";
 import { Client, Intents, Options, Sweepers } from "discord.js";
 import mongoose from "mongoose";
 import { resolve } from "node:path";
@@ -47,17 +47,17 @@ export class ZuikakuClient extends Client {
 
     public readonly listener = new ListenerHandler(
         this,
-        resolve(__dirname, "../Listeners")
+        resolve(Utils.importURLToString(import.meta.url), "../Listeners")
     );
 
     public readonly command = new CommandHandler(
         this,
-        resolve(__dirname, "../Commands")
+        resolve(Utils.importURLToString(import.meta.url), "../Commands")
     );
 
     public readonly router = new RouterHandler(
         this,
-        resolve(__dirname, "../Routers")
+        resolve(Utils.importURLToString(import.meta.url), "../Routers")
     );
 
     public constructor(public readonly config: IConfig) {

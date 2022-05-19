@@ -1,4 +1,4 @@
-import { DataInput, Utils } from "@zuikaku/Utils";
+import { DataInput, Utils } from "#zuikaku/Utils";
 import { User } from "discord.js";
 import { ShoukakuTrack } from "shoukaku";
 import { ShoukakuHandler } from "../ShoukakuHandler";

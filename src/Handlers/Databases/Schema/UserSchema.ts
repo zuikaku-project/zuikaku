@@ -1,5 +1,7 @@
-import { IUserSchema } from "@zuikaku/types";
-import { Schema } from "mongoose";
+import { IUserSchema } from "#zuikaku/types";
+import mongoose from "mongoose";
+
+const { Schema } = mongoose;
 
 export const UserSchema = new Schema<IUserSchema>({
     userId: String,

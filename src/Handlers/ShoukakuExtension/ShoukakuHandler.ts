@@ -1,13 +1,15 @@
-import { ZuikakuClient } from "@zuikaku/Structures/ZuikakuClient";
+import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
 import {
     ISpotifyLyrics,
-    LoadTrackResponse,
-    LavalinkSource
-} from "@zuikaku/types";
+    LavalinkSource,
+    LoadTrackResponse
+} from "#zuikaku/types";
 import petitio from "petitio";
-import { Constants, JoinOptions, Libraries, Shoukaku } from "shoukaku";
+import shoukaku, { JoinOptions } from "shoukaku";
 import { Dispatcher, EmbedPlayer, Lyrics, PersistentQueue, TrackList } from ".";
 import { PluginManager } from "./Plugin";
+
+const { Constants, Libraries, Shoukaku } = shoukaku;
 
 export class ShoukakuHandler extends Shoukaku {
     public plugin = new PluginManager(this, {

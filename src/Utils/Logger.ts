@@ -6,6 +6,7 @@ import {
     yellowBright
 } from "colorette";
 import dayjs from "dayjs";
+import { Utils } from "./Utils";
 
 export class Logger {
     public debug(...messages: any[]): void {
@@ -16,7 +17,13 @@ export class Logger {
         this.log(
             messages.map(message =>
                 message instanceof String
-                    ? message.replace(new RegExp(`${__dirname}/`, "g"), "./")
+                    ? message.replace(
+                          new RegExp(
+                              `${Utils.importURLToString(import.meta.url)}/`,
+                              "g"
+                          ),
+                          "./"
+                      )
                     : message
             ),
             "error"

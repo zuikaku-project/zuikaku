@@ -1,5 +1,4 @@
-import { LoadTrackResponse } from "@zuikaku/types";
-import { Exception, ShoukakuTrackListException } from "shoukaku";
+import { LoadTrackResponse } from "#zuikaku/types";
 import { Track } from "./Track";
 
 const Types = {
@@ -24,9 +23,7 @@ export class TrackList {
 
     public tracks = this.raw.tracks.map(d => new Track(d));
     public exception =
-        this.type === Types.LOAD_FAILED
-            ? new ShoukakuTrackListException(this.raw.exception as Exception)
-            : null;
+        this.type === Types.LOAD_FAILED ? this.raw.exception : null;
 
     public constructor(public readonly raw: LoadTrackResponse) {}
 }
