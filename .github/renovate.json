@@ -7,7 +7,7 @@
         ":semanticCommits"
     ],
     "labels": ["meta: dependencies"],
-    "schedule": ["7am"],
+    "schedule": ["before 6am"],
     "timezone": "Asia/Jakarta",
     "docker": {
         "enabled": true,
