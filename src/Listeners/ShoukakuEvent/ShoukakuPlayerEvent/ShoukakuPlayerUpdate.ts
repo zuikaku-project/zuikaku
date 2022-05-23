@@ -23,7 +23,7 @@ export default class ShoukakuPlayerUpdate extends ZuikakuListener {
                     textId: dispatcher.textId,
                     voiceId: dispatcher.voiceId,
                     playerMessageId:
-                        dispatcher.queueMessage.lastPlayerMessage?.id,
+                        dispatcher.queueMessage.lastPlayerMessage?.id ?? null,
                     tracks: dispatcher.queue.tracks.filter(x => x.track.length),
                     current: dispatcher.queue.current,
                     previous: dispatcher.queue.previous,

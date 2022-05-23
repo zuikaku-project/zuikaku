@@ -90,7 +90,10 @@ export class PersistentQueue {
         guildPlayer: IGuildSchema["guildPlayer"],
         persistentQueue: IGuildSchema["persistentQueue"]
     ): Promise<void> {
-        if (persistentQueue.playerMessageId !== guildPlayer.messageId) {
+        if (
+            persistentQueue.playerMessageId &&
+            persistentQueue.playerMessageId !== guildPlayer.messageId
+        ) {
             const channelPersistence = this._client.channels.resolve(
                 persistentQueue.textId
             );
@@ -98,7 +101,7 @@ export class PersistentQueue {
                 const messagePersistent = await (
                     channelPersistence as TextBasedChannel
                 ).messages
-                    .fetch(persistentQueue.playerMessageId!)
+                    .fetch(persistentQueue.playerMessageId)
                     .catch(() => null);
                 await messagePersistent?.delete().catch(() => null);
             }
