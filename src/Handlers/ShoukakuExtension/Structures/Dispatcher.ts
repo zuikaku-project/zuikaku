@@ -152,13 +152,7 @@ export class Dispatcher {
             }
             this.player.playTrack({
                 track: this.queue.current.track,
-                options: {
-                    startTime: this.queue.current.info.uri?.startsWith(
-                        "https://open.spotify.com"
-                    )
-                        ? undefined
-                        : startTime
-                }
+                options: { startTime }
             });
         }
     }
