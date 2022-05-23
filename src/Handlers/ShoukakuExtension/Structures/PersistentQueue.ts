@@ -1,6 +1,5 @@
 import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
 import { documentType, IGuildSchema } from "#zuikaku/types";
-import { Utils } from "#zuikaku/Utils";
 import { Guild, TextBasedChannel, User } from "discord.js";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 import { EmbedPlayer } from "./EmbedPlayer";
@@ -46,7 +45,7 @@ export class PersistentQueue {
                 Boolean(persistentQueue.textId) &&
                 (await guild.channels
                     .fetch(persistentQueue.voiceId)
-                    .then(x => Boolean(x?.isText()))
+                    .then(x => Boolean(x?.isVoice()))
                     .catch(() => false));
             const isValidGuildPlayer =
                 Boolean(guildPlayer.channelId) &&
@@ -55,7 +54,6 @@ export class PersistentQueue {
             if (isValidGuildPlayer) {
                 await this.assignGuildPlayer(guild, guildPlayer);
             }
-            await Utils.delay(3000);
             if (isValidPersistent) {
                 await this.assignPersistentQueue(
                     guild,
