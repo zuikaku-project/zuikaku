@@ -112,12 +112,10 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
                     disabledCount++;
                     return;
                 }
-                const parseCategory = files.substring(
-                    0,
-                    files.lastIndexOf("/")
-                );
-                const category = parseCategory
-                    .substring(parseCategory.lastIndexOf("/") + 1)
+                const category = files
+                    .split(/\/|\\/g)
+                    .slice(0, -1)
+                    .pop()!
                     .toLowerCase();
                 const path = files;
                 Object.freeze(Object.assign(command.meta, { category, path }));
