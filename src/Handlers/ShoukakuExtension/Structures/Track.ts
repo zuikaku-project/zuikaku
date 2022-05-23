@@ -1,16 +1,16 @@
 import { DataInput, Utils } from "#zuikaku/Utils";
+import { Track as LavalinkTrack } from "#zuikaku/types";
 import { User } from "discord.js";
-import { ShoukakuTrack } from "shoukaku";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 
 export class Track {
     public isrc?: string;
     public track = this.raw.track;
-    public info!: TrackInfo;
+    public info!: LavalinkTrack["info"];
     public _requester!: User;
     public resolve!: () => Promise<void>;
     private readonly _shoukaku!: ShoukakuHandler;
-    public constructor(public readonly raw: ShoukakuTrack) {
+    public constructor(public readonly raw: LavalinkTrack) {
         this.decode();
     }
 
@@ -61,8 +61,8 @@ export class Track {
                 length: Number(input.readLong()),
                 identifier: input.readUTF(),
                 isStream: input.readBoolean(),
-                uri: input.readBoolean() ? input.readUTF() : undefined,
-                artworkUrl: input.readBoolean() ? input.readUTF() : undefined,
+                uri: input.readBoolean() ? input.readUTF() : "",
+                artworkUrl: input.readBoolean() ? input.readUTF() : "",
                 sourceName: input.readUTF(),
                 position: Number(input.readLong()),
                 isSeekable: this.raw.info.isSeekable
@@ -74,7 +74,7 @@ export class Track {
 
     public static async getClosestTrack(
         shoukaku: ShoukakuHandler,
-        track: Track
+        track: LavalinkTrack
     ): Promise<Track | undefined> {
         const isFromPlugin =
             shoukaku.plugin.appleRegex.test(track.info.uri ?? "") ||
@@ -125,17 +125,4 @@ export class Track {
             .forEach(key => delete track[key]); // eslint-disable-line
         Object.assign(validated, resolved);
     }
-}
-
-interface TrackInfo {
-    title?: string;
-    author?: string;
-    length?: number;
-    identifier?: string;
-    isStream?: boolean;
-    uri?: string;
-    artworkUrl?: string;
-    sourceName?: string;
-    position?: number;
-    isSeekable?: boolean;
 }

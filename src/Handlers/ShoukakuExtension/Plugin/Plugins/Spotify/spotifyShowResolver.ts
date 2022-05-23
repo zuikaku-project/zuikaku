@@ -1,7 +1,7 @@
 import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import { TrackList } from "#zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "#zuikaku/Structures/ZuikakuPlugin";
-import { IPluginComponent, LavalinkTrack, SpotifyShow } from "#zuikaku/types";
+import { IPluginComponent, Track, SpotifyShow } from "#zuikaku/types";
 import petitio from "petitio";
 
 @ZuikakuDecorator<IPluginComponent>({
@@ -9,10 +9,8 @@ import petitio from "petitio";
     category: "spotify"
 })
 export default class spotifyShowResolver extends ZuikakuPlugin {
-    public cache: Map<
-        string,
-        { tracks: LavalinkTrack[]; playlistName: string }
-    > = new Map();
+    public cache: Map<string, { tracks: Track[]; playlistName: string }> =
+        new Map();
 
     public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {

@@ -10,7 +10,7 @@ import {
     ThreadChannel,
     VoiceChannel
 } from "discord.js";
-import { JoinOptions, ShoukakuPlayer } from "shoukaku";
+import { VoiceChannelOptions, Player } from "shoukaku";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 import { EmbedPlayer } from "./EmbedPlayer";
 import { Filter } from "./Filter";
@@ -39,8 +39,8 @@ export class Dispatcher {
     public _timeout!: NodeJS.Timeout | null;
     public constructor(
         public readonly shoukaku: ShoukakuHandler,
-        public readonly player: ShoukakuPlayer,
-        public readonly opts: JoinOptions
+        public readonly player: Player,
+        public readonly opts: VoiceChannelOptions
     ) {
         Object.defineProperties(this, {
             queueMessage: {
@@ -150,12 +150,15 @@ export class Dispatcher {
                         );
                     });
             }
-            this.player.playTrack(this.queue.current.track, {
-                startTime: this.queue.current.info.uri?.startsWith(
-                    "https://open.spotify.com"
-                )
-                    ? undefined
-                    : startTime
+            this.player.playTrack({
+                track: this.queue.current.track,
+                options: {
+                    startTime: this.queue.current.info.uri?.startsWith(
+                        "https://open.spotify.com"
+                    )
+                        ? undefined
+                        : startTime
+                }
             });
         }
     }

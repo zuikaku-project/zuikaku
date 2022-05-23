@@ -2,18 +2,15 @@ import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "#zuikaku/types";
 import { Utils } from "#zuikaku/Utils";
-import { PlayerUpdate, ShoukakuPlayer } from "shoukaku";
+import { PlayerUpdate, Player } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({
-    name: "ShoukakuPlayerUpdate",
+    name: "PlayerUpdate",
     event: "playerUpdate",
     emitter: "shoukaku"
 })
 export default class ShoukakuPlayerUpdate extends ZuikakuListener {
-    public async execute(
-        player: ShoukakuPlayer,
-        payload: PlayerUpdate
-    ): Promise<void> {
+    public async execute(player: Player, payload: PlayerUpdate): Promise<void> {
         const dispatcher = this.client.shoukaku.dispatcher.get(
             player.connection.guildId
         );

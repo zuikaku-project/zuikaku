@@ -1,15 +1,15 @@
 import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "#zuikaku/types";
-import { ShoukakuPlayer } from "shoukaku";
+import { Player } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({
-    name: "ShoukakuPlayerTrackEnd",
+    name: "PlayerTrackEnd",
     event: "playerTrackEnd",
     emitter: "shoukaku"
 })
 export default class ShoukakuPlayerTrackEnd extends ZuikakuListener {
-    public async execute(player: ShoukakuPlayer): Promise<void> {
+    public async execute(player: Player): Promise<void> {
         const dispatcher = this.client.shoukaku.dispatcher.get(
             player.connection.guildId
         );

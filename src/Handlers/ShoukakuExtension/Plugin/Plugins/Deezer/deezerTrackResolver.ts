@@ -1,7 +1,7 @@
 import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import { TrackList } from "#zuikaku/Handlers/ShoukakuExtension/Structures";
 import { ZuikakuPlugin } from "#zuikaku/Structures/ZuikakuPlugin";
-import { DeezerTrack, IPluginComponent, LavalinkTrack } from "#zuikaku/types";
+import { DeezerTrack, IPluginComponent, Track } from "#zuikaku/types";
 import petitio from "petitio";
 
 @ZuikakuDecorator<IPluginComponent>({
@@ -9,7 +9,7 @@ import petitio from "petitio";
     category: "deezer"
 })
 export default class deezerTrackResolver extends ZuikakuPlugin {
-    public cache: Map<string, LavalinkTrack> = new Map();
+    public cache: Map<string, Track> = new Map();
     public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {
             if (this.cache.has(trackId)) {

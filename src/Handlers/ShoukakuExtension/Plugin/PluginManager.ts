@@ -3,15 +3,15 @@ import {
     IPluginComponent,
     IPluginOptions,
     IregExpExec,
-    LavalinkSource,
-    LavalinkTrack
+    Source,
+    Track
 } from "#zuikaku/types";
 import { Utils } from "#zuikaku/Utils";
 import { load } from "cheerio";
 import { Collection } from "discord.js";
 import { join, resolve } from "node:path";
 import petitio from "petitio";
-import { ShoukakuSocket } from "shoukaku";
+import { Node } from "shoukaku";
 import { ShoukakuHandler, TrackList } from "..";
 
 export class PluginManager {
@@ -34,7 +34,7 @@ export class PluginManager {
 
     private readonly _getTracks!: (
         query: string,
-        options?: LavalinkSource
+        options?: Source
     ) => Promise<TrackList>;
 
     private spotifyNextRequest?: NodeJS.Timeout;
@@ -118,8 +118,8 @@ export class PluginManager {
         }
     }
 
-    public getNode(query?: string[] | string): ShoukakuSocket {
-        return this.shoukaku.getNode(query);
+    public getNode(query?: string[] | string): Node | undefined {
+        return this.shoukaku.getNode(query ?? "auto");
     }
 
     public buildUnresolved({
@@ -139,8 +139,8 @@ export class PluginManager {
         uri: string;
         length: number;
         artworkUrl: string;
-        sourceName: LavalinkSource;
-    }): LavalinkTrack {
+        sourceName: Source;
+    }): Track {
         return {
             track: "",
             isrc,
@@ -165,12 +165,12 @@ export class PluginManager {
     ): TrackList;
     public buildResponse(
         loadType: "SEARCH_RESULT" | "TRACK_LOADED",
-        tracks: LavalinkTrack[]
+        tracks: Track[]
     ): TrackList;
     public buildResponse(
         loadType: "PLAYLIST_LOADED",
-        tracks: LavalinkTrack[],
-        playlistInfo: { name: string; selectedTrack: number }
+        tracks: Track[],
+        playlistInfo?: { name?: string; selectedTrack: number }
     ): TrackList;
     public buildResponse(
         loadType:
@@ -179,8 +179,8 @@ export class PluginManager {
             | "PLAYLIST_LOADED"
             | "SEARCH_RESULT"
             | "TRACK_LOADED",
-        tracks: LavalinkTrack[] = [],
-        playlistInfo?: { name: string; selectedTrack: number }
+        tracks: Track[] = [],
+        playlistInfo?: { name?: string; selectedTrack?: number }
     ): TrackList {
         const buildTrackList = new TrackList({
             loadType,
@@ -262,7 +262,7 @@ export class PluginManager {
 
     public async getTracks(
         query: string,
-        options?: LavalinkSource
+        options?: Source
     ): Promise<TrackList> {
         const getHTTPQuery = query
             .slice(query.search("http") >= 0 ? query.search("http") : 0)

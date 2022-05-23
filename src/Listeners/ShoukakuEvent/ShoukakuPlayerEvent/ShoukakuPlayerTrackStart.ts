@@ -4,15 +4,15 @@ import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "#zuikaku/types";
 import { createEmbed, Utils } from "#zuikaku/Utils";
 import { MessageActionRow, MessageButton } from "discord.js";
-import { ShoukakuPlayer } from "shoukaku";
+import { Player } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({
-    name: "ShoukakuPlayerTrackStart",
+    name: "PlayerTrackStart",
     event: "playerTrackStart",
     emitter: "shoukaku"
 })
 export default class ShoukakuPlayerTrackStart extends ZuikakuListener {
-    public async execute(player: ShoukakuPlayer): Promise<void> {
+    public async execute(player: Player): Promise<void> {
         const dispatcher = this.client.shoukaku.dispatcher.get(
             player.connection.guildId
         );

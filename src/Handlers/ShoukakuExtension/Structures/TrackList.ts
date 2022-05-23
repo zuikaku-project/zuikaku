@@ -1,4 +1,4 @@
-import { LoadTrackResponse } from "#zuikaku/types";
+import { Response, Track as LavalinkTrack } from "#zuikaku/types";
 import { Track } from "./Track";
 
 const Types = {
@@ -21,9 +21,12 @@ export class TrackList {
             ? this.raw.playlistInfo!.selectedTrack
             : null;
 
-    public tracks = this.raw.tracks.map(d => new Track(d));
+    public tracks = this.raw.tracks.map(
+        d => new Track(d as unknown as LavalinkTrack)
+    );
+
     public exception =
         this.type === Types.LOAD_FAILED ? this.raw.exception : null;
 
-    public constructor(public readonly raw: LoadTrackResponse) {}
+    public constructor(public readonly raw: Response) {}
 }

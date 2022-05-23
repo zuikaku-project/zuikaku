@@ -1,15 +1,15 @@
 import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "#zuikaku/types";
-import { ShoukakuPlayer } from "shoukaku";
+import { Player } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({
-    name: "ShoukakuPlayerException",
+    name: "PlayerException",
     event: "playerException",
     emitter: "shoukaku"
 })
 export default class ShoukakuPlayerException extends ZuikakuListener {
-    public execute(player: ShoukakuPlayer): void {
+    public execute(player: Player): void {
         const dispatcher = this.client.shoukaku.dispatcher.get(
             player.connection.guildId
         );

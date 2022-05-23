@@ -5,7 +5,7 @@ import {
     DeezerArtist,
     DeezerData,
     IPluginComponent,
-    LavalinkTrack
+    Track
 } from "#zuikaku/types";
 import petitio from "petitio";
 
@@ -14,10 +14,8 @@ import petitio from "petitio";
     category: "deezer"
 })
 export default class deezerArtistResolver extends ZuikakuPlugin {
-    public cache: Map<
-        string,
-        { tracks: LavalinkTrack[]; playlistName: string }
-    > = new Map();
+    public cache: Map<string, { tracks: Track[]; playlistName: string }> =
+        new Map();
 
     public async fetch(trackId: string): Promise<TrackList | undefined> {
         try {

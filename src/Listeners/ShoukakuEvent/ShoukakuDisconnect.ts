@@ -1,7 +1,7 @@
 import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
 import { ZuikakuListener } from "#zuikaku/Structures/ZuikakuListener";
 import { IListenerComponent } from "#zuikaku/types";
-import { ShoukakuPlayer } from "shoukaku";
+import { Player } from "shoukaku";
 
 @ZuikakuDecorator<IListenerComponent>({
     name: "ShoukakuDisconnect",
@@ -9,7 +9,7 @@ import { ShoukakuPlayer } from "shoukaku";
     emitter: "shoukaku"
 })
 export default class ShoukakuDisconnect extends ZuikakuListener {
-    public execute(name: string, _: ShoukakuPlayer[], moved: boolean): void {
+    public execute(name: string, _: Player[], moved: boolean): void {
         this.client.logger.warn(
             "shoukaku",
             `Node ${name} Disconnected${moved ? ", Moved" : ""}`

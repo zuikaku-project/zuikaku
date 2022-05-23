@@ -1,6 +1,5 @@
 import { Utils } from "#zuikaku/Utils";
 import { MessageButton } from "discord.js";
-import { ShoukakuTrack } from "shoukaku";
 import { Dispatcher } from "./Dispatcher";
 import { Track } from "./Track";
 
@@ -52,10 +51,7 @@ export class Queue {
         }
     }
 
-    public async removeTrack(
-        track: number,
-        range: number
-    ): Promise<ShoukakuTrack[]> {
+    public async removeTrack(track: number, range: number): Promise<Track[]> {
         const spliced = this.tracks.splice(track, range ? range : 1);
         const getGuildDatabase = await this.dispatcher.getGuildDatabase;
         if (getGuildDatabase?.guildPlayer.channelId)

@@ -1,11 +1,11 @@
 import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import { TrackList } from "#zuikaku/Handlers/ShoukakuExtension";
 import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
 import { documentType, ICommandComponent, IUserSchema } from "#zuikaku/types";
 import { createEmbed, createMusicEmbed, Utils } from "#zuikaku/Utils";
 import { randomBytes } from "crypto";
 import { MessageActionRow, MessageSelectMenu } from "discord.js";
-import { ShoukakuTrackList } from "shoukaku";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "add",
@@ -143,7 +143,7 @@ export default class AddPlaylistCommand extends ZuikakuCommand {
 
     private async generateSelectMenus(
         ctx: CommandContext,
-        getTracks: ShoukakuTrackList
+        getTracks: TrackList
     ): Promise<{ trackAuthor: string; trackTitle: string; length: number }[]> {
         const finalSelectMenuTrack: {
             trackAuthor: string;
