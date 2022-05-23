@@ -1,15 +1,9 @@
 import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
-import {
-    ISpotifyLyrics,
-    LavalinkSource,
-    LoadTrackResponse
-} from "#zuikaku/types";
-import petitio from "petitio";
-import shoukaku, { JoinOptions } from "shoukaku";
+import { Response, Source } from "#zuikaku/types";
+import { Connectors, Constants, Shoukaku, VoiceChannelOptions } from "shoukaku";
 import { Dispatcher, EmbedPlayer, Lyrics, PersistentQueue, TrackList } from ".";
 import { PluginManager } from "./Plugin";
-
-const { Constants, Libraries, Shoukaku } = shoukaku;
+import { ShoukakuPlayer, ShoukakuRest } from "./Structures/Shoukaku";
 
 export class ShoukakuHandler extends Shoukaku {
     public plugin = new PluginManager(this, {
@@ -23,19 +17,23 @@ export class ShoukakuHandler extends Shoukaku {
     public embedPlayers = new Map<string, EmbedPlayer>();
     public persistentQueue = new PersistentQueue(this);
     public constructor(public client: ZuikakuClient) {
-        super(new Libraries.DiscordJS(client), client.config.nodes, {
+        super(new Connectors.DiscordJS(client), client.config.nodes, {
             moveOnDisconnect: true,
-            resumable: true,
-            reconnectTries: 3
+            resume: true,
+            reconnectTries: 3,
+            structures: {
+                rest: ShoukakuRest,
+                player: ShoukakuPlayer
+            }
         });
         void this.plugin._init();
     }
 
-    public async handleJoin(opts: JoinOptions): Promise<Dispatcher> {
+    public async handleJoin(opts: VoiceChannelOptions): Promise<Dispatcher> {
         if (this.dispatcher.has(opts.guildId))
             return this.dispatcher.get(opts.guildId)!;
         const getNode = this.getNode();
-        const player = await getNode.joinChannel({
+        const player = await getNode!.joinChannel({
             guildId: opts.guildId,
             channelId: opts.channelId,
             shardId: opts.shardId,
@@ -56,7 +54,7 @@ export class ShoukakuHandler extends Shoukaku {
 
     public async getTracks(
         identifier: string,
-        options?: LavalinkSource
+        options?: Source
     ): Promise<TrackList> {
         const searchTypes: Record<string, string> = {
             soundcloud: "scsearch:",
@@ -67,21 +65,15 @@ export class ShoukakuHandler extends Shoukaku {
                 identifier.search("http") >= 0 ? identifier.search("http") : 0
             )
             .split(" ")[0];
+
         const node = this.getNode();
-        const url = new URL(node.rest.url);
-        url.pathname = "/loadtracks";
         try {
-            const response = await petitio(url)
-                .query(
-                    "identifier",
-                    parseQueryUrl.includes("http")
-                        ? parseQueryUrl
-                        : `${searchTypes[options ?? "youtube"]}${identifier}`
-                )
-                // @ts-expect-error ShoukakuRest#auth is private
-                .header("Authorization", node.rest.auth)
-                .json<LoadTrackResponse>();
-            return new TrackList(response);
+            const response = (await node!.rest.resolve(
+                parseQueryUrl.includes("http")
+                    ? parseQueryUrl
+                    : `${searchTypes[options ?? "youtube"]}${identifier}`
+            ))!;
+            return new TrackList(response as unknown as Response);
         } catch (e) {
             return new TrackList({
                 loadType: "LOAD_FAILED",
@@ -96,25 +88,14 @@ export class ShoukakuHandler extends Shoukaku {
 
     public async getLyrics(query: string): Promise<Lyrics> {
         const node = this.getNode();
-        const url = new URL(node.rest.url);
-        url.pathname = "/lyrics";
-        try {
-            const response = await petitio(url)
-                .query("title", query)
-                // @ts-expect-error ShoukakuRest#auth is private
-                .header("Authorization", node.rest.auth)
-                .json<ISpotifyLyrics>();
-            return new Lyrics(response);
-        } catch {
-            return new Lyrics();
-        }
+        return (node?.rest as ShoukakuRest).getLyrics(query);
     }
 
     public getRandomNode(loadBalancer = true): string {
         const array = [...this.nodes.keys()];
         if (loadBalancer) {
             const sorted = [...this.nodes.values()]
-                .filter(node => node.state === Constants.state.CONNECTED)
+                .filter(node => node.state === Constants.State.CONNECTED)
                 .map(node => ({ name: node.name, players: node.players.size }))
                 .sort((x, i) => x.players - i.players)[0].name;
             const result = sorted || this.getRandomNode(false);
@@ -122,13 +103,13 @@ export class ShoukakuHandler extends Shoukaku {
         }
         const random = Math.floor(Math.random() * array.length) as any;
         const randomNode = this.nodes.get(array[random as number]);
-        if (randomNode!.state === Constants.state.CONNECTED)
+        if (randomNode!.state === Constants.State.CONNECTED)
             return array[random as number];
         let idx = random;
         while (
             idx === random ||
             this.nodes.get(array[random as number])!.state ===
-                Constants.state.CONNECTED
+                Constants.State.CONNECTED
         )
             idx = randomNode;
         return array[random as number];
