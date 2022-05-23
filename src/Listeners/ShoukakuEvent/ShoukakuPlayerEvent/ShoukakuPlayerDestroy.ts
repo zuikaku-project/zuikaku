@@ -9,7 +9,7 @@ import { Player } from "shoukaku";
     emitter: "shoukaku"
 })
 export default class ShoukakuPlayerDestroy extends ZuikakuListener {
-    public async execute(_: string, player: Player): Promise<void> {
+    public async execute(player: Player): Promise<void> {
         const getGuildDatabase = await this.client.database.manager.guilds.get(
             player.connection.guildId
         );

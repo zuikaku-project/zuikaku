@@ -195,6 +195,7 @@ export class Dispatcher {
             this._timeout = null;
         }
         this.player.connection.disconnect();
+        this.shoukaku.emit("playerDestroy", this.player);
         void this.getGuildDatabase.then(guildSettings => {
             if (guildSettings?.guildPlayer.channelId)
                 setTimeout(() => this.getEmbedPlayer?.update(), 500);
