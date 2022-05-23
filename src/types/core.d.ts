@@ -303,14 +303,3 @@ declare module "discord.js" {
         activateCollector: boolean;
     }
 }
-
-declare module "shoukaku" {
-    export interface ShoukakuTrack {
-        isrc?: string;
-    }
-
-    export interface JoinOptions {
-        textId?: string;
-        voiceId?: string;
-    }
-}
