@@ -15,7 +15,9 @@ export class Utils {
         path: string,
         ...args: any[]
     ): Promise<T | undefined> {
-        const file = await import(resolve(path)).then(m => m.default);
+        const file = await import(
+            `${platform() === "win32" ? "/" : ""}${resolve(path)}`
+        ).then(m => m.default);
         return file ? new file(...args) : undefined;
     }
 
@@ -54,10 +56,6 @@ export class Utils {
         return decodeURIComponent(
             `${platform() === "win32" ? "" : "/"}${path}`
         );
-    }
-
-    public static pathStringToURLString(path: string): string {
-        return new URL(`file://${path}`).toString();
     }
 
     public static encodeDecodeBase64String(
