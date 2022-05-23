@@ -10,8 +10,8 @@
         "compile:ts": "tsc --build tsconfig.json",
         "lint": "npm run pretty && eslint src --ext .ts",
         "lint:fix": "npm run pretty:write && eslint src --ext .ts --fix",
-        "pretty": "prettier --check 'src/**/*.ts'",
-        "pretty:write": "prettier --write 'src/**/*.ts'",
+        "pretty": "prettier --check src/**/*.ts",
+        "pretty:write": "prettier --write src/**/*.ts",
         "start": "node --es-module-specifier-resolution=node -r tsconfig-paths/register .",
         "vps": "npm run build && npm start"
     },
@@ -76,7 +76,7 @@
         "typescript": "4.6.4"
     },
     "dependencies": {
-        "cheerio": "1.0.0-rc.11",
+        "cheerio": "1.0.0-rc.10",
         "colorette": "2.0.16",
         "cors": "2.8.5",
         "dayjs": "1.11.2",
@@ -86,7 +86,7 @@
         "js-yaml": "4.1.0",
         "mongoose": "6.3.4",
         "petitio": "1.4.0",
-        "shoukaku": "3.0.1",
+        "shoukaku": "3.0.2",
         "tslib": "2.4.0"
     },
     "optionalDependencies": {
