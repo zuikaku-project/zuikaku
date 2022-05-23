@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access */
-import { Node, Player, VoiceChannelOptions } from "shoukaku";
-import { OPCodes } from "shoukaku/dist/src/Constants";
+import { Node, Player, VoiceChannelOptions, Constants } from "shoukaku";
 
 export class ShoukakuPlayer extends Player {
     public constructor(node: Node, options: VoiceChannelOptions) {
@@ -8,10 +7,10 @@ export class ShoukakuPlayer extends Player {
     }
 
     public onLavalinkMessage(json: any): void {
-        if (json.op === OPCodes.PLAYER_UPDATE) {
+        if (json.op === Constants.OPCodes.PLAYER_UPDATE) {
             this.position = json.state.position;
             this.node.manager.emit("playerUpdate", this, json);
-        } else if (json.op === OPCodes.EVENT) {
+        } else if (json.op === Constants.OPCodes.EVENT) {
             this.extendOnPlayerEvent(json);
         } else {
             this.node.emit(
