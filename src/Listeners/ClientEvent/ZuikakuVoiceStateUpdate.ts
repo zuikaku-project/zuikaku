@@ -9,7 +9,10 @@ import { VoiceState } from "discord.js";
     emitter: "client"
 })
 export default class ZuikakuVoiceStateUpdate extends ZuikakuListener {
-    public execute(oldState: VoiceState, newState: VoiceState): any {
+    public async execute(
+        oldState: VoiceState,
+        newState: VoiceState
+    ): Promise<void> {
         const dispatcher = this.client.shoukaku.dispatcher.get(
             newState.guild.id
         );
@@ -23,7 +26,7 @@ export default class ZuikakuVoiceStateUpdate extends ZuikakuListener {
             try {
                 if (dispatcher._timeout) clearTimeout(dispatcher._timeout);
                 if (!dispatcher.queueChecker._isStopped)
-                    dispatcher.destroyPlayer();
+                    await dispatcher.destroyPlayer();
                 return;
             } catch (e) {
                 this.client.logger.error(

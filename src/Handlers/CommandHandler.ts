@@ -110,7 +110,7 @@ export class CommandHandler extends Collection<string, ICommandComponent> {
                         `File ${files} is not valid router file`
                     );
                     disabledCount++;
-                    return;
+                    continue;
                 }
                 const category = files
                     .split(/\/|\\/g)

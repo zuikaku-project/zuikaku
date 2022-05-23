@@ -1,5 +1,6 @@
 import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
 import { documentType, IGuildSchema } from "#zuikaku/types";
+import { Utils } from "#zuikaku/Utils";
 import { Guild, TextBasedChannel, User } from "discord.js";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 import { EmbedPlayer } from "./EmbedPlayer";
@@ -27,53 +28,83 @@ export class PersistentQueue {
 
     public async assign(): Promise<void> {
         const allGuildDatabase = this._client.database.manager.guilds.cache.map(
-            ({ guildId }) => ({ guildId })
+            ({ guildId, guildPlayer, persistentQueue }) => ({
+                guildId,
+                guildPlayer,
+                persistentQueue
+            })
         );
-        for (const { guildId } of allGuildDatabase) {
+        for (const {
+            guildId,
+            guildPlayer,
+            persistentQueue
+        } of allGuildDatabase) {
             const guild = this._client.guilds.cache.get(guildId);
-            if (!guild) return;
-            const guildDatabase = await this.getGuildDatabase(guildId);
-            await this.assignGuildDatabase(guild, guildDatabase);
+            if (!guild) continue;
+
+            const isValidPersistent =
+                Boolean(persistentQueue.textId) &&
+                (await guild.channels
+                    .fetch(persistentQueue.voiceId)
+                    .then(x => Boolean(x?.isText()))
+                    .catch(() => false));
+            const isValidGuildPlayer =
+                Boolean(guildPlayer.channelId) &&
+                Boolean(guildPlayer.messageId);
+
+            if (isValidGuildPlayer) {
+                await this.assignGuildPlayer(guild, guildPlayer);
+            }
+            await Utils.delay(3000);
+            if (isValidPersistent) {
+                await this.assignPersistentQueue(
+                    guild,
+                    guildPlayer,
+                    persistentQueue
+                );
+            }
         }
     }
 
-    public async assignGuildDatabase(
+    private async assignGuildPlayer(
         guild: Guild,
-        guildDatabase: documentType<IGuildSchema> | undefined
+        guildPlayer: IGuildSchema["guildPlayer"]
     ): Promise<void> {
-        if (guildDatabase?.guildPlayer.channelId) {
-            const channelGuildPlayer = this._client.channels.resolve(
-                guildDatabase.guildPlayer.channelId
-            );
-            if (channelGuildPlayer) {
-                const messageGuildPlayer = await (
-                    channelGuildPlayer as TextBasedChannel
-                ).messages
-                    .fetch(guildDatabase.guildPlayer.messageId)
-                    .catch(() => undefined);
-                if (
-                    messageGuildPlayer &&
-                    messageGuildPlayer.author.id === this._client.user?.id
-                ) {
-                    const embedPlayer = new EmbedPlayer(this._client, guild);
-                    await embedPlayer.fetch(!embedPlayer.channel);
-                    await embedPlayer.update();
-                }
+        const channelGuildPlayer = this._client.channels.resolve(
+            guildPlayer.channelId
+        );
+        if (channelGuildPlayer) {
+            const messageGuildPlayer = await (
+                channelGuildPlayer as TextBasedChannel
+            ).messages
+                .fetch(guildPlayer.messageId)
+                .catch(() => undefined);
+            if (
+                messageGuildPlayer &&
+                messageGuildPlayer.author.id === this._client.user?.id
+            ) {
+                const embedPlayer = new EmbedPlayer(this._client, guild);
+                await embedPlayer.fetch(!embedPlayer.channel);
+                await embedPlayer.update();
             }
         }
-        if (guildDatabase?.persistentQueue.textId) {
-            if (
-                guildDatabase.persistentQueue.playerMessageId !==
-                guildDatabase.guildPlayer.messageId
-            ) {
+    }
+
+    private async assignPersistentQueue(
+        guild: Guild,
+        guildPlayer: IGuildSchema["guildPlayer"],
+        persistentQueue: IGuildSchema["persistentQueue"]
+    ): Promise<void> {
+        if (persistentQueue.textId) {
+            if (persistentQueue.playerMessageId !== guildPlayer.messageId) {
                 const channelPersistence = this._client.channels.resolve(
-                    guildDatabase.persistentQueue.textId
+                    persistentQueue.textId
                 );
                 if (channelPersistence) {
                     const messagePersistent = await (
                         channelPersistence as TextBasedChannel
                     ).messages
-                        .fetch(guildDatabase.persistentQueue.playerMessageId!)
+                        .fetch(persistentQueue.playerMessageId!)
                         .catch(() => undefined);
                     if (messagePersistent) {
                         await messagePersistent.delete().catch(() => null);
@@ -82,36 +113,28 @@ export class PersistentQueue {
             }
             const dispatcher = await this._shoukaku.handleJoin({
                 guildId: guild.id,
-                channelId: guildDatabase.persistentQueue.voiceId,
+                channelId: persistentQueue.voiceId,
                 shardId: guild.shardId,
                 deaf: true,
-                textId: guildDatabase.persistentQueue.textId,
-                voiceId: guildDatabase.persistentQueue.voiceId
+                textId: persistentQueue.textId,
+                voiceId: persistentQueue.voiceId
             });
-            if (guildDatabase.persistentQueue.trackRepeat)
-                await dispatcher.setTrackRepeat();
-            if (guildDatabase.persistentQueue.queueRepeat)
-                await dispatcher.setQueueRepeat();
-            if (guildDatabase.persistentQueue.current) {
-                const currentPersistent = guildDatabase.persistentQueue.current;
+            if (persistentQueue.trackRepeat) await dispatcher.setTrackRepeat();
+            if (persistentQueue.queueRepeat) await dispatcher.setQueueRepeat();
+            if (persistentQueue.current) {
+                const currentPersistent = persistentQueue.current;
                 // @ts-expect-error Not export User
                 const requester = new User(
                     this._client,
                     currentPersistent._requester
                 ) as User;
-                guildDatabase.persistentQueue.current = new Track(
-                    currentPersistent
-                );
-                guildDatabase.persistentQueue.current.setRequester(requester);
-                guildDatabase.persistentQueue.current.setShoukaku(
-                    this._shoukaku
-                );
-                await dispatcher.queue.addTrack(
-                    guildDatabase.persistentQueue.current
-                );
+                persistentQueue.current = new Track(currentPersistent);
+                persistentQueue.current.setRequester(requester);
+                persistentQueue.current.setShoukaku(this._shoukaku);
+                await dispatcher.queue.addTrack(persistentQueue.current);
             }
-            if (guildDatabase.persistentQueue.tracks.length) {
-                guildDatabase.persistentQueue.tracks.map(track => {
+            if (persistentQueue.tracks.length) {
+                persistentQueue.tracks.map(track => {
                     // @ts-expect-error Not export User
                     const requester = new User(
                         this._client,
@@ -121,11 +144,9 @@ export class PersistentQueue {
                     track.setRequester(requester);
                     track.setShoukaku(this._shoukaku);
                 });
-                await dispatcher.queue.addTrack(
-                    guildDatabase.persistentQueue.tracks
-                );
+                await dispatcher.queue.addTrack(persistentQueue.tracks);
             }
-            await dispatcher.playTrack(guildDatabase.persistentQueue.position);
+            await dispatcher.playTrack(persistentQueue.position);
             this._client.logger.info(
                 "persistent queue",
                 `Persistent Queue has been assigned for guild ${guild.name}`

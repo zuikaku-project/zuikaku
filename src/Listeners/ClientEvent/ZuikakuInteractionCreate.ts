@@ -402,7 +402,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         if (embedPlayer?.channel?.id === interaction.channelId) {
             switch (getDecodeCommand) {
                 case "STOP":
-                    dispatcher.destroyPlayer();
+                    await dispatcher.destroyPlayer();
                     break;
                 case "PLAY-PAUSE":
                     await dispatcher.setPaused(!dispatcher.player.paused);
@@ -429,7 +429,7 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         } else {
             switch (getDecodeCommand) {
                 case "STOP":
-                    dispatcher.destroyPlayer();
+                    await dispatcher.destroyPlayer();
                     break;
                 case "PLAY-PAUSE":
                     await dispatcher.setPaused(!dispatcher.player.paused);

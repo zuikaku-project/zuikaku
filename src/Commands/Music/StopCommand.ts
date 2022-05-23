@@ -28,7 +28,7 @@ export default class StopCommand extends ZuikakuCommand {
                 ?.guildPlayer.channelId === ctx.channel?.id;
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const dispatcher = this.client.shoukaku.dispatcher.get(ctx.guild!.id)!;
-        dispatcher.destroyPlayer();
+        await dispatcher.destroyPlayer();
         await ctx
             .send({
                 embeds: [

@@ -184,7 +184,7 @@ export class Dispatcher {
         return this;
     }
 
-    public destroyPlayer(): this {
+    public async destroyPlayer(): Promise<this> {
         this.queueChecker._isStopped = true;
         if (this.queueMessage.lastPlayerMessage)
             this.queueMessage.lastPlayerMessage.delete().catch(() => null);
@@ -194,12 +194,20 @@ export class Dispatcher {
             clearTimeout(this._timeout);
             this._timeout = null;
         }
+        const guildDatabase = await this.getGuildDatabase;
+        if (guildDatabase?.guildPlayer.channelId) {
+            await this.client.database.manager.guilds
+                .reset(this.guildId, "persistentQueue")
+                .catch(() => null);
+        } else {
+            await this.client.database.manager.guilds
+                .drop(this.guildId)
+                .catch(() => null);
+        }
         this.player.connection.disconnect();
         this.shoukaku.emit("playerDestroy", this.player);
-        void this.getGuildDatabase.then(guildSettings => {
-            if (guildSettings?.guildPlayer.channelId)
-                setTimeout(() => this.getEmbedPlayer?.update(), 500);
-        });
+        if (guildDatabase?.guildPlayer.channelId)
+            setTimeout(() => this.getEmbedPlayer?.update(), 500);
         return this;
     }
 
@@ -213,7 +221,7 @@ export class Dispatcher {
                     }
                 })
                 .catch(() => null);
-            this.destroyPlayer();
+            void this.destroyPlayer();
         }, time).unref();
         return this._timeout;
     }

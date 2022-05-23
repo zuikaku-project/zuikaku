@@ -25,7 +25,7 @@ export class ListenerHandler extends Collection<string, IListenerComponent> {
                 );
                 if (event === undefined) {
                     console.log(event, files);
-                    return;
+                    continue;
                 }
                 this.set(event.meta.name, event);
                 const path = files;
