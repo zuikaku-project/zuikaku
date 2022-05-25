@@ -34,11 +34,14 @@ api:
     cookie:
         instagram: Instagram Cookie # required
 
-# Lavalink Nodes (https://github.com/Zuikaku-Org/lavalink/) required
-nodes:
-    - name: Node Name # required
-      url: Node URI # required
-      auth: Node Auth # required
+lavalink:
+    # Lavalink Nodes (https://github.com/Zuikaku-Org/lavalink/) required
+    nodes:
+        - name: Node Name # required
+          url: Node URI # required
+          auth: Node Auth # required
+
+    searchStrategy: How Zuikaku search the track # required
 
 # Mongo Database (https://mongodb.com)
 mongodb:
