@@ -8,6 +8,7 @@ import {
     User
 } from "discord.js";
 import { Request, Response } from "express";
+import { LavalinkSearchPrefix } from "./enum";
 import { UnresolvedPluginTrack } from "./plugin";
 
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
@@ -36,13 +37,16 @@ export interface IConfig {
             instagram: string;
         };
     };
-    nodes: {
-        auth: string;
-        group?: string;
-        url: string;
-        name: string;
-        secure?: boolean;
-    }[];
+    lavalink: {
+        nodes: {
+            auth: string;
+            group?: string;
+            url: string;
+            name: string;
+            secure?: boolean;
+        }[];
+        searchStrategy: keyof typeof LavalinkSearchPrefix;
+    };
     mongodb: {
         url: string;
         dbName: {

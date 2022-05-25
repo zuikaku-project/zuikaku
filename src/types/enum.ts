@@ -17,3 +17,10 @@ export enum ShoukakuSocketState {
     DISCONNECTING = 2,
     DISCONNECTED = 3
 }
+
+export enum LavalinkSearchPrefix {
+    youtube = "ytsearch:",
+    youtubemusic = "ytmsearch:",
+    soundcloud = "scsearch:",
+    spotify = "spsearch:"
+}
