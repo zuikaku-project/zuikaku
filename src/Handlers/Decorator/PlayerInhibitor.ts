@@ -1,7 +1,7 @@
-import { ZuikakuInhibitor } from "./ZuikakuInhibitor";
+import { BaseInhibitor } from "./BaseInhibitor";
 
 export function isMusicPlaying(): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (!dispatcher) {
             return "I am sorry but I am not playing anything right now.";
@@ -10,7 +10,7 @@ export function isMusicPlaying(): any {
 }
 
 export function isUserInTheVoiceChannel(): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         if (!ctx.member.voice.channel?.id) {
             return "I am sorry but you are not in a voice channel.";
         }
@@ -18,7 +18,7 @@ export function isUserInTheVoiceChannel(): any {
 }
 
 export function isSameVoiceChannel(): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         const queue = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (!ctx.guild?.me?.voice.channel?.id) return undefined;
         if (ctx.member.voice.channel?.id !== queue?.voiceId) {
@@ -28,7 +28,7 @@ export function isSameVoiceChannel(): any {
 }
 
 export function isSameTextChannel(): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (dispatcher && ctx.channel?.id !== dispatcher.textId) {
             return `I am sorry but this player can only be used in ${
@@ -41,7 +41,7 @@ export function isSameTextChannel(): any {
 }
 
 export function isValidVoiceChannel(): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         if (!ctx.member.voice.channel?.joinable) {
             return "I am sorry but I cannot join your voice channel. Please make sure I have the permission to join your voice channel.";
         }
@@ -56,7 +56,7 @@ export function isValidVoiceChannel(): any {
 }
 
 export function isQueueReachLimit(): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         const dispatcher = ctx.client.shoukaku.dispatcher.get(ctx.guild!.id);
         if (dispatcher && dispatcher.queue.tracks.length > 250) {
             return "I am sorry but the queue is full (250 tracks).";
@@ -65,7 +65,7 @@ export function isQueueReachLimit(): any {
 }
 
 export function isNoNodesAvailable(lyrics = false): any {
-    return ZuikakuInhibitor(ctx => {
+    return BaseInhibitor(ctx => {
         if (!Array.from(ctx.client.shoukaku.nodes).length) {
             return `I am sorry but I cannot ${
                 lyrics ? "get lyrics" : "play music"

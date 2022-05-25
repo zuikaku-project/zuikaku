@@ -2,7 +2,7 @@
 import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { createMusicEmbed } from "#zuikaku/Utils/GenerateEmbed";
 
-export function ZuikakuInhibitor<
+export function BaseInhibitor<
     T extends (
         ctx: CommandContext,
         ...args: any[]
