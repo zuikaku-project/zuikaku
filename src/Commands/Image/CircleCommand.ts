@@ -1,4 +1,7 @@
-import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import {
+    isValidAttachment,
+    ZuikakuDecorator
+} from "#zuikaku/Handlers/Decorator";
 import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "#zuikaku/types";
@@ -7,7 +10,7 @@ import { MessageAttachment } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "circle",
-    description: "Generate circle image",
+    description: "Generate a circle image",
     usage: "{CATEGORY} circle [image]",
     clientPermissions: ["SEND_MESSAGES", "EMBED_LINKS"],
     slash: {
@@ -17,16 +20,24 @@ import { MessageAttachment } from "discord.js";
                 name: "image",
                 type: "STRING",
                 description: "User, Emoji, or Image"
+            },
+            {
+                name: "file",
+                type: "ATTACHMENT",
+                description: "Image File"
             }
         ]
     }
 })
 export default class CircleCommand extends ZuikakuCommand {
+    @isValidAttachment("file", "image")
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const parse = Utils.parseMsg(
             ctx,
-            ctx.options?.getString("image") ?? undefined
+            ctx.options?.getString("image") ??
+                ctx.options?.getAttachment("file")?.url ??
+                undefined
         );
         const img = await this.client.apis.canvas.requestImageAPI("circle", {
             url: parse

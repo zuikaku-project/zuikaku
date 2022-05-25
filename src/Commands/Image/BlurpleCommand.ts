@@ -1,4 +1,7 @@
-import { ZuikakuDecorator } from "#zuikaku/Handlers/Decorator";
+import {
+    isValidAttachment,
+    ZuikakuDecorator
+} from "#zuikaku/Handlers/Decorator";
 import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "#zuikaku/types";
@@ -18,16 +21,24 @@ import petitio from "petitio";
                 name: "image",
                 type: "STRING",
                 description: "User, Emoji, or Image"
+            },
+            {
+                name: "file",
+                type: "ATTACHMENT",
+                description: "Image file"
             }
         ]
     }
 })
 export default class BlurpleCommand extends ZuikakuCommand {
+    @isValidAttachment("file", "image")
     public async execute(ctx: CommandContext): Promise<void> {
         if (ctx.isInteraction() && !ctx.deferred) await ctx.deferReply();
         const parse = Utils.parseMsg(
             ctx,
-            ctx.options?.getString("image") ?? undefined
+            ctx.options?.getString("image") ??
+                ctx.options?.getAttachment("file")?.url ??
+                undefined
         );
         const { url } = await petitio(
             `https://neko-love.xyz/api/v2/blurple?url=${parse}`

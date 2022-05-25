@@ -4,6 +4,7 @@ import {
     isQueueReachLimit,
     isSameVoiceChannel,
     isUserInTheVoiceChannel,
+    isValidAttachment,
     isValidVoiceChannel,
     ZuikakuDecorator
 } from "#zuikaku/Handlers/Decorator";
@@ -12,7 +13,16 @@ import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "#zuikaku/types";
 import { createEmbed, createMusicEmbed, Utils } from "#zuikaku/Utils";
-import { MessageActionRow, MessageSelectMenu, Util } from "discord.js";
+import {
+    CommandInteraction,
+    Constants,
+    MessageActionRow,
+    MessageSelectMenu,
+    Modal,
+    ModalActionRowComponent,
+    TextInputComponent,
+    Util
+} from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "play",
@@ -25,8 +35,12 @@ import { MessageActionRow, MessageSelectMenu, Util } from "discord.js";
             {
                 name: "query",
                 type: "STRING",
-                description: "Song query",
-                required: true
+                description: "Song query"
+            },
+            {
+                name: "file",
+                type: "ATTACHMENT",
+                description: "Audio File"
             },
             {
                 name: "search",
@@ -43,37 +57,48 @@ export default class PlayCommand extends ZuikakuCommand {
     @isSameVoiceChannel()
     @isQueueReachLimit()
     @isNoNodesAvailable()
+    @isValidAttachment("file", "audio")
     public async execute(ctx: CommandContext): Promise<void> {
+        if (
+            ctx.isCommand() &&
+            !ctx.options?.getAttachment("file") &&
+            !ctx.options?.getString("query")
+        ) {
+            const modal = new Modal()
+                .setCustomId(
+                    Utils.encodeDecodeBase64String(
+                        `${this.meta.category!}.${
+                            this.meta.name
+                        }_modalTextInput`
+                    )
+                )
+                .setTitle(`Modal's Play Command`)
+                .addComponents(
+                    new MessageActionRow<ModalActionRowComponent>().addComponents(
+                        new TextInputComponent()
+                            .setCustomId(`songQuery`)
+                            .setLabel("Song Query")
+                            .setPlaceholder("Enter song query here")
+                            .setStyle(Constants.TextInputStyles.SHORT)
+                            .setRequired(true)
+                    )
+                );
+            await (ctx.context as CommandInteraction).showModal(modal);
+            return undefined;
+        }
+
         const getGuildDatabase = await this.client.database.manager.guilds.get(
             ctx.guild!.id
         );
         const fromGuildPlayer =
             getGuildDatabase?.guildPlayer.channelId === ctx.channel?.id;
+
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
-        if (
-            getGuildDatabase?.guildPlayer.channelId &&
-            getGuildDatabase.guildPlayer.channelId !== ctx.channel!.id
-        ) {
-            await ctx.send({
-                embeds: [
-                    createEmbed(
-                        "info",
-                        "**<a:decline:879311910045097984> | Operation Canceled. " +
-                            `This command is restrictred to ${
-                                this.client.channels
-                                    .resolve(
-                                        getGuildDatabase.guildPlayer.channelId
-                                    )
-                                    ?.toString() ?? "unknown"
-                            }**`
-                    )
-                ]
-            });
-            return undefined;
-        }
 
         const search =
+            ctx.fields?.getTextInputValue("songQuery") ??
+            ctx.options?.getAttachment("file")?.url ??
             ctx.options?.getString("query") ??
             ctx.options?.getMessage("message")?.content ??
             ctx.args.join(" ");
@@ -92,7 +117,7 @@ export default class PlayCommand extends ZuikakuCommand {
             guildId: ctx.guild!.id,
             channelId: ctx.member.voice.channel!.id,
             shardId: ctx.guild!.shard.id,
-            textId: ctx.channel!.id,
+            textId: getGuildDatabase?.guildPlayer.channelId ?? ctx.channel!.id,
             voiceId: ctx.member.voice.channel!.id
         });
         const getTracks = await this.client.shoukaku.getTracks(search.trim());
