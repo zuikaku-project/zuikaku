@@ -26,6 +26,140 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         if (!interaction.inGuild()) return;
         const context = new CommandContext(this.client, interaction);
 
+        if (interaction.isCommand()) {
+            const commandArray = this.client.command.filter(
+                x => x.meta.slash !== undefined
+            );
+            const command =
+                commandArray.find(
+                    ({ meta }) =>
+                        meta.category === interaction.commandName &&
+                        meta.name ===
+                            interaction.options.getSubcommandGroup(false)
+                ) ??
+                commandArray.find(
+                    ({ meta }) =>
+                        meta.category === interaction.commandName &&
+                        meta.name === interaction.options.getSubcommand(false)
+                ) ??
+                commandArray.find(
+                    ({ meta }) => meta.name === interaction.commandName
+                );
+            if (command) {
+                try {
+                    if (await this.runCommandCheck(context, command)) return;
+                    await command.execute(context);
+                } catch (error: any) {
+                    this.client.emit("zuikakuError", context, error, command);
+                } finally {
+                    if (
+                        command.meta.devOnly &&
+                        !this.client.options.ownerId.includes(context.author.id)
+                    )
+                        // eslint-disable-next-line no-unsafe-finally
+                        return;
+                    this.client.logger.info(
+                        "command manager",
+                        `${(interaction.member as GuildMember).user.tag} •> ` +
+                            `${command.meta.name} <•> ` +
+                            `${interaction.guild!.name} <•> ` +
+                            `#${(interaction.channel as TextChannel).name}`
+                    );
+                }
+            } else {
+                await interaction.reply({
+                    embeds: [
+                        createEmbed(
+                            "info",
+                            "**<a:decline:879311910045097984> | Operation Canceled. Invalid Slash Command**"
+                        )
+                    ],
+                    ephemeral: true
+                });
+            }
+        }
+
+        if (interaction.isContextMenu()) {
+            const command = this.client.command.find(
+                x => x.meta.contextChat === interaction.commandName
+            );
+            if (command) {
+                try {
+                    if (await this.runCommandCheck(context, command)) return;
+                    await command.execute(context);
+                } catch (error: any) {
+                    this.client.emit("zuikakuError", context, error, command);
+                } finally {
+                    if (
+                        command.meta.devOnly &&
+                        !this.client.options.ownerId.includes(context.author.id)
+                    )
+                        // eslint-disable-next-line no-unsafe-finally
+                        return;
+                    this.client.logger.info(
+                        "command manager",
+                        `${(interaction.member as GuildMember).user.tag} •> ` +
+                            `${command.meta.name} <•> ` +
+                            `${interaction.guild!.name} <•> ` +
+                            `#${(interaction.channel as TextChannel).name}`
+                    );
+                }
+            } else {
+                await interaction.reply({
+                    embeds: [
+                        createEmbed(
+                            "info",
+                            "**<a:decline:879311910045097984> | Operation Canceled. Invalid Slash Command**"
+                        )
+                    ],
+                    ephemeral: true
+                });
+            }
+        }
+
+        if (interaction.isModalSubmit()) {
+            const [category, commandName] = Utils.encodeDecodeBase64String(
+                interaction.customId,
+                true
+            ).split(/[.]|_/g);
+
+            const command = this.client.command.find(
+                x => x.meta.category === category && x.meta.name === commandName
+            );
+            if (command) {
+                try {
+                    if (await this.runCommandCheck(context, command)) return;
+                    await command.execute(context);
+                } catch (error: any) {
+                    this.client.emit("zuikakuError", context, error, command);
+                } finally {
+                    if (
+                        command.meta.devOnly &&
+                        !this.client.options.ownerId.includes(context.author.id)
+                    )
+                        // eslint-disable-next-line no-unsafe-finally
+                        return;
+                    this.client.logger.info(
+                        "command manager",
+                        `${(interaction.member as GuildMember).user.tag} •> ` +
+                            `${command.meta.name} <•> ` +
+                            `${interaction.guild!.name} <•> ` +
+                            `#${(interaction.channel as TextChannel).name}`
+                    );
+                }
+            } else {
+                await interaction.reply({
+                    embeds: [
+                        createEmbed(
+                            "info",
+                            "**<a:decline:879311910045097984> | Operation Canceled. Invalid Slash Command**"
+                        )
+                    ],
+                    ephemeral: true
+                });
+            }
+        }
+
         if (interaction.isButton()) {
             try {
                 const decodeBase64Interaction = Utils.encodeDecodeBase64String(
@@ -225,97 +359,6 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
                         await interaction.respond(getPlaylistData);
                     }
                 }
-            }
-        }
-
-        if (interaction.isContextMenu()) {
-            const command = this.client.command.find(
-                x => x.meta.contextChat === interaction.commandName
-            );
-            if (command) {
-                try {
-                    if (await this.runCommandCheck(context, command)) return;
-                    await command.execute(context);
-                } catch (error: any) {
-                    this.client.emit("zuikakuError", context, error, command);
-                } finally {
-                    if (
-                        command.meta.devOnly &&
-                        !this.client.options.ownerId.includes(context.author.id)
-                    )
-                        // eslint-disable-next-line no-unsafe-finally
-                        return;
-                    this.client.logger.info(
-                        "command manager",
-                        `${(interaction.member as GuildMember).user.tag} •> ` +
-                            `${command.meta.name} <•> ` +
-                            `${interaction.guild!.name} <•> ` +
-                            `#${(interaction.channel as TextChannel).name}`
-                    );
-                }
-            } else {
-                await interaction.reply({
-                    embeds: [
-                        createEmbed(
-                            "info",
-                            "**<a:decline:879311910045097984> | Operation Canceled. Invalid Slash Command**"
-                        )
-                    ],
-                    ephemeral: true
-                });
-            }
-        }
-
-        if (interaction.isCommand()) {
-            const commandArray = this.client.command.filter(
-                x => x.meta.slash !== undefined
-            );
-            const command =
-                commandArray.find(
-                    ({ meta }) =>
-                        meta.category === interaction.commandName &&
-                        meta.name ===
-                            interaction.options.getSubcommandGroup(false)
-                ) ??
-                commandArray.find(
-                    ({ meta }) =>
-                        meta.category === interaction.commandName &&
-                        meta.name === interaction.options.getSubcommand(false)
-                ) ??
-                commandArray.find(
-                    ({ meta }) => meta.name === interaction.commandName
-                );
-            if (command) {
-                try {
-                    if (await this.runCommandCheck(context, command)) return;
-                    await command.execute(context);
-                } catch (error: any) {
-                    this.client.emit("zuikakuError", context, error, command);
-                } finally {
-                    if (
-                        command.meta.devOnly &&
-                        !this.client.options.ownerId.includes(context.author.id)
-                    )
-                        // eslint-disable-next-line no-unsafe-finally
-                        return;
-                    this.client.logger.info(
-                        "command manager",
-                        `${(interaction.member as GuildMember).user.tag} •> ` +
-                            `${command.meta.name} <•> ` +
-                            `${interaction.guild!.name} <•> ` +
-                            `#${(interaction.channel as TextChannel).name}`
-                    );
-                }
-            } else {
-                await interaction.reply({
-                    embeds: [
-                        createEmbed(
-                            "info",
-                            "**<a:decline:879311910045097984> | Operation Canceled. Invalid Slash Command**"
-                        )
-                    ],
-                    ephemeral: true
-                });
             }
         }
     }

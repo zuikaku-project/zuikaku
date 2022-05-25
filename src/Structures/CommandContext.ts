@@ -19,6 +19,8 @@ import {
     MessageMentions,
     MessageOptions,
     MessagePayload,
+    ModalSubmitFieldsResolver,
+    ModalSubmitInteraction,
     SelectMenuInteraction,
     TextBasedChannel,
     User
@@ -34,6 +36,7 @@ export class CommandContext {
             | ContextMenuInteraction
             | Interaction
             | Message
+            | ModalSubmitInteraction
             | SelectMenuInteraction,
         public args: string[] = []
     ) {}
@@ -83,15 +86,20 @@ export class CommandContext {
     }
 
     public get deferred(): boolean {
-        return this.context instanceof Interaction
-            ? (this.context as CommandInteraction).deferred
+        return this.context instanceof CommandInteraction
+            ? this.context.deferred
             : false;
     }
 
     public get options(): CommandInteractionOptionResolver | null {
-        return this.context instanceof Interaction
-            ? ((this.context as CommandInteraction)
-                  .options as CommandInteractionOptionResolver)
+        return this.context instanceof CommandInteraction
+            ? (this.context.options as CommandInteractionOptionResolver)
+            : null;
+    }
+
+    public get fields(): ModalSubmitFieldsResolver | null {
+        return this.context instanceof ModalSubmitInteraction
+            ? this.context.fields
             : null;
     }
 
