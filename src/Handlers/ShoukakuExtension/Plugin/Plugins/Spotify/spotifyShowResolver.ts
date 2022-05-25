@@ -25,10 +25,10 @@ export default class spotifyShowResolver extends ZuikakuPlugin {
                 );
             }
             const spotifyShow: SpotifyShow = await petitio(
-                `${this.plugin.spotifyBaseURL}/shows/${trackId}`
+                `${this.plugin.baseUrl.spotify}/shows/${trackId}`
             )
                 .query("market", "US")
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             let nextPage = spotifyShow.episodes.next;
             let pageLoaded = 1;
@@ -40,7 +40,7 @@ export default class spotifyShowResolver extends ZuikakuPlugin {
             ) {
                 const spotifyEpisodePage: SpotifyShow["episodes"] =
                     await petitio(nextPage)
-                        .header("Authorization", this.plugin.spotifyToken)
+                        .header("Authorization", this.plugin.token.spotify)
                         .json();
                 spotifyShow.episodes.items.push(...spotifyEpisodePage.items);
                 nextPage = spotifyEpisodePage.next;

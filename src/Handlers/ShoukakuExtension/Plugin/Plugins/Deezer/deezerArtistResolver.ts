@@ -30,10 +30,10 @@ export default class deezerArtistResolver extends ZuikakuPlugin {
                 );
             }
             const deezerArtist: DeezerArtist = await petitio(
-                `${this.plugin.deezerBaseURL}/artist/${trackId}`
+                `${this.plugin.baseUrl.deezer}/artist/${trackId}`
             ).json();
             const { data }: DeezerData = await petitio(
-                `${this.plugin.deezerBaseURL}/artist/${trackId}/top?limit=50`
+                `${this.plugin.baseUrl.deezer}/artist/${trackId}/top?limit=50`
             ).json();
             const unresolvedDeezerTracks = data.map(deezerTrack => {
                 const isrc = deezerTrack.isrc ?? "";

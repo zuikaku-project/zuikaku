@@ -20,17 +20,13 @@ export class PluginManager {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
     };
 
-    public readonly appleRegex!: RegExp;
-    public readonly deezerRegex!: RegExp;
-    public readonly spotifyRegex!: RegExp;
-    public readonly appleBaseURL!: string;
-    public readonly deezerBaseURL!: string;
-    public readonly spotifyBaseURL!: string;
-    public readonly appleToken!: string;
-    public readonly spotifyToken!: string;
-    public readonly appleResolver!: Collection<string, IPluginComponent>;
-    public readonly deezerResolver!: Collection<string, IPluginComponent>;
-    public readonly spotifyResolver!: Collection<string, IPluginComponent>;
+    public readonly regex!: Record<"apple" | "deezer" | "spotify", RegExp>;
+    public readonly baseUrl!: Record<"apple" | "deezer" | "spotify", string>;
+    public readonly token!: Record<"apple" | "spotify", string>;
+    public readonly resolver!: Record<
+        "apple" | "deezer" | "spotify",
+        Collection<string, IPluginComponent>
+    >;
 
     private readonly _getTracks!: (
         query: string,
@@ -43,49 +39,43 @@ export class PluginManager {
         public shoukaku: ShoukakuHandler,
         public pluginOptions: IPluginOptions
     ) {
-        Object.defineProperty(this, "_getTracks", {
-            value: this.shoukaku.getTracks.bind(this.shoukaku)
-        });
-        Object.defineProperty(this, "appleRegex", {
-            value: /(?<link>(?:https:\/\/music\.apple\.com\/)(?:.+)?(?<type>artist|album|music-video|playlist)\/(?<title>[\w\-.]\/[\w\-.]+|[^&]+)\/(?<id>[\w\-.]\/[\w\-.]+|[^&]+))/
-        });
-        Object.defineProperty(this, "deezerRegex", {
-            value: /(?<link>(?:https?:\/\/|)?(?:www\.)?deezer\.com\/(?:\w{2}\/)?(?<type>track|album|playlist|artist)\/(?<id>\d+))/
-        });
-        Object.defineProperty(this, "spotifyRegex", {
-            value: /(?<link>(?:https:\/\/open\.spotify\.com\/(?:user\/[A-Za-z0-9]+\/)?|spotify:)(?<type>album|playlist|track|artist|episode|show)(?:[/:])(?<id>[A-Za-z0-9]+).*$)/
-        });
-        Object.defineProperty(this, "appleBaseURL", {
-            value: "https://amp-api.music.apple.com/v1/catalog/us"
-        });
-        Object.defineProperty(this, "deezerBaseURL", {
-            value: "https://api.deezer.com"
-        });
-        Object.defineProperty(this, "spotifyBaseURL", {
-            value: "https://api.spotify.com/v1"
-        });
-        Object.defineProperty(this, "appleToken", {
-            value: null,
-            configurable: true
-        });
-        Object.defineProperty(this, "spotifyToken", {
-            value: null,
-            configurable: true
-        });
-        Object.defineProperty(this, "appleResolver", {
-            value: new Collection(),
-            configurable: true,
-            enumerable: true
-        });
-        Object.defineProperty(this, "deezerResolver", {
-            value: new Collection(),
-            configurable: true,
-            enumerable: true
-        });
-        Object.defineProperty(this, "spotifyResolver", {
-            value: new Collection(),
-            configurable: true,
-            enumerable: true
+        Object.defineProperties(this, {
+            _getTracks: {
+                value: this.shoukaku.getTracks.bind(this.shoukaku),
+                enumerable: true
+            },
+            regex: {
+                value: {
+                    apple: /(?<link>(?:https:\/\/music\.apple\.com\/)(?:.+)?(?<type>artist|album|music-video|playlist)\/(?<title>[\w\-.]\/[\w\-.]+|[^&]+)\/(?<id>[\w\-.]\/[\w\-.]+|[^&]+))/,
+                    deezer: /(?<link>(?:https?:\/\/|)?(?:www\.)?deezer\.com\/(?:\w{2}\/)?(?<type>track|album|playlist|artist)\/(?<id>\d+))/,
+                    spotify:
+                        /(?<link>(?:https:\/\/open\.spotify\.com\/(?:user\/[A-Za-z0-9]+\/)?|spotify:)(?<type>album|playlist|track|artist|episode|show)(?:[/:])(?<id>[A-Za-z0-9]+).*$)/
+                },
+                enumerable: true
+            },
+            baseUrl: {
+                value: {
+                    apple: "https://amp-api.music.apple.com/v1/catalog/us",
+                    deezer: "https://api.deezer.com",
+                    spotify: "https://api.spotify.com/v1"
+                },
+                enumerable: true
+            },
+            token: {
+                value: {
+                    apple: null,
+                    spotify: null
+                },
+                configurable: true
+            },
+            resolver: {
+                value: {
+                    apple: new Collection(),
+                    deezer: new Collection(),
+                    spotify: new Collection()
+                },
+                enumerable: true
+            }
         });
     }
 
@@ -94,28 +84,6 @@ export class PluginManager {
         await this.fetchAppleToken();
         await this.requestSpotifyToken();
         await this._loadPluginResolver();
-    }
-
-    public async _loadPluginResolver(): Promise<void> {
-        const getPluginFile = Utils.readdirRecursive(
-            join(Utils.importURLToString(import.meta.url), "./Plugins")
-        );
-        for (const pluginFile of getPluginFile) {
-            const plugin = await Utils.import<IPluginComponent>(
-                resolve(pluginFile),
-                this
-            );
-            if (plugin === undefined) {
-                console.log(plugin, pluginFile);
-                continue;
-            }
-            if (plugin.meta.category === "apple")
-                this.appleResolver.set(plugin.meta.name, plugin);
-            if (plugin.meta.category === "deezer")
-                this.deezerResolver.set(plugin.meta.name, plugin);
-            if (plugin.meta.category === "spotify")
-                this.spotifyResolver.set(plugin.meta.name, plugin);
-        }
     }
 
     public getNode(query?: string[] | string): Node | undefined {
@@ -203,9 +171,7 @@ export class PluginManager {
                     )!
                 )
             ) as AppleMusicMetaTagResponse;
-            Object.defineProperty(this, "appleToken", {
-                value: `Bearer ${token.MEDIA_API.token}`
-            });
+            this.token.apple = `Bearer ${token.MEDIA_API.token}`;
         } catch {
             /* Do nothing. */
         }
@@ -242,9 +208,7 @@ export class PluginManager {
                 token_type: string;
                 expires_in: number;
             } = request.json();
-            Object.defineProperty(this, "spotifyToken", {
-                value: `${token_type} ${access_token}`
-            });
+            this.token.spotify = `${token_type} ${access_token}`;
             Object.defineProperty(this, "spotifyNextRequest", {
                 configurable: true,
                 value: setTimeout(() => {
@@ -267,13 +231,13 @@ export class PluginManager {
         const getHTTPQuery = query
             .slice(query.search("http") >= 0 ? query.search("http") : 0)
             .split(" ")[0];
-        if (this.appleRegex.test(getHTTPQuery)) {
-            const regExpExec = this.appleRegex.exec(
+        if (this.regex.apple.test(getHTTPQuery)) {
+            const regExpExec = this.regex.apple.exec(
                 getHTTPQuery
             ) as unknown as IregExpExec;
-            if (this.appleResolver.has(regExpExec.groups.type)) {
+            if (this.resolver.apple.has(regExpExec.groups.type)) {
                 try {
-                    return await this.appleResolver
+                    return await this.resolver.apple
                         .get(regExpExec.groups.type)
                         ?.fetch(regExpExec.groups.id);
                 } catch (e) {
@@ -281,26 +245,26 @@ export class PluginManager {
                     return this.buildResponse("LOAD_FAILED", []);
                 }
             }
-        } else if (this.deezerRegex.test(getHTTPQuery)) {
-            const regExpExec = this.deezerRegex.exec(
+        } else if (this.regex.deezer.test(getHTTPQuery)) {
+            const regExpExec = this.regex.deezer.exec(
                 getHTTPQuery
             ) as unknown as IregExpExec;
-            if (this.deezerResolver.has(regExpExec.groups.type)) {
+            if (this.resolver.deezer.has(regExpExec.groups.type)) {
                 try {
-                    return await this.deezerResolver
+                    return await this.resolver.deezer
                         .get(regExpExec.groups.type)
                         ?.fetch(regExpExec.groups.id);
                 } catch {
                     return this.buildResponse("LOAD_FAILED", []);
                 }
             }
-        } else if (this.spotifyRegex.test(getHTTPQuery)) {
-            const regExpExec = this.spotifyRegex.exec(
+        } else if (this.regex.spotify.test(getHTTPQuery)) {
+            const regExpExec = this.regex.spotify.exec(
                 getHTTPQuery
             ) as unknown as IregExpExec;
-            if (this.spotifyResolver.has(regExpExec.groups.type)) {
+            if (this.resolver.spotify.has(regExpExec.groups.type)) {
                 try {
-                    return await this.spotifyResolver
+                    return await this.resolver.spotify
                         .get(regExpExec.groups.type)
                         ?.fetch(regExpExec.groups.id);
                 } catch {
@@ -309,5 +273,27 @@ export class PluginManager {
             }
         }
         return this._getTracks(query, options);
+    }
+
+    private async _loadPluginResolver(): Promise<void> {
+        const getPluginFile = Utils.readdirRecursive(
+            join(Utils.importURLToString(import.meta.url), "./Plugins")
+        );
+        for (const pluginFile of getPluginFile) {
+            const plugin = await Utils.import<IPluginComponent>(
+                resolve(pluginFile),
+                this
+            );
+            if (plugin === undefined) {
+                console.log(plugin, pluginFile);
+                continue;
+            }
+            if (plugin.meta.category === "apple")
+                this.resolver.apple.set(plugin.meta.name, plugin);
+            if (plugin.meta.category === "deezer")
+                this.resolver.deezer.set(plugin.meta.name, plugin);
+            if (plugin.meta.category === "spotify")
+                this.resolver.spotify.set(plugin.meta.name, plugin);
+        }
     }
 }

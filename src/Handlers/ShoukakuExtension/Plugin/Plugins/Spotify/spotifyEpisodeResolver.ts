@@ -18,11 +18,11 @@ export default class spotifyEpisodeResolver extends ZuikakuPlugin {
                 ]);
             }
             const spotifyEpisode: SpotifyEpisode = await petitio(
-                `${this.plugin.spotifyBaseURL}/episodes/${trackId}`,
+                `${this.plugin.baseUrl.spotify}/episodes/${trackId}`,
                 "GET"
             )
                 .query("market", "US")
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             const isrc = "";
             const identifier = spotifyEpisode.id;

@@ -18,7 +18,7 @@ export default class deezerTrackResolver extends ZuikakuPlugin {
                 ]);
             }
             const deezerTrack: DeezerTrack = await petitio(
-                `${this.plugin.deezerBaseURL}/track/${trackId}`
+                `${this.plugin.baseUrl.deezer}/track/${trackId}`
             ).json();
             const isrc = deezerTrack.isrc ?? "";
             const identifier = deezerTrack.id ?? "";

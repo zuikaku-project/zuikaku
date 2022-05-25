@@ -25,9 +25,9 @@ export default class spotifyPlaylistResolver extends ZuikakuPlugin {
                 );
             }
             const spotifyPlaylist: SpotifyPlaylist = await petitio(
-                `${this.plugin.spotifyBaseURL}/playlists/${trackId}`
+                `${this.plugin.baseUrl.spotify}/playlists/${trackId}`
             )
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             let nextPage = spotifyPlaylist.tracks.next;
             let pageLoaded = 1;
@@ -39,7 +39,7 @@ export default class spotifyPlaylistResolver extends ZuikakuPlugin {
             ) {
                 const spotifyPlaylistPage: SpotifyPlaylist["tracks"] =
                     await petitio(nextPage)
-                        .header("Authorization", this.plugin.spotifyToken)
+                        .header("Authorization", this.plugin.token.spotify)
                         .json();
                 spotifyPlaylist.tracks.items.push(...spotifyPlaylistPage.items);
                 nextPage = spotifyPlaylistPage.next;

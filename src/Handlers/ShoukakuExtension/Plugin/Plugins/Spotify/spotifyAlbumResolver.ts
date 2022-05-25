@@ -25,10 +25,10 @@ export default class spotifyAlbumResolver extends ZuikakuPlugin {
                 );
             }
             const spotifyAlbum: SpotifyAlbum = await petitio(
-                `${this.plugin.spotifyBaseURL}/albums/${trackId}`,
+                `${this.plugin.baseUrl.spotify}/albums/${trackId}`,
                 "GET"
             )
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             const unresolvedSpotifyTracks = spotifyAlbum.tracks.items.map(
                 spotifyTrack => {

@@ -25,7 +25,7 @@ export default class deezerPlaylistResolver extends ZuikakuPlugin {
                 );
             }
             const deezerPlaylist: DeezerPlaylist = await petitio(
-                `${this.plugin.deezerBaseURL}/playlist/${trackId}`
+                `${this.plugin.baseUrl.deezer}/playlist/${trackId}`
             ).json();
             const unresolvedDeezerTracks = deezerPlaylist.tracks.data.map(
                 deezerTrack => {

@@ -18,9 +18,9 @@ export default class spotifyTrackResolver extends ZuikakuPlugin {
                 ]);
             }
             const spotifyTrack: SpotifyTrack = await petitio(
-                `${this.plugin.spotifyBaseURL}/tracks/${trackId}`
+                `${this.plugin.baseUrl.spotify}/tracks/${trackId}`
             )
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             const isrc = spotifyTrack.external_ids?.isrc ?? "";
             const identifier = spotifyTrack.id ?? "";

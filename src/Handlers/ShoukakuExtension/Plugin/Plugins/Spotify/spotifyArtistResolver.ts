@@ -25,15 +25,15 @@ export default class spotifyArtistResolver extends ZuikakuPlugin {
                 );
             }
             const metaData: { name: string } = await petitio(
-                `${this.plugin.spotifyBaseURL}/artists/${trackId}`
+                `${this.plugin.baseUrl.spotify}/artists/${trackId}`
             )
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             const spotifyArtis: SpotifyArtist = await petitio(
-                `${this.plugin.spotifyBaseURL}/artists/${trackId}/top-tracks`
+                `${this.plugin.baseUrl.spotify}/artists/${trackId}/top-tracks`
             )
                 .query("country", "US")
-                .header("Authorization", this.plugin.spotifyToken)
+                .header("Authorization", this.plugin.token.spotify)
                 .json();
             const unresolvedSpotifyTracks = spotifyArtis.tracks.map(
                 spotifyTrack => {

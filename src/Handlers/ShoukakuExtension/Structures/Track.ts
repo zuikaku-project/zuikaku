@@ -1,5 +1,5 @@
-import { DataInput, Utils } from "#zuikaku/Utils";
 import { Track as LavalinkTrack } from "#zuikaku/types";
+import { DataInput, Utils } from "#zuikaku/Utils";
 import { User } from "discord.js";
 import { ShoukakuHandler } from "../ShoukakuHandler";
 
@@ -77,9 +77,9 @@ export class Track {
         track: LavalinkTrack
     ): Promise<Track | undefined> {
         const isFromPlugin =
-            shoukaku.plugin.appleRegex.test(track.info.uri ?? "") ||
-            shoukaku.plugin.deezerRegex.test(track.info.uri ?? "") ||
-            shoukaku.plugin.spotifyRegex.test(track.info.uri ?? "");
+            shoukaku.plugin.regex.apple.test(track.info.uri ?? "") ||
+            shoukaku.plugin.regex.deezer.test(track.info.uri ?? "") ||
+            shoukaku.plugin.regex.spotify.test(track.info.uri ?? "");
         let response = await shoukaku.getTracks(
             track.isrc?.length
                 ? track.isrc

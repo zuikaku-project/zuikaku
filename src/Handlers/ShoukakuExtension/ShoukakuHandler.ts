@@ -1,5 +1,6 @@
 import { ZuikakuClient } from "#zuikaku/Structures/ZuikakuClient";
-import { Response, Source } from "#zuikaku/types";
+import { Response } from "#zuikaku/types";
+import { LavalinkSearchPrefix } from "#zuikaku/types/enum";
 import { Connectors, Constants, Shoukaku, VoiceChannelOptions } from "shoukaku";
 import { Dispatcher, EmbedPlayer, Lyrics, PersistentQueue, TrackList } from ".";
 import { PluginManager } from "./Plugin";
@@ -17,7 +18,7 @@ export class ShoukakuHandler extends Shoukaku {
     public embedPlayers = new Map<string, EmbedPlayer>();
     public persistentQueue = new PersistentQueue(this);
     public constructor(public client: ZuikakuClient) {
-        super(new Connectors.DiscordJS(client), client.config.nodes, {
+        super(new Connectors.DiscordJS(client), client.config.lavalink.nodes, {
             moveOnDisconnect: true,
             resume: true,
             reconnectTries: 3,
@@ -54,12 +55,8 @@ export class ShoukakuHandler extends Shoukaku {
 
     public async getTracks(
         identifier: string,
-        options?: Source
+        options?: keyof typeof LavalinkSearchPrefix
     ): Promise<TrackList> {
-        const searchTypes: Record<string, string> = {
-            soundcloud: "scsearch:",
-            youtube: "ytsearch:"
-        };
         const parseQueryUrl = identifier
             .slice(
                 identifier.search("http") >= 0 ? identifier.search("http") : 0
@@ -71,7 +68,12 @@ export class ShoukakuHandler extends Shoukaku {
             const response = (await node!.rest.resolve(
                 parseQueryUrl.includes("http")
                     ? parseQueryUrl
-                    : `${searchTypes[options ?? "youtube"]}${identifier}`
+                    : `${
+                          LavalinkSearchPrefix[
+                              options ??
+                                  this.client.config.lavalink.searchStrategy
+                          ]
+                      }${identifier}`
             ))!;
             return new TrackList(response as unknown as Response);
         } catch (e) {
