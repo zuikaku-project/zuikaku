@@ -67,9 +67,9 @@ export default class PlayCommand extends ZuikakuCommand {
             const modal = new Modal()
                 .setCustomId(
                     Utils.encodeDecodeBase64String(
-                        `${this.meta.category!}.${
-                            this.meta.name
-                        }_modalTextInput`
+                        `${this.meta.category!}.${this.meta.name}.${Boolean(
+                            ctx.options?.getBoolean("search")
+                        )}`
                     )
                 )
                 .setTitle(`Modal's Play Command`)
@@ -90,19 +90,21 @@ export default class PlayCommand extends ZuikakuCommand {
         const getGuildDatabase = await this.client.database.manager.guilds.get(
             ctx.guild!.id
         );
+
         const fromGuildPlayer =
             getGuildDatabase?.guildPlayer.channelId === ctx.channel?.id;
 
         if (ctx.isInteraction() && !ctx.deferred)
             await ctx.deferReply(fromGuildPlayer);
 
-        const search =
+        const parseSearchQuery =
             ctx.fields?.getTextInputValue("songQuery") ??
             ctx.options?.getAttachment("file")?.url ??
             ctx.options?.getString("query") ??
             ctx.options?.getMessage("message")?.content ??
             ctx.args.join(" ");
-        if (!search.trim().length) {
+
+        if (!parseSearchQuery.trim().length) {
             if (!ctx.isInteraction()) {
                 await ctx.send({
                     embeds: [
@@ -120,7 +122,11 @@ export default class PlayCommand extends ZuikakuCommand {
             textId: getGuildDatabase?.guildPlayer.channelId ?? ctx.channel!.id,
             voiceId: ctx.member.voice.channel!.id
         });
-        const getTracks = await this.client.shoukaku.getTracks(search.trim());
+
+        const getTracks = await this.client.shoukaku.getTracks(
+            parseSearchQuery.trim()
+        );
+
         if (
             ["LOAD_FAILED", "NO_MATCHES"].includes(getTracks.type) ||
             !getTracks.tracks.length
@@ -131,7 +137,7 @@ export default class PlayCommand extends ZuikakuCommand {
                         createMusicEmbed(
                             ctx,
                             "info",
-                            `I can't get any result for ${search.trim()}`
+                            `I can't get any result for ${parseSearchQuery.trim()}`
                         )
                     ]
                 })
@@ -193,8 +199,9 @@ export default class PlayCommand extends ZuikakuCommand {
                 })
                 .catch(() => null);
         } else if (
-            ctx.args.includes("--search") ||
-            ctx.options?.getBoolean("search")
+            ctx.aditionalArgs.get("searchMode") ||
+            ctx.options?.getBoolean("search") ||
+            ctx.args.includes("--search")
         ) {
             return this.flags(ctx, getTracks, guildQueue, fromGuildPlayer);
         } else {

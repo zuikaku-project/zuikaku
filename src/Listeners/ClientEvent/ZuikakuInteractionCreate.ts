@@ -118,16 +118,21 @@ export default class ZuikakuInteractionCreate extends ZuikakuListener {
         }
 
         if (interaction.isModalSubmit()) {
-            const [category, commandName] = Utils.encodeDecodeBase64String(
-                interaction.customId,
-                true
-            ).split(/[.]|_/g);
+            const [category, commandName, searchMode] =
+                Utils.encodeDecodeBase64String(
+                    interaction.customId,
+                    true
+                ).split(/[.]|_/g);
 
             const command = this.client.command.find(
                 x => x.meta.category === category && x.meta.name === commandName
             );
             if (command) {
                 try {
+                    context.aditionalArgs.set(
+                        "searchMode",
+                        searchMode === "true"
+                    );
                     if (await this.runCommandCheck(context, command)) return;
                     await command.execute(context);
                 } catch (error: any) {
