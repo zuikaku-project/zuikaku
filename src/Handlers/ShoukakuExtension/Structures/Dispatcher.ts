@@ -199,7 +199,7 @@ export class Dispatcher {
                 .catch(() => null);
         }
         this.player.connection.disconnect();
-        this.shoukaku.emit("playerDestroy", this.player);
+        this.shoukaku.dispatcher.delete(this.guildId);
         if (guildDatabase?.guildPlayer.channelId)
             setTimeout(() => this.getEmbedPlayer?.update(), 500);
         return this;

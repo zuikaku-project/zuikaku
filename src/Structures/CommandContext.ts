@@ -28,9 +28,10 @@ import {
 import { ZuikakuClient } from "./ZuikakuClient";
 
 export class CommandContext {
+    public readonly aditionalArgs: Collection<string, any> = new Collection();
     public activateCollector = false;
     public constructor(
-        public client: ZuikakuClient,
+        public readonly client: ZuikakuClient,
         public readonly context:
             | CommandInteraction
             | ContextMenuInteraction
@@ -92,8 +93,9 @@ export class CommandContext {
     }
 
     public get options(): CommandInteractionOptionResolver | null {
-        return this.context instanceof CommandInteraction
-            ? (this.context.options as CommandInteractionOptionResolver)
+        return this.context instanceof Interaction
+            ? ((this.context as CommandInteraction | ContextMenuInteraction)
+                  .options as CommandInteractionOptionResolver)
             : null;
     }
 
