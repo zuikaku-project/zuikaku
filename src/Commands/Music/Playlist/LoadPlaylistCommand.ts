@@ -134,7 +134,10 @@ export default class ViewPlaylistCommand extends ZuikakuCommand {
             const buildResponse = this.client.shoukaku.plugin.buildResponse(
                 "PLAYLIST_LOADED",
                 buildUnresolved,
-                { name: getUserPlaylist.name, selectedTrack: -1 }
+                {
+                    name: getUserPlaylist.name,
+                    selectedTrack: -1
+                }
             );
             await guildQueue.queue.addTrack(
                 buildResponse.tracks.map(track => {

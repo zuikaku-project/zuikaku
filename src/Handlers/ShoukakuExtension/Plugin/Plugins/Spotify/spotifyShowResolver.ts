@@ -76,7 +76,10 @@ export default class spotifyShowResolver extends ZuikakuPlugin {
             return this.plugin.buildResponse(
                 "PLAYLIST_LOADED",
                 unresolvedSpotifyTracks,
-                { name: spotifyShow.name, selectedTrack: -1 }
+                {
+                    name: spotifyShow.name,
+                    selectedTrack: -1
+                }
             );
         } catch {
             return this.plugin.buildResponse("LOAD_FAILED", []);

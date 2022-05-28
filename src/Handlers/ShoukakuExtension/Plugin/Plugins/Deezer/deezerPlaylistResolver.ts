@@ -59,7 +59,10 @@ export default class deezerPlaylistResolver extends ZuikakuPlugin {
             return this.plugin.buildResponse(
                 "PLAYLIST_LOADED",
                 unresolvedDeezerTracks,
-                { name: deezerPlaylist.title, selectedTrack: -1 }
+                {
+                    name: deezerPlaylist.title,
+                    selectedTrack: -1
+                }
             );
         } catch {
             return this.plugin.buildResponse("LOAD_FAILED", []);

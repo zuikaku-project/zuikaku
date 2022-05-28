@@ -66,7 +66,10 @@ export default class spotifyAlbumResolver extends ZuikakuPlugin {
             return this.plugin.buildResponse(
                 "PLAYLIST_LOADED",
                 unresolvedSpotifyTracks,
-                { name: spotifyAlbum.name, selectedTrack: -1 }
+                {
+                    name: spotifyAlbum.name,
+                    selectedTrack: -1
+                }
             );
         } catch {
             return this.plugin.buildResponse("LOAD_FAILED", []);
