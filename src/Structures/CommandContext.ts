@@ -168,14 +168,10 @@ export class CommandContext {
             }
         }
         if (this.isInteraction()) {
-            (options as InteractionReplyOptions).fetchReply = true;
             const msg = (await (
                 this.context as CommandInteraction | ContextMenuInteraction
             )[type](options as any)) as Message;
-            const res = await this.channel!.messages.fetch(msg.id).catch(
-                () => null
-            );
-            return res ?? msg;
+            return msg;
         }
         if ((options as InteractionReplyOptions).ephemeral) {
             throw new Error(
