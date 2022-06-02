@@ -21,6 +21,7 @@ export class ShoukakuHandler extends Shoukaku {
         super(new Connectors.DiscordJS(client), client.config.lavalink.nodes, {
             moveOnDisconnect: true,
             resume: true,
+            resumeKey: "EnterpriseWangy",
             reconnectTries: 3,
             structures: {
                 rest: ShoukakuRest,
