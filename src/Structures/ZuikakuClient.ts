@@ -15,15 +15,22 @@ import {
     UserDatabaseManager
 } from "#zuikaku/Handlers/Databases";
 import { ShoukakuHandler } from "#zuikaku/Handlers/ShoukakuExtension";
-import { IConfig, ISnipe } from "#zuikaku/types";
+import { IConfig } from "#zuikaku/types";
 import { Logger, Utils } from "#zuikaku/Utils";
-import { Client, Intents, Options, Sweepers } from "discord.js";
+import {
+    Client,
+    Collection,
+    Intents,
+    MessageEmbed,
+    Options,
+    Sweepers
+} from "discord.js";
 import mongoose from "mongoose";
 import { resolve } from "node:path";
 import process from "node:process";
 
 export class ZuikakuClient extends Client {
-    public readonly snipe = new Map<string, ISnipe[]>();
+    public readonly snipe = new Collection<string, MessageEmbed[][]>();
     public readonly logger = new Logger();
     public readonly utils = new Utils();
     public readonly apis = {

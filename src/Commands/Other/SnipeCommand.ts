@@ -3,7 +3,7 @@ import { CommandContext } from "#zuikaku/Structures/CommandContext";
 import { ZuikakuCommand } from "#zuikaku/Structures/ZuikakuCommand";
 import { ICommandComponent } from "#zuikaku/types";
 import { createEmbed } from "#zuikaku/Utils";
-import { MessageEmbed, TextChannel, ThreadChannel, User } from "discord.js";
+import { MessageEmbed, TextChannel, ThreadChannel } from "discord.js";
 
 @ZuikakuDecorator<ICommandComponent>({
     name: "snipe",
@@ -28,11 +28,9 @@ export default class SnipeCommand extends ZuikakuCommand {
             channel instanceof TextChannel ||
             channel instanceof ThreadChannel
         ) {
-            const snipes = this.client.snipe.get(channel.id) as
-                | Snipe[]
-                | undefined;
+            const snipes = this.client.snipe.get(channel.id);
             if (snipes) {
-                const embeds = this.geneembed(snipes, channel);
+                const embeds = this.generateEmbedPage(snipes, channel);
                 await new this.client.utils.pagination(
                     ctx,
                     embeds
@@ -67,40 +65,17 @@ export default class SnipeCommand extends ZuikakuCommand {
         }
     }
 
-    private geneembed(
-        snipes: Snipe[],
+    private generateEmbedPage(
+        snipes: MessageEmbed[][],
         channel: TextChannel | ThreadChannel
-    ): MessageEmbed[] {
-        const array = snipes.map(({ content, author, date, attachments }) => {
-            content =
-                content.length <= 2047
-                    ? content
-                    : `${content.substring(0, 2047).trim()} ...`;
-            const generateEmbed = createEmbed("info", content)
-                .setAuthor({
-                    name: author.tag,
-                    iconURL: author.displayAvatarURL({ dynamic: true })
-                })
-                .addField("Date", `<t:${date}:F> (<t:${date}:R>)`);
-            if (attachments.length) {
-                generateEmbed.addField("Attachments", attachments.join("\n"));
-            }
-            return generateEmbed;
-        });
+    ): MessageEmbed[][] {
         let i = 1;
-        array.map(embed =>
-            embed.setFooter({
+        return snipes.map(embed => {
+            embed[0].setFooter({
                 text: `Page [${i++}/${snipes.length}] • #${channel.name}`,
                 iconURL: this.client.user?.displayAvatarURL({ format: "png" })
-            })
-        );
-        return array;
+            });
+            return embed;
+        });
     }
-}
-
-interface Snipe {
-    author: User;
-    content: string;
-    date: string;
-    attachments: string[];
 }
