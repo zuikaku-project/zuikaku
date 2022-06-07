@@ -20,6 +20,8 @@ export class ShoukakuHandler extends Shoukaku {
     public constructor(public client: ZuikakuClient) {
         super(new Connectors.DiscordJS(client), client.config.lavalink.nodes, {
             moveOnDisconnect: true,
+            alwaysSendResumeKey: true,
+            resumeByLibrary: true,
             resume: true,
             resumeKey: "EnterpriseWangy",
             reconnectTries: 3,
