@@ -2,13 +2,9 @@ name: Lint & Compile Test
 
 on:
     push:
-        paths:
-            - ["**.ts", "package.json", "test.yaml"]
         branches:
             - master
     pull_request:
-        paths:
-            - ["**.ts", "package.json", "test.yaml"]
         branches:
             - "**"
 
