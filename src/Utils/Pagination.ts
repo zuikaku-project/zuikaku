@@ -11,7 +11,7 @@ import { Utils } from "./Utils";
 export default class Pagination {
     public constructor(
         public ctx: CommandContext,
-        public embed: MessageEmbed[]
+        public embed: MessageEmbed[] | MessageEmbed[][]
     ) {}
 
     public async Pagination(): Promise<void> {
@@ -47,7 +47,9 @@ export default class Pagination {
         }
         let index = 0;
         const send = await this.ctx.send({
-            embeds: [this.embed[index]],
+            embeds: Array.isArray(this.embed[index])
+                ? (this.embed as MessageEmbed[][])[index]
+                : [(this.embed as MessageEmbed[])[index]],
             components: [row]
         });
         const collector = send.createMessageComponentCollector<2>({
@@ -86,7 +88,13 @@ export default class Pagination {
             }
             const something = index % this.embed.length;
             index = (something + this.embed.length) % this.embed.length;
-            await send.edit({ embeds: [this.embed[index]] }).catch(() => null);
+            await send
+                .edit({
+                    embeds: Array.isArray(this.embed[index])
+                        ? (this.embed as MessageEmbed[][])[index]
+                        : [(this.embed as MessageEmbed[])[index]]
+                })
+                .catch(() => null);
         });
         collector.on("end", async (_, reason) => {
             if (reason === "time") {
@@ -132,7 +140,9 @@ export default class Pagination {
         }
         let index = 0;
         const send = await this.ctx.send({
-            embeds: [this.embed[index]],
+            embeds: Array.isArray(this.embed[index])
+                ? (this.embed as MessageEmbed[][])[index]
+                : [(this.embed as MessageEmbed[])[index]],
             components: [row]
         });
         const collector = send.createMessageComponentCollector<2>({
@@ -167,7 +177,13 @@ export default class Pagination {
             }
             const something = index % this.embed.length;
             index = (something + this.embed.length) % this.embed.length;
-            await send.edit({ embeds: [this.embed[index]] }).catch(() => null);
+            await send
+                .edit({
+                    embeds: Array.isArray(this.embed[index])
+                        ? (this.embed as MessageEmbed[][])[index]
+                        : [(this.embed as MessageEmbed[])[index]]
+                })
+                .catch(() => null);
         });
         collector.on("end", async (_, reason) => {
             if (reason === "time") {
@@ -212,7 +228,9 @@ export default class Pagination {
         );
         let index = 0;
         const send = await this.ctx.send({
-            embeds: [this.embed[index]],
+            embeds: Array.isArray(this.embed[index])
+                ? (this.embed as MessageEmbed[][])[index]
+                : [(this.embed as MessageEmbed[])[index]],
             components: [selectMenus, deleteButton]
         });
         const collector = send.createMessageComponentCollector({
@@ -250,7 +268,9 @@ export default class Pagination {
                     );
                 await send
                     .edit({
-                        embeds: [this.embed[index]],
+                        embeds: Array.isArray(this.embed[index])
+                            ? (this.embed as MessageEmbed[][])[index]
+                            : [(this.embed as MessageEmbed[])[index]],
                         components: messageRow
                     })
                     .catch(() => null);
