@@ -150,7 +150,7 @@ export class Filter extends Set {
             this.player.setRotation({ rotationHz: 0.2 });
         } else {
             if (this.has("eightd")) this.player.setRotation({});
-            this.updateSet("eigthd");
+            this.updateSet("eightd");
         }
         return this.updatePlayerFilterWithSeeking();
     }
