@@ -60,7 +60,7 @@
     "devDependencies": {
         "@clytage-pkg/eslint-config": "github:clytage/eslint-config",
         "@swc/cli": "^0.1.57",
-        "@swc/core": "^1.2.197",
+        "@swc/core": "^1.2.198",
         "@types/cors": "2.8.12",
         "@types/express": "4.17.13",
         "@types/js-yaml": "4.0.5",
