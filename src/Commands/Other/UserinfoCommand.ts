@@ -16,7 +16,7 @@ locale();
     slash: {
         options: [
             {
-                name: "query",
+                name: "user",
                 type: "USER",
                 description: "Display some user"
             }
