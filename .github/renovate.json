@@ -26,6 +26,10 @@
                 "allowedVersions": "1.0.0-rc.10"
             },
             {
+                "matchPackagePatterns": ["typescript"],
+                "allowedVersions": "4.7.3"
+            },
+            {
                 "matchDepTypes": ["engines"],
                 "enabled": false
             }
