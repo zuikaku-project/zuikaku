@@ -14,7 +14,7 @@ api:
     # Port for the API to listen on (default: 3030)
     port: 3030 # required
 
-    # Canvas API (https://github.com/Zuikaku-Org/zuikaku-canvas-api/)
+    # Canvas API (https://github.com/zuikaku-project/zuikaku-canvas-api/)
     canvas:
         url: Canvas API URI # required
         auth: Canvas API Auth # required
@@ -35,7 +35,7 @@ api:
         instagram: Instagram Cookie # required
 
 lavalink:
-    # Lavalink Nodes (https://github.com/Zuikaku-Org/lavalink/) required
+    # Lavalink Nodes (https://github.com/zuikaku-project/lavalink/) required
     nodes:
         - name: Node Name # required
           url: Node URI # required

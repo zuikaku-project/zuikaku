@@ -17,15 +17,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/zuikaku-org/zuikaku.git"
+        "url": "git+https://github.com/zuikaku-project/zuikaku.git"
     },
     "keywords": [],
     "author": "noxzym",
     "license": "agpl-3.0",
     "bugs": {
-        "url": "https://github.com/zuikaku-org/zuikaku/issues"
+        "url": "https://github.com/zuikaku-project/zuikaku/issues"
     },
-    "homepage": "https://github.com/zuikaku-org/zuikaku#readme",
+    "homepage": "https://github.com/zuikaku-project/zuikaku#readme",
     "engines": {
         "node": ">=16",
         "npm": ">=7"

@@ -5,7 +5,7 @@
 # Zuikaku
 
 [![Typescript](https://badgen.net/badge/icon/typescript?icon=typescript&label)](https://www.typescriptlang.org/)
-[![Linter](https://github.com/Zuikaku-org/Zuikaku/workflows/Lint%20&%20Compile%20Test/badge.svg)](https://github.com/Zuikaku-org/zuikaku)
+[![Linter](https://github.com/zuikaku-project/Zuikaku/workflows/Lint%20&%20Compile%20Test/badge.svg)](https://github.com/zuikaku-project/zuikaku)
 [![Discord](https://discordapp.com/api/guilds/770540956163899423/embed.png)](https://zui.my.id/discord)
 
 ### YOUR POWERFUL DISCORD AIRCRAFT CARRIER WITH MANY FEATURES
