@@ -2,18 +2,17 @@
     "name": "zuikaku",
     "version": "4.0.0",
     "description": "The best Discord Bot that can serve you everytime, Fast, Secure, Always on, Best Audio, No Configuration",
-    "main": "./dist/ZuikakuBase.js",
+    "main": "dist",
     "type": "module",
     "scripts": {
-        "build": "rimraf dist && npm run lint && npm run compile",
-        "compile": "swc src -d dist",
-        "compile:ts": "tsc --build tsconfig.json",
         "lint": "npm run pretty && eslint src --ext .ts",
         "lint:fix": "npm run pretty:write && eslint src --ext .ts --fix",
+        "compile": "swc src -d dist",
+        "compile:ts": "tsc --build tsconfig.json",
         "pretty": "prettier --check src/**/*.ts",
         "pretty:write": "prettier --write src/**/*.ts",
-        "start": "node --es-module-specifier-resolution=node -r tsconfig-paths/register .",
-        "vps": "npm run build && npm start"
+        "start": "node --experimental-specifier-resolution=node -r tsconfig-paths/register .",
+        "start:dev": "rimraf dist && npm run lint && npm run compile && npm start"
     },
     "repository": {
         "type": "git",
@@ -31,7 +30,10 @@
         "npm": ">=7"
     },
     "imports": {
-        "#zuikaku/*": "./dist/*"
+        "zuikaku-structures/*": "./dist/structures/*",
+        "zuikaku-utils/*": "./dist/utils/*",
+        "zuikaku-types": "./dist/types",
+        "zuikaku-enums": "./dist/enums"
     },
     "eslintConfig": {
         "extends": [
