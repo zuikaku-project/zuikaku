@@ -1,6 +1,5 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "npm.packageManager": "npm",
-  "files.eol": "\n",
-  "deepscan.enable": true
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "npm.packageManager": "npm",
+    "files.eol": "\n"
 }
