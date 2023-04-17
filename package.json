@@ -58,7 +58,7 @@
         "arrowParens": "avoid"
     },
     "devDependencies": {
-        "@clytage-pkg/eslint-config": "1.2.0",
+        "@clytage-pkg/eslint-config": "2.0.0",
         "@swc/cli": "^0.1.57",
         "@swc/core": "^1.2.204",
         "@types/cors": "2.8.12",
