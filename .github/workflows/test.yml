@@ -18,10 +18,10 @@ jobs:
                     - ">=16.x <17.x"
         steps:
             - name: Checkout repository
-              uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
+              uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd # tag=v3.3.0
+              uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
               with:
                   node-version: ${{ matrix.node-version }}
                   check-latest: true
@@ -42,10 +42,10 @@ jobs:
                     - ">=16.x <17.x"
         steps:
             - name: Checkout repository
-              uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
+              uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd # tag=v3.3.0
+              uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
               with:
                   node-version: ${{ matrix.node-version }}
                   check-latest: true
